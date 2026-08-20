@@ -2,46 +2,38 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Fraud Analyst</title>
+<title>UPI Verify</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:#e0f2fe;
+background:#f8fafc;
 }
 
-.chat{
-width:700px;
-max-width:94%;
-margin:30px auto;
-background:white;
-border-radius:20px;
-overflow:hidden;
-box-shadow:0 10px 30px #94a3b8;
-}
-
-.header{
-background:#0369a1;
+.nav{
+background:#2563eb;
 color:white;
-padding:25px;
-}
-
-.chatbox{
-padding:25px;
-min-height:350px;
-}
-
-.bot{
-background:#e0f2fe;
-padding:15px;
-border-radius:12px;
-margin:10px 0;
-}
-
-.controls{
 padding:20px;
-border-top:1px solid #ddd;
+}
+
+.container{
+width:500px;
+max-width:90%;
+margin:40px auto;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:20px;
+box-shadow:0 5px 25px #cbd5e1;
+}
+
+.amount{
+font-size:40px;
+text-align:center;
+font-weight:bold;
 }
 
 input[type=number]{
@@ -52,40 +44,46 @@ box-sizing:border-box;
 
 label{
 display:block;
-padding:6px;
+padding:8px;
 }
 
 button{
 width:100%;
 padding:15px;
-background:#0369a1;
+background:#2563eb;
 color:white;
 border:0;
-border-radius:8px;
+border-radius:10px;
+margin-top:15px;
 }
+
+.result{
+text-align:center;
+margin-top:25px;
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="chat">
-
-<div class="header">
-<h2>🤖 SecureFlow AI Analyst</h2>
-<p>UPI Fraud Investigation Assistant</p>
+<div class="nav">
+<h2>SecureFlow-AI</h2>
 </div>
 
-<div class="chatbox" id="chat">
+<div class="container">
 
-<div class="bot">
-Hello! I am SecureFlow AI. Submit a UPI transaction and I will investigate it.
+<div class="card">
+
+<h2>Verify UPI Payment</h2>
+
+<div class="amount">
+₹ <span id="amountDisplay">0</span>
 </div>
 
-</div>
-
-<div class="controls">
-
-<input id="amount" type="number" placeholder="Amount ₹">
+<input id="amount" type="number"
+placeholder="Enter amount"
+oninput="amountDisplay.innerText=this.value">
 
 <label><input id="unusual_time" type="checkbox"> Unusual Time</label>
 <label><input id="unusual_frequency" type="checkbox"> Unusual Frequency</label>
@@ -96,14 +94,20 @@ Hello! I am SecureFlow AI. Submit a UPI transaction and I will investigate it.
 <label><input id="no_previous_transactions" type="checkbox"> No Previous Transaction</label>
 <label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
 
-<button onclick="investigate()">ASK AI TO INVESTIGATE</button>
+<button onclick="verify()">VERIFY PAYMENT</button>
+
+<div class="result">
+
+<h2 id="decision">Waiting for verification</h2>
+<h3 id="score"></h3>
 
 </div>
 
+</div>
 </div>
 
 <script>
-async function investigate(){
+async function verify(){
 
 let ids=[
 "unusual_time","unusual_frequency","new_device",
@@ -130,22 +134,10 @@ body:JSON.stringify(data)
 
 let r=await response.json();
 
-let html=`
-<div class="bot">
-<b>Risk Score:</b> ${r.risk_score}<br>
-<b>Decision:</b> ${r.decision}
-</div>
-`;
+document.getElementById("decision").innerText=r.decision;
 
-r.reasons.forEach(x=>{
-html+=`<div class="bot">⚠ ${x}</div>`;
-});
-
-r.ai_questions.forEach(x=>{
-html+=`<div class="bot">🤖 ${x}</div>`;
-});
-
-document.getElementById("chat").innerHTML+=html;
+document.getElementById("score").innerText=
+"Risk Score: "+r.risk_score;
 }
 </script>
 
