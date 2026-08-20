@@ -3,46 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SecureFlow Fraud Monitor</title>
+<title>SecureFlow Blue AI</title>
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:#fffaf5;color:#292524}
-.sidebar{position:fixed;width:240px;height:100vh;background:#431407;padding:25px}
-.logo{color:#fb923c;font-size:21px;font-weight:bold;margin-bottom:40px}
-nav a{display:block;padding:14px;color:#fed7aa;text-decoration:none;border-radius:8px}
-nav a:hover,nav a.active{background:#7c2d12;color:white}
-.main{margin-left:240px;padding:30px}
+body{margin:0;font-family:Arial;background:#eef6ff;color:#102a43}
+.sidebar{position:fixed;width:245px;height:100vh;background:linear-gradient(#0f3c68,#075985);padding:25px}
+.logo{color:white;font-size:21px;font-weight:bold;margin-bottom:40px}
+nav a{display:block;color:#bae6fd;padding:14px;text-decoration:none;border-radius:9px;margin:5px}
+nav a:hover,nav a.active{background:rgba(255,255,255,.15);color:white}
+.main{margin-left:245px;padding:30px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.card{background:white;padding:22px;border-radius:12px;border-left:4px solid #f97316;box-shadow:0 3px 10px #eee}
-.card h2{color:#ea580c;margin-top:8px}
+.card{background:white;padding:22px;border-radius:14px;box-shadow:0 8px 20px #dbeafe}
+.card h2{color:#0284c7;margin-top:8px}
 .grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-top:20px}
-.panel{background:white;border:1px solid #fed7aa;border-radius:12px;overflow:hidden}
-.panel h2{padding:20px}
+.panel{background:white;border-radius:14px;overflow:hidden;box-shadow:0 8px 20px #dbeafe}
+.panel h2{padding:20px;color:#0369a1}
 table{width:100%;border-collapse:collapse}
-th{padding:13px;text-align:left;background:#fff7ed;color:#9a3412}
-td{padding:14px;border-top:1px solid #ffedd5}
-.alert{background:#fff1f2;border:1px solid #fecdd3;color:#be123c;padding:20px;border-radius:12px;margin-top:20px}
+th{padding:13px;text-align:left;background:#f0f9ff;color:#0369a1}
+td{padding:14px;border-top:1px solid #e0f2fe}
 </style>
 </head>
 
 <body>
 
 <aside class="sidebar">
-<div class="logo">🚨 SecureFlow</div>
+<div class="logo">🔷 SecureFlow-AI</div>
 <nav>
 <a class="active" href="#">Dashboard</a>
 <a href="#">Transactions</a>
-<a href="#">Fraud Alerts</a>
-<a href="#">Risk Analysis</a>
+<a href="#">AI Risk Engine</a>
+<a href="#">Users</a>
 <a href="#">Reports</a>
 </nav>
 </aside>
 
 <main class="main">
 
-<h1>Fraud Monitoring Center</h1>
-<p style="color:#78716c">Detect suspicious UPI behaviour</p>
+<h1>AI Fraud Detection</h1>
+<p style="color:#64748b">Smart UPI behavioural monitoring</p>
 
 <section class="stats">
 <div class="card">Transactions<h2>40</h2></div>
@@ -54,26 +53,22 @@ td{padding:14px;border-top:1px solid #ffedd5}
 <section class="grid">
 
 <div class="panel">
-<h2>Suspicious Transactions</h2>
+<h2>Transaction Analysis</h2>
 <table>
-<tr><th>ID</th><th>Sender</th><th>Amount</th><th>Risk</th></tr>
-<tr><td>TXN10001</td><td>Soumadip Das</td><td>₹12,500</td><td style="color:red">86</td></tr>
-<tr><td>TXN10003</td><td>Tridip Debroy</td><td>₹35,000</td><td style="color:red">91</td></tr>
-<tr><td>TXN10004</td><td>Shubham Mukherjee</td><td>₹4,500</td><td style="color:#ea580c">52</td></tr>
+<tr><th>ID</th><th>Sender</th><th>Receiver</th><th>Amount</th><th>Risk</th></tr>
+<tr><td>TXN10001</td><td>Soumadip Das</td><td>Shubham Paul</td><td>₹12,500</td><td>86</td></tr>
+<tr><td>TXN10002</td><td>Shubham Paul</td><td>Tridip Debroy</td><td>₹2,000</td><td>18</td></tr>
+<tr><td>TXN10003</td><td>Tridip Debroy</td><td>Soumadip Das</td><td>₹35,000</td><td>91</td></tr>
 </table>
 </div>
 
 <div class="panel">
-<h2>Threat Score</h2>
-<div style="font-size:70px;text-align:center;color:#dc2626;padding:35px">62%</div>
+<h2>AI Risk Score</h2>
+<div style="font-size:65px;text-align:center;color:#0284c7;padding:40px">62%</div>
+<p style="text-align:center;color:#64748b">Current Risk Level</p>
 </div>
 
 </section>
-
-<div class="alert">
-<strong>⚠ High Risk Activity Detected</strong>
-<p>Multiple transactions require security review.</p>
-</div>
 
 </main>
 </body>
