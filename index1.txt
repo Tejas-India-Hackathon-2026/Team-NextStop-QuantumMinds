@@ -2,98 +2,96 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Transaction Verification</title>
+    <title>Transaction History</title>
 
     <style>
         body {
-            background: #f4f6f8;
             font-family: Arial;
+            background: #f4f7fb;
+            padding: 30px;
         }
 
-        .box {
-            max-width: 600px;
-            margin: 80px auto;
+        table {
+            width: 100%;
+            border-collapse: collapse;
             background: white;
-            padding: 35px;
-            border-radius: 15px;
         }
 
-        .question {
-            padding: 20px;
-            background: #f9fafb;
-            margin: 15px 0;
-            border-radius: 10px;
+        th, td {
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
         }
 
-        button {
-            padding: 12px 25px;
-            margin-right: 10px;
-            border: none;
-            border-radius: 7px;
-            cursor: pointer;
-        }
-
-        .yes {
-            background: #16a34a;
+        th {
+            background: #111827;
             color: white;
         }
 
-        .no {
-            background: #dc2626;
-            color: white;
+        .allow {
+            color: green;
+            font-weight: bold;
+        }
+
+        .alert {
+            color: orange;
+            font-weight: bold;
+        }
+
+        .block {
+            color: red;
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
 
-<div class="box">
+<h1>Transaction History</h1>
 
-    <h1>Verify Transaction</h1>
+<br>
 
-    <p>
-        SecureFlow-AI detected unusual activity.
-    </p>
+<table>
 
-    <div class="question">
+    <thead>
+        <tr>
+            <th>Transaction ID</th>
+            <th>Amount</th>
+            <th>Risk Score</th>
+            <th>Decision</th>
+            <th>Date</th>
+        </tr>
+    </thead>
 
-        <h3>Did you initiate this payment?</h3>
+    <tbody>
 
-        <br>
+        <tr>
+            <td>TXN10001</td>
+            <td>₹500</td>
+            <td>12</td>
+            <td class="allow">ALLOW</td>
+            <td>21 Aug 2026</td>
+        </tr>
 
-        <button class="yes" onclick="answer('YES')">
-            Yes
-        </button>
+        <tr>
+            <td>TXN10002</td>
+            <td>₹7,500</td>
+            <td>64</td>
+            <td class="alert">ALERT</td>
+            <td>21 Aug 2026</td>
+        </tr>
 
-        <button class="no" onclick="answer('NO')">
-            No
-        </button>
+        <tr>
+            <td>TXN10003</td>
+            <td>₹25,000</td>
+            <td>91</td>
+            <td class="block">BLOCK</td>
+            <td>21 Aug 2026</td>
+        </tr>
 
-    </div>
+    </tbody>
 
-    <p id="message"></p>
-
-</div>
-
-<script>
-
-function answer(value) {
-
-    const message = document.getElementById("message");
-
-    if (value === "YES") {
-
-        message.innerHTML =
-            "Transaction verification submitted.";
-
-    } else {
-
-        message.innerHTML =
-            "Transaction reported as suspicious.";
-    }
-}
-
-</script>
+</table>
 
 </body>
 </html>
