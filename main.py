@@ -1,31 +1,63 @@
-# services/time_risk.py
+# security/session_manager.py
 
-class TransactionTimeAnalyzer:
+import secrets
+from datetime import datetime, timedelta
 
-    def analyze(
+
+class SessionManager:
+
+    def __init__(self):
+
+        self.sessions = {}
+
+    def create_session(
         self,
-        transaction_hour,
-        normal_hours
+        user_id,
+        device_id
     ):
 
-        if transaction_hour in normal_hours:
+        session_id = secrets.token_urlsafe(32)
 
-            return {
-                "risk": 0,
-                "status": "NORMAL",
-                "reason": "Transaction occurred during normal hours."
-            }
-
-        if transaction_hour >= 0 and transaction_hour < 5:
-
-            return {
-                "risk": 30,
-                "status": "HIGH_RISK_TIME",
-                "reason": "Transaction occurred during late-night hours."
-            }
-
-        return {
-            "risk": 15,
-            "status": "UNUSUAL_TIME",
-            "reason": "Transaction occurred outside normal user activity."
+        self.sessions[session_id] = {
+            "user_id": user_id,
+            "device_id": device_id,
+            "created_at": datetime.utcnow(),
+            "last_activity": datetime.utcnow()
         }
+
+        return session_id
+
+    def validate_session(
+        self,
+        session_id,
+        timeout_minutes=30
+    ):
+
+        session = self.sessions.get(session_id)
+
+        if not session:
+            return False
+
+        elapsed = (
+            datetime.utcnow()
+            - session["last_activity"]
+        )
+
+        if elapsed > timedelta(
+            minutes=timeout_minutes
+        ):
+
+            del self.sessions[session_id]
+
+            return False
+
+        session["last_activity"] = datetime.utcnow()
+
+        return True
+
+    def revoke(self, session_id):
+
+        self.sessions.pop(
+            session_id,
+            None
+        )
