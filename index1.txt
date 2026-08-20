@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Live Transaction Monitor</title>
+    <title>Device Security</title>
 
     <style>
         body {
@@ -11,115 +11,93 @@
             padding: 30px;
         }
 
-        h1 {
-            margin-bottom: 20px;
-        }
-
-        .live {
-            color: green;
-            font-weight: bold;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .device {
             background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        th, td {
-            padding: 14px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background: #111827;
-            color: white;
-        }
-
-        .allow {
+        .known {
             color: green;
             font-weight: bold;
         }
 
-        .alert {
-            color: orange;
-            font-weight: bold;
-        }
-
-        .block {
+        .new {
             color: red;
             font-weight: bold;
+        }
+
+        button {
+            padding: 9px 15px;
+            border: none;
+            border-radius: 7px;
+            background: #dc2626;
+            color: white;
+            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
 
-<h1>
-    Live Transaction Monitor
-    <span class="live">● LIVE</span>
-</h1>
+<h1>Device Security</h1>
 
-<table>
+<div class="device">
 
-    <thead>
-        <tr>
-            <th>Transaction</th>
-            <th>User</th>
-            <th>Amount</th>
-            <th>Risk</th>
-            <th>Status</th>
-        </tr>
-    </thead>
+    <div>
+        <h3>Windows Desktop</h3>
+        <p>Device ID: DEV-1001</p>
+        <span class="known">Trusted Device</span>
+    </div>
 
-    <tbody id="transactions"></tbody>
+    <button onclick="removeDevice('DEV-1001')">
+        Remove
+    </button>
 
-</table>
+</div>
+
+<div class="device">
+
+    <div>
+        <h3>Android Phone</h3>
+        <p>Device ID: DEV-1002</p>
+        <span class="known">Trusted Device</span>
+    </div>
+
+    <button onclick="removeDevice('DEV-1002')">
+        Remove
+    </button>
+
+</div>
+
+<div class="device">
+
+    <div>
+        <h3>Unknown Device</h3>
+        <p>Device ID: DEV-1099</p>
+        <span class="new">⚠ New Device</span>
+    </div>
+
+    <button onclick="removeDevice('DEV-1099')">
+        Block
+    </button>
+
+</div>
 
 <script>
 
-function addTransaction(tx) {
+function removeDevice(deviceId) {
 
-    const row = document.createElement("tr");
+    alert(
+        "Security action requested for " +
+        deviceId
+    );
 
-    row.innerHTML = `
-        <td>${tx.transaction_id}</td>
-        <td>${tx.user_id}</td>
-        <td>₹${tx.amount}</td>
-        <td>${tx.risk_score}</td>
-        <td class="${tx.action.toLowerCase()}">
-            ${tx.action}
-        </td>
-    `;
-
-    document
-        .getElementById("transactions")
-        .prepend(row);
 }
-
-setInterval(() => {
-
-    const actions = ["ALLOW", "ALERT", "BLOCK"];
-
-    const action =
-        actions[Math.floor(Math.random() * actions.length)];
-
-    addTransaction({
-        transaction_id:
-            "TXN" + Math.floor(Math.random() * 100000),
-
-        user_id: "USER001",
-
-        amount:
-            Math.floor(Math.random() * 10000) + 100,
-
-        risk_score:
-            Math.floor(Math.random() * 100),
-
-        action: action
-    });
-
-}, 3000);
 
 </script>
 
