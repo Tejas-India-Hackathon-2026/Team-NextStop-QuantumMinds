@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Recipient Risk</title>
+<title>SecureFlow-AI | Blocked Transactions</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -19,13 +19,13 @@
 
 <div>
 
-<h1>Recipient Risk Analysis</h1>
+<h1>Blocked Transactions</h1>
 
-<p>Detection of suspicious UPI recipients</p>
+<p>High-risk payments stopped by SecureFlow-AI</p>
 
 </div>
 
-<div class="avatar">R</div>
+<div class="avatar">!</div>
 
 </header>
 
@@ -33,23 +33,23 @@
 <section class="stats">
 
 <div class="stat">
-<div class="stat-title">RECIPIENTS</div>
-<div class="stat-number blue">24</div>
+<div class="stat-title">BLOCKED</div>
+<div class="stat-number red">10</div>
 </div>
 
 <div class="stat">
-<div class="stat-title">TRUSTED</div>
-<div class="stat-number green">16</div>
+<div class="stat-title">AMOUNT PROTECTED</div>
+<div class="stat-number green">₹2.8L</div>
 </div>
 
 <div class="stat">
-<div class="stat-title">UNKNOWN</div>
-<div class="stat-number orange">05</div>
+<div class="stat-title">AVG RISK</div>
+<div class="stat-number red">89</div>
 </div>
 
 <div class="stat">
-<div class="stat-title">HIGH RISK</div>
-<div class="stat-number red">03</div>
+<div class="stat-title">AI ACTION</div>
+<div class="stat-number blue">AUTO</div>
 </div>
 
 </section>
@@ -59,9 +59,9 @@
 
 <div class="panel-title">
 
-<h2>Recipient Database</h2>
+<h2>Blocked Payment History</h2>
 
-<p>Recipient-level fraud risk assessment</p>
+<p>Transactions automatically prevented</p>
 
 </div>
 
@@ -71,12 +71,12 @@
 <thead>
 
 <tr>
-<th>Recipient</th>
-<th>Transactions</th>
-<th>Total Received</th>
-<th>Risk Score</th>
-<th>Category</th>
-<th>Status</th>
+<th>Transaction</th>
+<th>User</th>
+<th>Amount</th>
+<th>Risk</th>
+<th>Reason</th>
+<th>Action</th>
 </tr>
 
 </thead>
@@ -85,50 +85,36 @@
 <tbody>
 
 <tr>
-
-<td>Priya Singh</td>
-<td>08</td>
-<td>₹18,500</td>
-<td>10</td>
-
-<td>Trusted</td>
-
+<td>TXN1002</td>
+<td>Amit Kumar</td>
+<td>₹45,000</td>
+<td>91</td>
+<td>Unknown Recipient</td>
 <td>
-<span class="badge safe">SAFE</span>
+<span class="badge high">BLOCKED</span>
 </td>
-
 </tr>
 
-
 <tr>
-
-<td>Merchant XYZ</td>
-<td>05</td>
-<td>₹42,000</td>
-<td>63</td>
-
-<td>Business</td>
-
-<td>
-<span class="badge review">MONITOR</span>
-</td>
-
-</tr>
-
-
-<tr>
-
-<td>Unknown Account</td>
-<td>02</td>
+<td>TXN1006</td>
+<td>Vikash Das</td>
 <td>₹75,000</td>
-<td>94</td>
-
-<td>Unknown</td>
-
+<td>96</td>
+<td>Unusual Amount</td>
 <td>
-<span class="badge high">HIGH RISK</span>
+<span class="badge high">BLOCKED</span>
 </td>
+</tr>
 
+<tr>
+<td>TXN1008</td>
+<td>Priya Das</td>
+<td>₹32,000</td>
+<td>84</td>
+<td>New Device</td>
+<td>
+<span class="badge high">BLOCKED</span>
+</td>
 </tr>
 
 </tbody>
@@ -140,5 +126,4 @@
 </main>
 
 </body>
-
 </html>
