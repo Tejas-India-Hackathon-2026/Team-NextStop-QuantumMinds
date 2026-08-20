@@ -1,48 +1,55 @@
-# services/explanation.py
+# ml/train.py
 
-def explain_transaction(
-    risk_score,
-    z_score,
-    new_device,
-    new_location,
-    failed_attempts,
-    velocity_suspicious
-):
+import pandas as pd
 
-    reasons = []
+from xgboost import XGBClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import joblib
 
-    if abs(z_score) >= 3:
-        reasons.append(
-            "Transaction amount is significantly "
-            "different from normal behavior."
-        )
 
-    if new_device:
-        reasons.append(
-            "Transaction originated from a new device."
-        )
+def train_fraud_model(csv_file):
 
-    if new_location:
-        reasons.append(
-            "Transaction originated from a new location."
-        )
+    data = pd.read_csv(csv_file)
 
-    if failed_attempts > 0:
-        reasons.append(
-            "Multiple failed attempts were detected."
-        )
+    X = data.drop(
+        columns=["is_fraud"]
+    )
 
-    if velocity_suspicious:
-        reasons.append(
-            "Unusually high transaction frequency detected."
-        )
+    y = data["is_fraud"]
 
-    if not reasons:
-        reasons.append(
-            "No major behavioral anomaly detected."
-        )
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.2,
+        random_state=42,
+        stratify=y
+    )
+
+    model = XGBClassifier(
+        n_estimators=200,
+        max_depth=6,
+        learning_rate=0.05,
+        subsample=0.8,
+        colsample_bytree=0.8,
+        eval_metric="logloss"
+    )
+
+    model.fit(X_train, y_train)
+
+    predictions = model.predict(X_test)
+
+    accuracy = accuracy_score(
+        y_test,
+        predictions
+    )
+
+    joblib.dump(
+        model,
+        "models/xgboost_fraud_model.pkl"
+    )
 
     return {
-        "risk_score": risk_score,
-        "reasons": reasons
+        "accuracy": round(accuracy, 4),
+        "model_saved": True
     }
