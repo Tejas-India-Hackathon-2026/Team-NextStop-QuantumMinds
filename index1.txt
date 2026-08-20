@@ -2,74 +2,77 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Risk Score</title>
+    <title>Fraud Alerts</title>
 
     <style>
         body {
-            background: #f5f7fa;
+            background: #f3f4f6;
             font-family: Arial;
-            display: flex;
-            justify-content: center;
-            padding-top: 80px;
+            padding: 30px;
         }
 
-        .risk-card {
+        .alert {
             background: white;
-            width: 400px;
-            padding: 40px;
-            text-align: center;
-            border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,.1);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 6px solid #dc2626;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
         }
 
-        .score {
-            font-size: 70px;
-            font-weight: bold;
-            margin: 30px;
+        .alert h3 {
+            color: #dc2626;
         }
 
-        .bar {
-            height: 20px;
-            background: #e5e7eb;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-
-        .progress {
-            height: 100%;
-            width: 72%;
-            background: #f59e0b;
-        }
-
-        .decision {
-            margin-top: 25px;
-            font-size: 22px;
-            font-weight: bold;
+        .time {
+            color: #6b7280;
+            margin-top: 8px;
         }
     </style>
 </head>
 
 <body>
 
-<div class="risk-card">
+<h1>Fraud Alerts</h1>
 
-    <h1>Transaction Risk</h1>
+<br>
 
-    <div class="score">72</div>
+<div id="alerts">
 
-    <div class="bar">
-        <div class="progress"></div>
+    <div class="alert">
+        <h3>⚠ Suspicious Transaction</h3>
+        <p>Transaction TXN10021 has a high fraud risk.</p>
+        <p>Risk Score: <strong>89</strong></p>
+        <div class="time">2 minutes ago</div>
     </div>
-
-    <div class="decision">
-        ALERT
-    </div>
-
-    <p style="margin-top:15px;">
-        Additional verification required.
-    </p>
 
 </div>
+
+<script>
+
+const socket = new WebSocket(
+    "ws://localhost:8000/ws/USER001"
+);
+
+socket.onmessage = function(event) {
+
+    const data = JSON.parse(event.data);
+
+    const alertBox = document.createElement("div");
+
+    alertBox.className = "alert";
+
+    alertBox.innerHTML = `
+        <h3>⚠ Real-Time Fraud Alert</h3>
+        <p>${data.message}</p>
+    `;
+
+    document
+        .getElementById("alerts")
+        .prepend(alertBox);
+};
+
+</script>
 
 </body>
 </html>
