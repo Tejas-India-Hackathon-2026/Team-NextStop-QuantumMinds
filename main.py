@@ -1,24 +1,34 @@
-# services/auth.py
+# database/mongodb.py
 
-from datetime import datetime, timedelta, timezone
+from pymongo import MongoClient
 
-from jose import jwt
+client = MongoClient(
+    "mongodb://localhost:27017"
+)
 
-SECRET_KEY = "CHANGE_THIS_SECRET_KEY"
-ALGORITHM = "HS256"
+db = client["secureflow"]
+
+transactions = db["transactions"]
 
 
-def create_access_token(user_id: str):
+def save_transaction(transaction, result):
 
-    expires = datetime.now(timezone.utc) + timedelta(hours=1)
+    document = {
+        "transaction_id": transaction.transaction_id,
+        "user_id": transaction.user_id,
+        "amount": transaction.amount,
+        "merchant_id": transaction.merchant_id,
+        "device_id": transaction.device_id,
+        "location": transaction.location,
 
-    payload = {
-        "sub": user_id,
-        "exp": expires
+        "risk_score": result["risk_score"],
+        "fraud_probability": result["fraud_probability"],
+        "action": result["action"],
+
+        "created_at": __import__("datetime")
+            .datetime.utcnow()
     }
 
-    return jwt.encode(
-        payload,
-        SECRET_KEY,
-        algorithm=ALGORITHM
-    )
+    transactions.insert_one(document)
+
+    return document
