@@ -2,131 +2,74 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Check Transaction - SecureFlow-AI</title>
+    <title>Risk Score</title>
 
     <style>
         body {
-            background: #f3f4f6;
+            background: #f5f7fa;
             font-family: Arial;
-            padding: 40px;
+            display: flex;
+            justify-content: center;
+            padding-top: 80px;
         }
 
-        .container {
-            max-width: 600px;
-            margin: auto;
+        .risk-card {
             background: white;
-            padding: 30px;
-            border-radius: 15px;
+            width: 400px;
+            padding: 40px;
+            text-align: center;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.1);
         }
 
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0 18px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
+        .score {
+            font-size: 70px;
+            font-weight: bold;
+            margin: 30px;
         }
 
-        button {
-            width: 100%;
-            padding: 14px;
-            background: #111827;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
+        .bar {
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 20px;
+            overflow: hidden;
         }
 
-        #result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            display: none;
+        .progress {
+            height: 100%;
+            width: 72%;
+            background: #f59e0b;
+        }
+
+        .decision {
+            margin-top: 25px;
+            font-size: 22px;
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="risk-card">
 
-    <h1>UPI Transaction Check</h1>
-    <br>
+    <h1>Transaction Risk</h1>
 
-    <label>User ID</label>
-    <input id="user_id" placeholder="USER001">
+    <div class="score">72</div>
 
-    <label>Transaction ID</label>
-    <input id="transaction_id" placeholder="TXN10001">
+    <div class="bar">
+        <div class="progress"></div>
+    </div>
 
-    <label>Amount</label>
-    <input id="amount" type="number" placeholder="5000">
+    <div class="decision">
+        ALERT
+    </div>
 
-    <label>Device ID</label>
-    <input id="device_id" placeholder="DEVICE123">
-
-    <label>Location</label>
-    <input id="location" placeholder="Patna">
-
-    <button onclick="checkTransaction()">
-        Analyze Transaction
-    </button>
-
-    <div id="result"></div>
+    <p style="margin-top:15px;">
+        Additional verification required.
+    </p>
 
 </div>
-
-<script>
-
-async function checkTransaction() {
-
-    const transaction = {
-        user_id: document.getElementById("user_id").value,
-        transaction_id: document.getElementById("transaction_id").value,
-        amount: Number(document.getElementById("amount").value),
-        device_id: document.getElementById("device_id").value,
-        location: document.getElementById("location").value,
-        transaction_hour: new Date().getHours(),
-        average_transaction_amount: 500
-    };
-
-    try {
-
-        const response = await fetch(
-            "http://localhost:8000/api/transactions/check",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(transaction)
-            }
-        );
-
-        const data = await response.json();
-
-        const result = document.getElementById("result");
-
-        result.style.display = "block";
-
-        result.innerHTML = `
-            <h3>Fraud Analysis</h3>
-            <p>Risk Score: ${data.risk_score}</p>
-            <p>Fraud Probability: ${data.fraud_probability}</p>
-            <p>Z-Score: ${data.z_score}</p>
-            <p><strong>Decision: ${data.action}</strong></p>
-        `;
-
-    } catch(error) {
-
-        document.getElementById("result").style.display = "block";
-
-        document.getElementById("result").innerHTML =
-            "Backend connection failed.";
-    }
-}
-
-</script>
 
 </body>
 </html>
