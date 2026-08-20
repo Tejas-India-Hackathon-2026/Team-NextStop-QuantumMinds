@@ -1,214 +1,29 @@
-# =========================================================
-# BACKEND 15
-# TRANSACTION VELOCITY DETECTION
-# =========================================================
-
-from datetime import datetime, timedelta
-
-
-@app.get("/api/velocity/{user_id}")
-def transaction_velocity(user_id: str):
-
-    db = get_db()
-
-    # -----------------------------------------------------
-    # CHECK USER
-    # -----------------------------------------------------
-
-    user = db.execute(
-        """
-        SELECT user_id
-        FROM users
-        WHERE user_id = ?
-        """,
-        (user_id,)
-    ).fetchone()
-
-    if user is None:
-
-        db.close()
-
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
-        )
-
-    # -----------------------------------------------------
-    # CURRENT TIME
-    # -----------------------------------------------------
-
-    now = datetime.now()
-
-
-    # -----------------------------------------------------
-    # TIME WINDOWS
-    # -----------------------------------------------------
-
-    five_minutes_ago = (
-        now - timedelta(minutes=5)
-    ).isoformat()
-
-    fifteen_minutes_ago = (
-        now - timedelta(minutes=15)
-    ).isoformat()
-
-    one_hour_ago = (
-        now - timedelta(hours=1)
-    ).isoformat()
-
-
-    # -----------------------------------------------------
-    # TRANSACTIONS IN LAST 5 MINUTES
-    # -----------------------------------------------------
-
-    last_5_minutes = db.execute(
-        """
-        SELECT COUNT(*) AS count
-        FROM transactions
-        WHERE user_id = ?
-        AND created_at >= ?
-        """,
-        (
-            user_id,
-            five_minutes_ago
-        )
-    ).fetchone()["count"]
-
-
-    # -----------------------------------------------------
-    # TRANSACTIONS IN LAST 15 MINUTES
-    # -----------------------------------------------------
-
-    last_15_minutes = db.execute(
-        """
-        SELECT COUNT(*) AS count
-        FROM transactions
-        WHERE user_id = ?
-        AND created_at >= ?
-        """,
-        (
-            user_id,
-            fifteen_minutes_ago
-        )
-    ).fetchone()["count"]
-
-
-    # -----------------------------------------------------
-    # TRANSACTIONS IN LAST 1 HOUR
-    # -----------------------------------------------------
-
-    last_hour = db.execute(
-        """
-        SELECT COUNT(*) AS count
-        FROM transactions
-        WHERE user_id = ?
-        AND created_at >= ?
-        """,
-        (
-            user_id,
-            one_hour_ago
-        )
-    ).fetchone()["count"]
-
-
-    # -----------------------------------------------------
-    # TOTAL AMOUNT IN LAST HOUR
-    # -----------------------------------------------------
-
-    hourly_amount = db.execute(
-        """
-        SELECT COALESCE(SUM(amount), 0) AS amount
-        FROM transactions
-        WHERE user_id = ?
-        AND created_at >= ?
-        """,
-        (
-            user_id,
-            one_hour_ago
-        )
-    ).fetchone()["amount"]
-
-
-    db.close()
-
-
-    # -----------------------------------------------------
-    # DETERMINE VELOCITY RISK
-    # -----------------------------------------------------
+def explain_transaction(transaction):
 
     reasons = []
 
-    risk_level = "LOW"
+    if transaction["new_recipient"] == 1:
+        reasons.append("New recipient")
 
+    if transaction["previous_connection"] == 0:
+        reasons.append("No previous connection")
 
-    # Very high frequency
+    if transaction["device_match"] == 0:
+        reasons.append("Unknown device")
 
-    if last_5_minutes >= 3:
+    if transaction["name_match"] == 0:
+        reasons.append("UPI name mismatch")
 
-        risk_level = "HIGH"
+    if transaction["location_change_km"] > 100:
+        reasons.append("Unusual location change")
 
-        reasons.append(
-            "3 or more transactions detected "
-            "within the last 5 minutes."
-        )
+    if transaction["amount_deviation"] > 2:
+        reasons.append("Unusual transaction amount")
 
+    if transaction["hour"] < 5 or transaction["hour"] > 23:
+        reasons.append("Unusual transaction time")
 
-    elif last_15_minutes >= 5:
+    if transaction["velocity"] > 10:
+        reasons.append("High transaction velocity")
 
-        risk_level = "HIGH"
-
-        reasons.append(
-            "5 or more transactions detected "
-            "within the last 15 minutes."
-        )
-
-
-    elif last_hour >= 8:
-
-        risk_level = "MEDIUM"
-
-        reasons.append(
-            "8 or more transactions detected "
-            "within the last hour."
-        )
-
-
-    # -----------------------------------------------------
-    # RESPONSE
-    # -----------------------------------------------------
-
-    return {
-
-        "success": True,
-
-        "user_id": user_id,
-
-        "velocity": {
-
-            "last_5_minutes":
-                last_5_minutes,
-
-            "last_15_minutes":
-                last_15_minutes,
-
-            "last_hour":
-                last_hour,
-
-            "hourly_amount":
-                round(
-                    hourly_amount,
-                    2
-                )
-
-        },
-
-        "risk_level":
-            risk_level,
-
-        "suspicious":
-            risk_level != "LOW",
-
-        "reasons":
-            reasons
-
-    }
+    return reasons
