@@ -1,0 +1,930 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="SecureFlow-AI5.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="4571"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="recipient_transaction_history" custom_title="0" dock_id="1" table="4,29:mainrecipient_transaction_history"/><dock_state state="000000ff00000000fd00000001000000020000000000000000fc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000ffffffff0000011e00ffffff000000000000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1*">-- ============================================================
+-- SECUREFLOW-AI
+-- SQLITE DATABASE
+-- 4 SENDERS + 4 RECIPIENTS
+-- 10 TRANSACTIONS PER SENDER
+-- TOTAL TRANSACTIONS = 40
+-- ============================================================
+
+PRAGMA foreign_keys = ON;
+
+
+-- ============================================================
+-- REMOVE OLD TABLES
+-- ============================================================
+
+DROP VIEW IF EXISTS sender_transaction_history;
+DROP VIEW IF EXISTS recipient_transaction_history;
+
+DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS sender_recipient_connections;
+DROP TABLE IF EXISTS recipients;
+DROP TABLE IF EXISTS users;
+
+
+-- ============================================================
+-- 1. SENDERS / USERS TABLE
+-- ============================================================
+
+CREATE TABLE users
+(
+    user_id TEXT PRIMARY KEY,
+
+    name TEXT NOT NULL,
+
+    date_of_birth TEXT,
+
+    college_name TEXT,
+
+    living_area TEXT NOT NULL,
+
+    known_device TEXT NOT NULL,
+
+    common_location TEXT,
+
+    -- INITIAL BANK BALANCE
+    initial_bank_balance REAL NOT NULL DEFAULT 0,
+
+    average_transaction REAL DEFAULT 0,
+
+    total_transactions INTEGER DEFAULT 0,
+
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+    CHECK (initial_bank_balance &gt;= 0)
+);
+
+
+-- ============================================================
+-- 2. RECIPIENTS TABLE
+-- ONLY 4 TOTAL RECIPIENTS
+-- ============================================================
+
+CREATE TABLE recipients
+(
+    recipient_id TEXT PRIMARY KEY,
+
+    recipient_name TEXT NOT NULL,
+
+    upi_id TEXT NOT NULL UNIQUE,
+
+    recipient_device_name TEXT NOT NULL,
+
+    recipient_location TEXT NOT NULL,
+
+    recipient_type TEXT NOT NULL,
+
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- ============================================================
+-- 3. SENDER-RECIPIENT CONNECTION TABLE
+-- ============================================================
+
+CREATE TABLE sender_recipient_connections
+(
+    connection_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    user_id TEXT NOT NULL,
+
+    recipient_id TEXT NOT NULL,
+
+    previous_connection INTEGER NOT NULL DEFAULT 0,
+
+    connection_type TEXT,
+
+    previous_transaction_count INTEGER DEFAULT 0,
+
+    connection_notes TEXT,
+
+    FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (recipient_id)
+        REFERENCES recipients(recipient_id)
+        ON DELETE CASCADE,
+
+    UNIQUE(user_id, recipient_id),
+
+    CHECK (previous_connection IN (0, 1)),
+
+    CHECK (previous_transaction_count &gt;= 0)
+);
+
+
+-- ============================================================
+-- 4. TRANSACTIONS TABLE
+-- ============================================================
+
+CREATE TABLE transactions
+(
+    transaction_id TEXT PRIMARY KEY,
+
+    user_id TEXT NOT NULL,
+
+    recipient_id TEXT NOT NULL,
+
+    amount REAL NOT NULL,
+
+    transaction_time TEXT NOT NULL,
+
+    sender_device_name TEXT NOT NULL,
+
+    recipient_device_name TEXT NOT NULL,
+
+    payment_location TEXT NOT NULL,
+
+    previous_location TEXT,
+
+    previous_connection INTEGER NOT NULL DEFAULT 0,
+
+    transaction_status TEXT NOT NULL DEFAULT 'SUCCESS',
+
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (recipient_id)
+        REFERENCES recipients(recipient_id)
+        ON DELETE CASCADE,
+
+    CHECK (amount &gt; 0),
+
+    CHECK (previous_connection IN (0, 1)),
+
+    CHECK
+    (
+        transaction_status IN
+        (
+            'SUCCESS',
+            'PENDING',
+            'FAILED',
+            'BLOCKED',
+            'HELD'
+        )
+    )
+);
+
+
+-- ============================================================
+-- 5. INSERT 4 SENDERS
+-- WITH INITIAL BANK BALANCE
+-- ============================================================
+
+INSERT INTO users
+(
+    user_id,
+    name,
+    date_of_birth,
+    college_name,
+    living_area,
+    known_device,
+    common_location,
+    initial_bank_balance,
+    average_transaction,
+    total_transactions
+)
+VALUES
+
+(
+    'U001',
+    'Soumadip Das',
+    '2005-04-18',
+    'Haldia Institute of Technology',
+    'Haldia',
+    'Samsung Galaxy S23 - SOUMADIP',
+    'Haldia',
+    50000,
+    1850,
+    10
+),
+
+(
+    'U002',
+    'Shubham Paul',
+    '2004-11-07',
+    'Haldia Institute of Technology',
+    'Haldia',
+    'OnePlus 12R - SHUBHAM',
+    'Kolkata',
+    60000,
+    2100,
+    10
+),
+
+(
+    'U003',
+    'Shubham Mukharjee',
+    '2005-02-21',
+    'Haldia Institute of Technology',
+    'Haldia',
+    'Redmi Note 13 Pro - MUKHERJEE',
+    'Haldia',
+    55000,
+    2500,
+    10
+),
+
+(
+    'U004',
+    'Tridip Devroy',
+    '2004-08-13',
+    'Haldia Institute of Technology',
+    'Haldia',
+    'Google Pixel 8 - TRIDIP',
+    'Kolkata',
+    45000,
+    1750,
+    10
+);
+
+
+-- ============================================================
+-- 6. INSERT 4 RECIPIENTS
+-- ============================================================
+
+INSERT INTO recipients
+(
+    recipient_id,
+    recipient_name,
+    upi_id,
+    recipient_device_name,
+    recipient_location,
+    recipient_type
+)
+VALUES
+
+(
+    'R001',
+    'Rahul Verma',
+    'rahul.verma@upi',
+    'iPhone 15 - RAHUL',
+    'Kolkata',
+    'Friend'
+),
+
+(
+    'R002',
+    'Priya Sharma',
+    'priya.sharma@upi',
+    'Samsung Galaxy A55 - PRIYA',
+    'Howrah',
+    'Friend'
+),
+
+(
+    'R003',
+    'Amit Kumar',
+    'amit.kumar@upi',
+    'OnePlus Nord CE4 - AMIT',
+    'Durgapur',
+    'Friend'
+),
+
+(
+    'R004',
+    'Rohan Chakraborty',
+    'rohan.chakraborty@upi',
+    'iPhone 14 - ROHAN',
+    'Midnapore',
+    'Friend'
+);
+
+
+-- ============================================================
+-- 7. PREVIOUS CONNECTION INFORMATION
+-- ============================================================
+
+-- U001 CONNECTIONS
+
+INSERT INTO sender_recipient_connections
+(user_id, recipient_id, previous_connection, connection_type,
+ previous_transaction_count, connection_notes)
+VALUES
+('U001','R001',1,'College Friend',8,'Frequently transacted before'),
+('U001','R002',1,'Friend',5,'Known recipient'),
+('U001','R003',0,'No Previous Connection',0,'New recipient'),
+('U001','R004',1,'College Friend',3,'Previous transactions exist');
+
+
+-- U002 CONNECTIONS
+
+INSERT INTO sender_recipient_connections
+(user_id, recipient_id, previous_connection, connection_type,
+ previous_transaction_count, connection_notes)
+VALUES
+('U002','R001',1,'Friend',6,'Known recipient'),
+('U002','R002',0,'No Previous Connection',0,'New recipient'),
+('U002','R003',1,'Friend',4,'Previous connection exists'),
+('U002','R004',1,'College Friend',7,'Frequently transacted');
+
+
+-- U003 CONNECTIONS
+
+INSERT INTO sender_recipient_connections
+(user_id, recipient_id, previous_connection, connection_type,
+ previous_transaction_count, connection_notes)
+VALUES
+('U003','R001',0,'No Previous Connection',0,'New recipient'),
+('U003','R002',1,'Friend',9,'Known recipient'),
+('U003','R003',1,'Friend',5,'Previous transaction history'),
+('U003','R004',1,'College Friend',4,'Known recipient');
+
+
+-- U004 CONNECTIONS
+
+INSERT INTO sender_recipient_connections
+(user_id, recipient_id, previous_connection, connection_type,
+ previous_transaction_count, connection_notes)
+VALUES
+('U004','R001',1,'Friend',7,'Known recipient'),
+('U004','R002',1,'Friend',6,'Previous transactions'),
+('U004','R003',0,'No Previous Connection',0,'New recipient'),
+('U004','R004',1,'College Friend',5,'Known recipient');
+
+
+-- ============================================================
+-- 8. U001 - SOUMADIP DAS
+-- EXACTLY 10 TRANSACTIONS
+-- ============================================================
+
+INSERT INTO transactions VALUES
+(
+'T001','U001','R001',1200,
+'2026-08-01 09:15',
+'Samsung Galaxy S23 - SOUMADIP',
+'iPhone 15 - RAHUL',
+'Haldia',
+'Haldia',
+1,'SUCCESS',CURRENT_TIMESTAMP
+),
+
+(
+'T002','U001','R002',850,
+'2026-08-03 14:30',
+'Samsung Galaxy S23 - SOUMADIP',
+'Samsung Galaxy A55 - PRIYA',
+'Haldia',
+'Haldia',
+1,'SUCCESS',CURRENT_TIMESTAMP
+),
+
+(
+'T003','U001','R001',2500,
+'2026-08-05 19:45',
+'Samsung Galaxy S23 - SOUMADIP',
+'iPhone 15 - RAHUL',
+'Haldia',
+'Kolkata',
+1,'SUCCESS',CURRENT_TIMESTAMP
+),
+
+(
+'T004','U001','R004',700,
+'2026-08-07 11:20',
+'Samsung Galaxy S23 - SOUMADIP',
+'iPhone 14 - ROHAN',
+'Haldia',
+'Haldia',
+1,'SUCCESS',CURRENT_TIMESTAMP
+),
+
+(
+'T005','U001','R003',1800,
+'2026-08-09 22:10',
+'Samsung Galaxy S23 - SOUMADIP',
+'OnePlus Nord CE4 - AMIT',
+'Kolkata',
+'Haldia',
+0,'PENDING',CURRENT_TIMESTAMP
+),
+
+(
+'T006','U001','R002',950,
+'2026-08-11 16:40',
+'Samsung Galaxy S23 - SOUMADIP',
+'Samsung Galaxy A55 - PRIYA',
+'Haldia',
+'Kolkata',
+1,'SUCCESS',CURRENT_TIMESTAMP
+),
+
+(
+'T007','U001','R001',3000,
+'2026-08-14 10:05',
+'Samsung Galaxy S23 - SOUMADIP',
+'iPhone 15 - RAHUL',
+'Haldia',
+'Haldia',
+1,'SUCCESS',CURRENT_TIMESTAMP
+),
+
+(
+'T008','U001','R004',1100,
+'2026-08-16 18:25',
+'Samsung Galaxy S23 - SOUMADIP',
+'iPhone 14 - ROHAN',
+'Haldia',
+'Haldia',
+1,'SUCCESS',CURRENT_TIMESTAMP
+),
+
+(
+'T009','U001','R003',5000,
+'2026-08-18 23:35',
+'Samsung Galaxy S23 - SOUMADIP',
+'OnePlus Nord CE4 - AMIT',
+'Kolkata',
+'Haldia',
+0,'HELD',CURRENT_TIMESTAMP
+),
+
+(
+'T010','U001','R002',1500,
+'2026-08-20 13:50',
+'Samsung Galaxy S23 - SOUMADIP',
+'Samsung Galaxy A55 - PRIYA',
+'Haldia',
+'Haldia',
+1,'SUCCESS',CURRENT_TIMESTAMP
+);
+
+
+-- ============================================================
+-- 9. U002 - SHUBHAM PAUL
+-- EXACTLY 10 TRANSACTIONS
+-- ============================================================
+
+INSERT INTO transactions VALUES
+('T011','U002','R001',2000,'2026-08-01 10:20',
+'OnePlus 12R - SHUBHAM','iPhone 15 - RAHUL',
+'Kolkata','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T012','U002','R003',1300,'2026-08-03 15:40',
+'OnePlus 12R - SHUBHAM','OnePlus Nord CE4 - AMIT',
+'Kolkata','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T013','U002','R004',900,'2026-08-05 18:15',
+'OnePlus 12R - SHUBHAM','iPhone 14 - ROHAN',
+'Haldia','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T014','U002','R002',3500,'2026-08-07 21:50',
+'OnePlus 12R - SHUBHAM','Samsung Galaxy A55 - PRIYA',
+'Kolkata','Haldia',0,'PENDING',CURRENT_TIMESTAMP),
+
+('T015','U002','R001',1700,'2026-08-09 12:30',
+'OnePlus 12R - SHUBHAM','iPhone 15 - RAHUL',
+'Kolkata','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T016','U002','R004',2200,'2026-08-11 17:10',
+'OnePlus 12R - SHUBHAM','iPhone 14 - ROHAN',
+'Kolkata','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T017','U002','R003',2800,'2026-08-13 20:30',
+'OnePlus 12R - SHUBHAM','OnePlus Nord CE4 - AMIT',
+'Durgapur','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T018','U002','R002',4200,'2026-08-15 23:20',
+'OnePlus 12R - SHUBHAM','Samsung Galaxy A55 - PRIYA',
+'Kolkata','Durgapur',0,'HELD',CURRENT_TIMESTAMP),
+
+('T019','U002','R001',1000,'2026-08-18 11:45',
+'OnePlus 12R - SHUBHAM','iPhone 15 - RAHUL',
+'Kolkata','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T020','U002','R004',1600,'2026-08-20 16:20',
+'OnePlus 12R - SHUBHAM','iPhone 14 - ROHAN',
+'Haldia','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP);
+
+
+-- ============================================================
+-- 10. U003 - SHUBHAM MUKHARJEE
+-- EXACTLY 10 TRANSACTIONS
+-- ============================================================
+
+INSERT INTO transactions VALUES
+('T021','U003','R002',2500,'2026-08-01 09:40',
+'Redmi Note 13 Pro - MUKHERJEE','Samsung Galaxy A55 - PRIYA',
+'Haldia','Haldia',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T022','U003','R003',1200,'2026-08-03 14:15',
+'Redmi Note 13 Pro - MUKHERJEE','OnePlus Nord CE4 - AMIT',
+'Haldia','Haldia',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T023','U003','R004',800,'2026-08-05 18:35',
+'Redmi Note 13 Pro - MUKHERJEE','iPhone 14 - ROHAN',
+'Haldia','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T024','U003','R001',4500,'2026-08-07 22:40',
+'Redmi Note 13 Pro - MUKHERJEE','iPhone 15 - RAHUL',
+'Kolkata','Haldia',0,'PENDING',CURRENT_TIMESTAMP),
+
+('T025','U003','R002',1800,'2026-08-09 11:25',
+'Redmi Note 13 Pro - MUKHERJEE','Samsung Galaxy A55 - PRIYA',
+'Haldia','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T026','U003','R003',3200,'2026-08-11 16:55',
+'Redmi Note 13 Pro - MUKHERJEE','OnePlus Nord CE4 - AMIT',
+'Haldia','Haldia',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T027','U003','R004',1400,'2026-08-14 19:10',
+'Redmi Note 13 Pro - MUKHERJEE','iPhone 14 - ROHAN',
+'Haldia','Haldia',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T028','U003','R001',6000,'2026-08-16 23:10',
+'Redmi Note 13 Pro - MUKHERJEE','iPhone 15 - RAHUL',
+'Kolkata','Haldia',0,'HELD',CURRENT_TIMESTAMP),
+
+('T029','U003','R002',2100,'2026-08-18 13:20',
+'Redmi Note 13 Pro - MUKHERJEE','Samsung Galaxy A55 - PRIYA',
+'Haldia','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T030','U003','R003',1700,'2026-08-20 15:40',
+'Redmi Note 13 Pro - MUKHERJEE','OnePlus Nord CE4 - AMIT',
+'Haldia','Haldia',1,'SUCCESS',CURRENT_TIMESTAMP);
+
+
+-- ============================================================
+-- 11. U004 - TRIDIP DEVROY
+-- EXACTLY 10 TRANSACTIONS
+-- ============================================================
+
+INSERT INTO transactions VALUES
+('T031','U004','R001',1500,'2026-08-01 10:10',
+'Google Pixel 8 - TRIDIP','iPhone 15 - RAHUL',
+'Kolkata','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T032','U004','R002',900,'2026-08-03 13:35',
+'Google Pixel 8 - TRIDIP','Samsung Galaxy A55 - PRIYA',
+'Kolkata','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T033','U004','R004',2200,'2026-08-05 17:50',
+'Google Pixel 8 - TRIDIP','iPhone 14 - ROHAN',
+'Haldia','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T034','U004','R003',4000,'2026-08-07 21:30',
+'Google Pixel 8 - TRIDIP','OnePlus Nord CE4 - AMIT',
+'Kolkata','Haldia',0,'PENDING',CURRENT_TIMESTAMP),
+
+('T035','U004','R001',1800,'2026-08-09 12:15',
+'Google Pixel 8 - TRIDIP','iPhone 15 - RAHUL',
+'Kolkata','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T036','U004','R002',1300,'2026-08-11 16:30',
+'Google Pixel 8 - TRIDIP','Samsung Galaxy A55 - PRIYA',
+'Kolkata','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T037','U004','R004',2600,'2026-08-14 19:45',
+'Google Pixel 8 - TRIDIP','iPhone 14 - ROHAN',
+'Kolkata','Haldia',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T038','U004','R003',5500,'2026-08-16 23:05',
+'Google Pixel 8 - TRIDIP','OnePlus Nord CE4 - AMIT',
+'Durgapur','Kolkata',0,'HELD',CURRENT_TIMESTAMP),
+
+('T039','U004','R001',1200,'2026-08-18 11:50',
+'Google Pixel 8 - TRIDIP','iPhone 15 - RAHUL',
+'Kolkata','Durgapur',1,'SUCCESS',CURRENT_TIMESTAMP),
+
+('T040','U004','R002',1700,'2026-08-20 15:15',
+'Google Pixel 8 - TRIDIP','Samsung Galaxy A55 - PRIYA',
+'Kolkata','Kolkata',1,'SUCCESS',CURRENT_TIMESTAMP);
+
+
+-- ============================================================
+-- 12. VIEW: COMPLETE TRANSACTION HISTORY
+-- ============================================================
+
+CREATE VIEW sender_transaction_history AS
+
+SELECT
+
+    t.transaction_id,
+
+    u.user_id,
+
+    u.name AS sender_name,
+
+    u.initial_bank_balance,
+
+    t.amount,
+
+    t.transaction_time,
+
+    t.payment_location,
+
+    t.previous_location,
+
+    t.sender_device_name,
+
+    r.recipient_id,
+
+    r.recipient_name,
+
+    r.upi_id,
+
+    t.recipient_device_name,
+
+    r.recipient_location,
+
+    r.recipient_type,
+
+    CASE
+        WHEN t.previous_connection = 1
+        THEN 'YES - Previous Connection Exists'
+
+        ELSE 'NO - No Previous Connection'
+    END AS previous_connection_status,
+
+    c.connection_type,
+
+    c.previous_transaction_count,
+
+    t.transaction_status
+
+FROM transactions t
+
+JOIN users u
+ON t.user_id = u.user_id
+
+JOIN recipients r
+ON t.recipient_id = r.recipient_id
+
+LEFT JOIN sender_recipient_connections c
+ON t.user_id = c.user_id
+AND t.recipient_id = c.recipient_id;
+
+
+-- ============================================================
+-- 13. VIEW: RECIPIENT TRANSACTION HISTORY
+-- ============================================================
+
+CREATE VIEW recipient_transaction_history AS
+
+SELECT
+
+    r.recipient_id,
+
+    r.recipient_name,
+
+    r.upi_id,
+
+    r.recipient_device_name,
+
+    t.transaction_id,
+
+    u.name AS sender_name,
+
+    t.amount,
+
+    t.transaction_time,
+
+    t.payment_location,
+
+    t.transaction_status
+
+FROM transactions t
+
+JOIN users u
+ON t.user_id = u.user_id
+
+JOIN recipients r
+ON t.recipient_id = r.recipient_id;
+
+
+-- ============================================================
+-- 14. INDEXES
+-- ============================================================
+
+CREATE INDEX idx_transactions_user
+ON transactions(user_id);
+
+CREATE INDEX idx_transactions_recipient
+ON transactions(recipient_id);
+
+CREATE INDEX idx_transactions_time
+ON transactions(transaction_time);
+
+
+-- ============================================================
+-- 15. CHECK ALL SENDERS + INITIAL BALANCE
+-- ============================================================
+
+SELECT
+    user_id,
+    name,
+    initial_bank_balance,
+    total_transactions
+FROM users
+ORDER BY user_id;
+
+
+-- ============================================================
+-- 16. CHECK ALL 40 TRANSACTIONS
+-- ============================================================
+
+SELECT *
+FROM sender_transaction_history
+ORDER BY user_id, transaction_time;
+
+
+-- ============================================================
+-- 17. VERIFY EACH SENDER HAS EXACTLY 10 TRANSACTIONS
+-- ============================================================
+
+SELECT
+
+    u.user_id,
+
+    u.name AS sender_name,
+
+    u.initial_bank_balance,
+
+    COUNT(t.transaction_id) AS total_transaction_history
+
+FROM users u
+
+LEFT JOIN transactions t
+ON u.user_id = t.user_id
+
+GROUP BY
+    u.user_id,
+    u.name,
+    u.initial_bank_balance
+
+ORDER BY u.user_id;
+
+
+-- ============================================================
+-- END OF SECUREFLOW-AI DATABASE
+-- ============================================================</sql><sql name="SQL 2*">SELECT * FROM sender_transaction_history;</sql><sql name="SQL 3*">-- ============================================================
+-- SECUREFLOW-AI
+-- COMPLETE SENDER + TRANSACTION + RECIPIENT HISTORY
+-- ============================================================
+
+SELECT
+
+    -- ========================================================
+    -- SENDER PERSONAL DETAILS
+    -- ========================================================
+
+    u.user_id AS sender_id,
+
+    u.name AS sender_name,
+
+    u.date_of_birth AS sender_date_of_birth,
+
+    u.college_name AS sender_college,
+
+    u.living_area AS sender_living_area,
+
+    u.common_location AS sender_common_location,
+
+    u.known_device AS sender_known_device,
+
+    u.initial_bank_balance AS sender_initial_bank_balance,
+
+    u.average_transaction AS sender_average_transaction,
+
+    u.total_transactions AS sender_total_transactions,
+
+
+    -- ========================================================
+    -- TRANSACTION DETAILS
+    -- ========================================================
+
+    t.transaction_id,
+
+    t.amount AS transaction_amount,
+
+    t.transaction_time,
+
+    t.transaction_status,
+
+    t.payment_location,
+
+    t.previous_location,
+
+
+    -- ========================================================
+    -- SENDER DEVICE USED FOR THIS TRANSACTION
+    -- ========================================================
+
+    t.sender_device_name AS transaction_sender_device,
+
+
+    -- ========================================================
+    -- RECIPIENT DETAILS
+    -- ========================================================
+
+    r.recipient_id,
+
+    r.recipient_name,
+
+    r.upi_id,
+
+    r.recipient_type,
+
+    r.recipient_location,
+
+    r.recipient_device_name,
+
+
+    -- ========================================================
+    -- PREVIOUS CONNECTION DETAILS
+    -- ========================================================
+
+    CASE
+        WHEN t.previous_connection = 1
+        THEN 'YES - Previous Connection Exists'
+
+        ELSE 'NO - No Previous Connection'
+    END AS previous_connection_status,
+
+    c.connection_type,
+
+    c.previous_transaction_count,
+
+    c.connection_notes,
+
+
+    -- ========================================================
+    -- BALANCE AFTER TRANSACTION
+    --
+    -- This calculates balance using ALL transactions
+    -- before and including the current transaction.
+    --
+    -- IMPORTANT:
+    -- PENDING / HELD transactions are NOT deducted here.
+    -- Only SUCCESS transactions are deducted.
+    -- ========================================================
+
+    u.initial_bank_balance
+    -
+    COALESCE
+    (
+        (
+            SELECT SUM(t2.amount)
+
+            FROM transactions t2
+
+            WHERE t2.user_id = t.user_id
+
+            AND t2.transaction_status = 'SUCCESS'
+
+            AND
+            (
+                t2.transaction_time &lt; t.transaction_time
+
+                OR
+                (
+                    t2.transaction_time = t.transaction_time
+                    AND t2.transaction_id &lt;= t.transaction_id
+                )
+            )
+        ),
+        0
+    ) AS balance_after_transaction
+
+
+FROM users u
+
+
+-- ============================================================
+-- CONNECT TRANSACTIONS
+-- ============================================================
+
+LEFT JOIN transactions t
+ON u.user_id = t.user_id
+
+
+-- ============================================================
+-- CONNECT RECIPIENT
+-- ============================================================
+
+LEFT JOIN recipients r
+ON t.recipient_id = r.recipient_id
+
+
+-- ============================================================
+-- CONNECT PREVIOUS CONNECTION INFORMATION
+-- ============================================================
+
+LEFT JOIN sender_recipient_connections c
+ON t.user_id = c.user_id
+AND t.recipient_id = c.recipient_id
+
+
+-- ============================================================
+-- ORDER
+-- ============================================================
+
+ORDER BY
+
+    u.user_id,
+
+    t.transaction_time;</sql><current_tab id="0"/></tab_sql></sqlb_project>
