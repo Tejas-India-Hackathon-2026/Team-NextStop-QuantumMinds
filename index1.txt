@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Secure Payment | UPI FraudShield</title>
+<title>AI Transaction Analysis | UPI FraudShield</title>
 
 <style>
 
@@ -92,239 +93,235 @@ body{
 }
 
 .header p{
-    margin-top:7px;
+    margin-top:8px;
     color:#64748b;
 }
 
-/* PAYMENT LAYOUT */
+/* TRANSACTION */
 
-.payment-layout{
-    display:grid;
-    grid-template-columns:1.2fr .8fr;
-    gap:25px;
+.transaction-card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 6px 25px rgba(0,0,0,.06);
+    margin-bottom:25px;
 }
 
-/* PAYMENT CARD */
+.transaction-card h2{
+    margin-bottom:20px;
+}
 
-.payment-card{
+.transaction-info{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.info-box{
+    background:#f8fafc;
+    padding:18px;
+    border-radius:9px;
+}
+
+.info-box span{
+    display:block;
+    color:#64748b;
+    font-size:13px;
+    margin-bottom:7px;
+}
+
+.info-box strong{
+    font-size:17px;
+}
+
+/* ANALYSIS */
+
+.analysis-card{
     background:white;
     padding:30px;
     border-radius:15px;
     box-shadow:0 6px 25px rgba(0,0,0,.06);
 }
 
-.payment-card h2{
-    color:#081b33;
-    margin-bottom:25px;
-}
-
-/* FORM */
-
-.form-group{
-    margin-bottom:20px;
-}
-
-.form-group label{
-    display:block;
-    font-weight:bold;
-    margin-bottom:8px;
-    color:#334155;
-}
-
-.form-group input,
-.form-group select{
-    width:100%;
-    padding:14px;
-    border:1px solid #d7dee8;
-    border-radius:8px;
-    outline:none;
-    font-size:15px;
-}
-
-.form-group input:focus,
-.form-group select:focus{
-    border-color:#1677ff;
-    box-shadow:0 0 0 3px rgba(22,119,255,.1);
-}
-
-/* UPI FIELD */
-
-.upi-box{
-    position:relative;
-}
-
-.upi-icon{
-    position:absolute;
-    right:15px;
-    top:12px;
-    font-size:22px;
-}
-
-/* AMOUNT */
-
-.amount-box{
-    position:relative;
-}
-
-.amount-symbol{
-    position:absolute;
-    left:15px;
-    top:14px;
-    font-size:16px;
-    font-weight:bold;
-}
-
-.amount-box input{
-    padding-left:35px;
-}
-
-/* BUTTON */
-
-.pay-btn{
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:8px;
-    background:#1677ff;
-    color:white;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer;
-    margin-top:5px;
-}
-
-.pay-btn:hover{
-    background:#075dcc;
-}
-
-/* SECURITY INFO */
-
-.security-box{
-    margin-top:20px;
-    background:#eff8ff;
-    border:1px solid #c7e8ff;
-    padding:15px;
-    border-radius:9px;
+.analysis-header{
     display:flex;
-    gap:12px;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
 }
 
-.security-icon{
-    font-size:25px;
-}
-
-.security-box h4{
-    color:#075985;
-    margin-bottom:5px;
-}
-
-.security-box p{
-    color:#475569;
-    font-size:13px;
-    line-height:1.5;
-}
-
-/* RIGHT SIDE */
-
-.side-card{
-    background:white;
-    padding:25px;
-    border-radius:15px;
-    box-shadow:0 6px 25px rgba(0,0,0,.06);
-    margin-bottom:20px;
-}
-
-.side-card h3{
-    margin-bottom:20px;
+.analysis-header h2{
     color:#081b33;
 }
 
-/* SECURITY STATUS */
+.live{
+    padding:7px 14px;
+    background:#dcfce7;
+    color:#166534;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:bold;
+}
 
-.status{
+/* SCAN CIRCLE */
+
+.scan-section{
+    display:flex;
+    justify-content:center;
+    margin:25px 0 40px;
+}
+
+.scan-circle{
+    width:190px;
+    height:190px;
+    border-radius:50%;
+    border:8px solid #dbeafe;
+    border-top-color:#1677ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    animation:spin 1.5s linear infinite;
+}
+
+.scan-inner{
+    text-align:center;
+    animation:counterspin 1.5s linear infinite;
+}
+
+.scan-icon{
+    font-size:40px;
+}
+
+.scan-inner h3{
+    margin-top:8px;
+    color:#1677ff;
+}
+
+.scan-inner p{
+    margin-top:5px;
+    font-size:12px;
+    color:#64748b;
+}
+
+@keyframes spin{
+
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(360deg);
+    }
+
+}
+
+@keyframes counterspin{
+
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(-360deg);
+    }
+
+}
+
+/* CHECKS */
+
+.checks{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.check{
     display:flex;
     align-items:center;
     gap:15px;
-    padding:15px;
-    background:#f0fdf4;
+    padding:17px;
+    border:1px solid #e2e8f0;
     border-radius:10px;
 }
 
-.status-icon{
-    width:45px;
-    height:45px;
-    background:#dcfce7;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:22px;
-}
-
-.status strong{
-    color:#166534;
-}
-
-.status p{
-    font-size:13px;
-    color:#64748b;
-    margin-top:4px;
-}
-
-/* STEPS */
-
-.step{
-    display:flex;
-    gap:14px;
-    margin-bottom:18px;
-}
-
-.step-number{
-    min-width:32px;
-    height:32px;
+.check-icon{
+    width:40px;
+    height:40px;
     border-radius:50%;
     background:#dbeafe;
-    color:#1677ff;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-weight:bold;
+    font-size:20px;
 }
 
-.step h4{
-    margin-bottom:4px;
+.check-text{
+    flex:1;
 }
 
-.step p{
-    color:#64748b;
+.check-text strong{
+    display:block;
+    margin-bottom:5px;
+}
+
+.check-text span{
     font-size:13px;
+    color:#64748b;
 }
 
-/* MESSAGE */
+.check-status{
+    color:#1677ff;
+    font-size:20px;
+}
 
-.message{
-    display:none;
-    margin-top:20px;
-    padding:15px;
-    border-radius:8px;
+/* PROGRESS */
+
+.progress-container{
+    margin-top:30px;
+}
+
+.progress-header{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:8px;
+    font-size:14px;
+}
+
+.progress{
+    height:9px;
+    background:#e5e7eb;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:#1677ff;
+    border-radius:10px;
+    transition:width .5s;
+}
+
+/* STATUS */
+
+.status-message{
+    margin-top:25px;
+    padding:17px;
+    background:#eff6ff;
+    color:#1e40af;
+    border-radius:9px;
     text-align:center;
-}
-
-.success{
-    background:#dcfce7;
-    color:#166534;
-}
-
-.warning{
-    background:#fef3c7;
-    color:#92400e;
 }
 
 /* RESPONSIVE */
 
 @media(max-width:900px){
 
-    .payment-layout{
+    .transaction-info{
+        grid-template-columns:1fr;
+    }
+
+    .checks{
         grid-template-columns:1fr;
     }
 
@@ -356,6 +353,7 @@ body{
 
 </head>
 
+
 <body>
 
 
@@ -376,7 +374,7 @@ body{
 </li>
 
 <li>
-<a href="payment.html" class="active">
+<a href="payment.html">
 💸 Make Payment
 </a>
 </li>
@@ -419,60 +417,98 @@ body{
 
 <div class="header">
 
-<h1>Secure UPI Payment</h1>
+<h1>Real-Time AI Analysis</h1>
 
 <p>
-Enter the transaction details. FraudShield will analyze
-the payment before it is processed.
+FraudShield is analyzing your transaction before processing.
 </p>
 
 </div>
 
 
-<div class="payment-layout">
+<!-- TRANSACTION DETAILS -->
+
+<section class="transaction-card">
+
+<h2>Transaction Under Review</h2>
+
+<div class="transaction-info">
 
 
-<!-- PAYMENT FORM -->
+<div class="info-box">
 
-<div class="payment-card">
+<span>Recipient</span>
 
-<h2>Payment Details</h2>
-
-
-<form id="paymentForm">
-
-
-<div class="form-group">
-
-<label>
-Recipient Name
-</label>
-
-<input
-type="text"
-id="recipient"
-placeholder="Enter recipient name"
-required>
+<strong id="recipient">
+Loading...
+</strong>
 
 </div>
 
 
-<div class="form-group">
+<div class="info-box">
 
-<label>
-UPI ID
-</label>
+<span>UPI ID</span>
 
-<div class="upi-box">
+<strong id="upi">
+Loading...
+</strong>
 
-<input
-type="text"
-id="upi"
-placeholder="example@upi"
-required>
+</div>
 
-<div class="upi-icon">
-💳
+
+<div class="info-box">
+
+<span>Amount</span>
+
+<strong id="amount">
+Loading...
+</strong>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<!-- AI ANALYSIS -->
+
+<section class="analysis-card">
+
+
+<div class="analysis-header">
+
+<h2>AI Fraud Detection Engine</h2>
+
+<div class="live">
+● LIVE ANALYSIS
+</div>
+
+</div>
+
+
+<!-- SCANNING -->
+
+<div class="scan-section">
+
+<div class="scan-circle">
+
+<div class="scan-inner">
+
+<div class="scan-icon">
+🧠
+</div>
+
+<h3 id="scanText">
+Analyzing
+</h3>
+
+<p>
+AI Risk Engine
+</p>
+
 </div>
 
 </div>
@@ -480,306 +516,301 @@ required>
 </div>
 
 
-<div class="form-group">
+<!-- SECURITY CHECKS -->
 
-<label>
-Amount
-</label>
+<div class="checks">
 
-<div class="amount-box">
 
-<span class="amount-symbol">
-₹
+<div class="check">
+
+<div class="check-icon">
+👤
+</div>
+
+<div class="check-text">
+
+<strong>Behaviour Analysis</strong>
+
+<span>
+Comparing with normal payment behaviour
 </span>
 
-<input
-type="number"
-id="amount"
-placeholder="Enter amount"
-min="1"
-required>
+</div>
 
+<div class="check-status" id="check1">
+⌛
 </div>
 
 </div>
 
 
-<div class="form-group">
+<div class="check">
 
-<label>
-Payment Purpose
-</label>
+<div class="check-icon">
+📱
+</div>
 
-<select id="purpose">
+<div class="check-text">
 
-<option>Shopping</option>
-<option>Food & Dining</option>
-<option>Bill Payment</option>
-<option>Education</option>
-<option>Money Transfer</option>
-<option>Other</option>
+<strong>Device Analysis</strong>
 
-</select>
+<span>
+Checking trusted device signals
+</span>
+
+</div>
+
+<div class="check-status" id="check2">
+⌛
+</div>
 
 </div>
 
 
-<button
-type="submit"
-class="pay-btn">
+<div class="check">
 
-🔐 Analyze & Continue
+<div class="check-icon">
+📍
+</div>
 
-</button>
+<div class="check-text">
+
+<strong>Location Analysis</strong>
+
+<span>
+Checking transaction location signals
+</span>
+
+</div>
+
+<div class="check-status" id="check3">
+⌛
+</div>
+
+</div>
 
 
-</form>
+<div class="check">
+
+<div class="check-icon">
+🔗
+</div>
+
+<div class="check-text">
+
+<strong>Fraud Pattern Analysis</strong>
+
+<span>
+Checking suspicious transaction patterns
+</span>
+
+</div>
+
+<div class="check-status" id="check4">
+⌛
+</div>
+
+</div>
+
+
+</div>
+
+
+<!-- PROGRESS -->
+
+<div class="progress-container">
+
+<div class="progress-header">
+
+<span>
+AI Analysis Progress
+</span>
+
+<strong id="progressText">
+0%
+</strong>
+
+</div>
+
+<div class="progress">
+
+<div
+class="progress-bar"
+id="progressBar">
+</div>
+
+</div>
+
+</div>
 
 
 <div
-id="message"
-class="message">
-</div>
+class="status-message"
+id="statusMessage">
 
-
-<div class="security-box">
-
-<div class="security-icon">
-🛡️
-</div>
-
-<div>
-
-<h4>
-AI Fraud Protection Active
-</h4>
-
-<p>
-Your transaction will be checked against behavioural
-patterns, transaction history and other risk signals
-before processing.
-</p>
-
-</div>
-
-</div>
+Initializing AI fraud detection...
 
 </div>
 
 
-<!-- SECURITY PANEL -->
+</section>
 
-<div>
-
-
-<div class="side-card">
-
-<h3>Payment Security</h3>
-
-<div class="status">
-
-<div class="status-icon">
-✓
-</div>
-
-<div>
-
-<strong>Protection Active</strong>
-
-<p>
-Real-time fraud monitoring enabled
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-
-<div class="side-card">
-
-<h3>How FraudShield Works</h3>
-
-
-<div class="step">
-
-<div class="step-number">
-1
-</div>
-
-<div>
-
-<h4>Transaction Data</h4>
-
-<p>
-Your payment details are securely analyzed.
-</p>
-
-</div>
-
-</div>
-
-
-<div class="step">
-
-<div class="step-number">
-2
-</div>
-
-<div>
-
-<h4>AI Risk Analysis</h4>
-
-<p>
-Behaviour and transaction signals are evaluated.
-</p>
-
-</div>
-
-</div>
-
-
-<div class="step">
-
-<div class="step-number">
-3
-</div>
-
-<div>
-
-<h4>Risk Score</h4>
-
-<p>
-A dynamic risk score is generated.
-</p>
-
-</div>
-
-</div>
-
-
-<div class="step">
-
-<div class="step-number">
-4
-</div>
-
-<div>
-
-<h4>Smart Action</h4>
-
-<p>
-The system can Allow, Alert or Block the payment.
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
 
 </main>
 
 
 <script>
 
-document
-.getElementById("paymentForm")
-.addEventListener("submit",function(event){
-
-event.preventDefault();
-
+/* GET TRANSACTION DATA */
 
 const recipient =
-document.getElementById("recipient").value;
+localStorage.getItem("recipient") || "Rahul Kumar";
 
 const upi =
-document.getElementById("upi").value;
+localStorage.getItem("upi") || "rahul@upi";
 
 const amount =
-document.getElementById("amount").value;
-
-const message =
-document.getElementById("message");
+localStorage.getItem("amount") || "8500";
 
 
-if(recipient === "" ||
-   upi === "" ||
-   amount === ""){
+document.getElementById("recipient")
+.innerText = recipient;
 
-message.innerHTML =
-"Please enter all required payment details.";
+document.getElementById("upi")
+.innerText = upi;
 
-message.className =
-"message warning";
-
-message.style.display =
-"block";
-
-return;
-
-}
+document.getElementById("amount")
+innerText = "₹" + amount;
 
 
-/*
-    DEMO TRANSACTION FLOW
+/* ANALYSIS SIMULATION */
 
-    In the actual project this data
-    will be sent to the backend AI
-    risk engine.
-*/
+let progress = 0;
 
-message.innerHTML =
-"Transaction submitted. AI risk analysis starting...";
+const progressBar =
+document.getElementById("progressBar");
 
-message.className =
-"message success";
+const progressText =
+document.getElementById("progressText");
 
-message.style.display =
-"block";
+const statusMessage =
+document.getElementById("statusMessage");
 
-
-/*
-    Store demo transaction data
-    for the next frontend page.
-*/
-
-localStorage.setItem(
-"recipient",
-recipient
-);
-
-localStorage.setItem(
-"upi",
-upi
-);
-
-localStorage.setItem(
-"amount",
-amount
-);
+const scanText =
+document.getElementById("scanText");
 
 
-/*
-    Redirect to AI analysis page
-*/
+const checks = [
+    document.getElementById("check1"),
+    document.getElementById("check2"),
+    document.getElementById("check3"),
+    document.getElementById("check4")
+];
+
+
+const messages = [
+
+"Collecting transaction signals...",
+
+"Analyzing user behaviour...",
+
+"Checking device and location signals...",
+
+"Detecting suspicious fraud patterns...",
+
+"Calculating dynamic risk score..."
+
+];
+
+
+let step = 0;
+
+
+/* PROGRESS ANIMATION */
+
+const analysis =
+setInterval(function(){
+
+    progress += 5;
+
+    progressBar.style.width =
+    progress + "%";
+
+    progressText.innerText =
+    progress + "%";
+
+
+    if(progress === 20){
+
+        checks[0].innerText = "✓";
+        statusMessage.innerText =
+        messages[1];
+
+    }
+
+
+    if(progress === 40){
+
+        checks[1].innerText = "✓";
+        statusMessage.innerText =
+        messages[2];
+
+    }
+
+
+    if(progress === 60){
+
+        checks[2].innerText = "✓";
+        statusMessage.innerText =
+        messages[3];
+
+    }
+
+
+    if(progress === 80){
+
+        checks[3].innerText = "✓";
+        statusMessage.innerText =
+        messages[4];
+
+    }
+
+
+    if(progress >= 100){
+
+        clearInterval(analysis);
+
+        scanText.innerText =
+        "Analysis Complete";
+
+        statusMessage.innerText =
+        "AI analysis completed. Generating your risk score...";
+
+
+        setTimeout(function(){
+
+            window.location.href =
+            "risk-score.html";
+
+        },1200);
+
+    }
+
+},150);
+
+
+/* INITIAL MESSAGE */
 
 setTimeout(function(){
 
-window.location.href =
-"analysis.html";
+    statusMessage.innerText =
+    messages[0];
 
-},1500);
-
-});
+},500);
 
 </script>
 
 
 </body>
+
 </html>
