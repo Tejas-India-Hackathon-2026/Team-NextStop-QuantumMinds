@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Fraud Engine</title>
+<title>SecureFlow-AI | Live Security Center</title>
 
 <link rel="stylesheet"
 href="style10.css">
@@ -18,26 +18,33 @@ href="style10.css">
 
 <body>
 
+
 <main class="main">
 
 
 <header class="header">
 
+
 <div>
 
-<h1>Fraud Engine Monitor</h1>
+<h1>
+Live Security Center
+</h1>
 
 <p>
-Live status of the SecureFlow-AI behavioural fraud engine
+Real-time UPI fraud detection and behavioural monitoring
 </p>
 
 </div>
+
 
 <div class="avatar">
 AI
 </div>
 
+
 </header>
+
 
 
 <section class="stats">
@@ -46,50 +53,53 @@ AI
 <div class="stat">
 
 <div class="stat-title">
-ENGINE STATUS
-</div>
-
-<div class="stat-number green">
-ACTIVE
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-TRANSACTIONS ANALYZED
+LIVE TRANSACTIONS
 </div>
 
 <div class="stat-number blue">
-40
+08
 </div>
 
 </div>
+
 
 
 <div class="stat">
 
 <div class="stat-title">
-FRAUD DETECTED
-</div>
-
-<div class="stat-number red">
-07
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-ACCURACY
+SAFE
 </div>
 
 <div class="stat-number green">
-94%
+05
+</div>
+
+</div>
+
+
+
+<div class="stat">
+
+<div class="stat-title">
+UNDER REVIEW
+</div>
+
+<div class="stat-number orange">
+02
+</div>
+
+</div>
+
+
+
+<div class="stat">
+
+<div class="stat-title">
+BLOCKED
+</div>
+
+<div class="stat-number red">
+01
 </div>
 
 </div>
@@ -98,17 +108,520 @@ ACCURACY
 </section>
 
 
+
 <section class="panel factors">
 
 
 <div class="panel-title">
 
 <h2>
-Fraud Detection Engine
+Real-Time Transaction Stream
 </h2>
 
 <p>
-Current AI processing modules
+Incoming transactions being analyzed by SecureFlow-AI
+</p>
+
+</div>
+
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>Time</th>
+
+<th>Transaction</th>
+
+<th>User</th>
+
+<th>Amount</th>
+
+<th>Risk Score</th>
+
+<th>AI Detection</th>
+
+<th>Decision</th>
+
+</tr>
+
+</thead>
+
+
+
+<tbody>
+
+
+<tr>
+
+<td>
+12:45:21
+</td>
+
+<td>
+TXN2011
+</td>
+
+<td>
+Rahul Sharma
+</td>
+
+<td>
+₹1,500
+</td>
+
+<td>
+12
+</td>
+
+<td>
+Normal Behaviour
+</td>
+
+<td>
+
+<span class="badge safe">
+ALLOW
+</span>
+
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+12:45:18
+</td>
+
+<td>
+TXN2010
+</td>
+
+<td>
+Amit Kumar
+</td>
+
+<td>
+₹45,000
+</td>
+
+<td>
+91
+</td>
+
+<td>
+Unknown Recipient
+</td>
+
+<td>
+
+<span class="badge high">
+BLOCK
+</span>
+
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+12:45:10
+</td>
+
+<td>
+TXN2009
+</td>
+
+<td>
+Priya Das
+</td>
+
+<td>
+₹3,200
+</td>
+
+<td>
+21
+</td>
+
+<td>
+Normal Behaviour
+</td>
+
+<td>
+
+<span class="badge safe">
+ALLOW
+</span>
+
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+12:44:58
+</td>
+
+<td>
+TXN2008
+</td>
+
+<td>
+Rohan Gupta
+</td>
+
+<td>
+₹18,500
+</td>
+
+<td>
+67
+</td>
+
+<td>
+Rapid Transactions
+</td>
+
+<td>
+
+<span class="badge review">
+REVIEW
+</span>
+
+</td>
+
+</tr>
+
+
+</tbody>
+
+
+</table>
+
+
+</section>
+
+
+
+<section class="panel factors">
+
+
+<div class="panel-title">
+
+<h2>
+Live AI Behaviour Analysis
+</h2>
+
+<p>
+Behavioural signals currently monitored by the fraud engine
+</p>
+
+</div>
+
+
+
+<div class="factor-grid">
+
+
+<div class="factor">
+
+<h3>
+Transaction Velocity
+</h3>
+
+<p>
+Multiple transactions within a short time period.</p>
+
+<div class="progress">
+
+<div style="width:78%"></div>
+
+</div>
+
+</div>
+
+
+
+<div class="factor">
+
+<h3>
+Amount Deviation
+</h3>
+
+<p>
+Transaction amount differs from historical behaviour.</p>
+
+<div class="progress">
+
+<div style="width:84%"></div>
+
+</div>
+
+</div>
+
+
+
+<div class="factor">
+
+<h3>
+Location Anomaly
+</h3>
+
+<p>
+Transaction originates from an unusual location.</p>
+
+<div class="progress">
+
+<div style="width:56%"></div>
+
+</div>
+
+</div>
+
+
+
+<div class="factor">
+
+<h3>
+Device Anomaly
+</h3>
+
+<p>
+Payment initiated from an unfamiliar device.</p>
+
+<div class="progress">
+
+<div style="width:68%"></div>
+
+</div>
+
+</div>
+
+
+
+<div class="factor">
+
+<h3>
+Recipient Risk
+</h3>
+
+<p>
+Recipient has limited transaction history.</p>
+
+<div class="progress">
+
+<div style="width:74%"></div>
+
+</div>
+
+</div>
+
+
+
+<div class="factor">
+
+<h3>
+Behavioural Deviation
+</h3>
+
+<p>
+Current activity differs from normal user behaviour.</p>
+
+<div class="progress">
+
+<div style="width:81%"></div>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+<section class="panel factors">
+
+
+<div class="panel-title">
+
+<h2>
+System Health
+</h2>
+
+<p>
+Current SecureFlow-AI infrastructure status
+</p>
+
+</div>
+
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>Component</th>
+
+<th>Status</th>
+
+<th>Performance</th>
+
+<th>Response Time</th>
+
+</tr>
+
+</thead>
+
+
+
+<tbody>
+
+
+<tr>
+
+<td>
+FastAPI Backend
+</td>
+
+<td>
+
+<span class="badge safe">
+ONLINE
+</span>
+
+</td>
+
+<td>
+99.9%
+</td>
+
+<td>
+24 ms
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+SQLite Database
+</td>
+
+<td>
+
+<span class="badge safe">
+CONNECTED
+</span>
+
+</td>
+
+<td>
+99.8%
+</td>
+
+<td>
+12 ms
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+AI Fraud Engine
+</td>
+
+<td>
+
+<span class="badge safe">
+ACTIVE
+</span>
+
+</td>
+
+<td>
+94%
+</td>
+
+<td>
+42 ms
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+Alert System
+</td>
+
+<td>
+
+<span class="badge safe">
+ACTIVE
+</span>
+
+</td>
+
+<td>
+99.9%
+</td>
+
+<td>
+18 ms
+</td>
+
+</tr>
+
+
+</tbody>
+
+
+</table>
+
+
+</section>
+
+
+
+<section class="panel factors">
+
+
+<div class="panel-title">
+
+<h2>
+Current Security Decision
+</h2>
+
+<p>
+Latest AI-generated system assessment
 </p>
 
 </div>
@@ -120,14 +633,11 @@ Current AI processing modules
 <div class="factor">
 
 <h3>
-Transaction Analyzer
+System Status
 </h3>
 
-<p>Analyzing payment details.</p>
-
-<div class="progress">
-<div style="width:95%"></div>
-</div>
+<p>
+SecureFlow-AI is actively monitoring transactions.</p>
 
 </div>
 
@@ -135,14 +645,11 @@ Transaction Analyzer
 <div class="factor">
 
 <h3>
-Behaviour Engine
+Threat Level
 </h3>
 
-<p>Comparing user behaviour.</p>
-
-<div class="progress">
-<div style="width:92%"></div>
-</div>
+<p>
+MEDIUM — suspicious activity detected.</p>
 
 </div>
 
@@ -150,14 +657,11 @@ Behaviour Engine
 <div class="factor">
 
 <h3>
-Risk Scoring Engine
+AI Engine
 </h3>
 
-<p>Calculating fraud probability.</p>
-
-<div class="progress">
-<div style="width:94%"></div>
-</div>
+<p>
+ACTIVE — behavioural analysis running.</p>
 
 </div>
 
@@ -165,24 +669,41 @@ Risk Scoring Engine
 <div class="factor">
 
 <h3>
-Decision Engine
+Protection
 </h3>
 
-<p>Generating security actions.</p>
-
-<div class="progress">
-<div style="width:97%"></div>
-</div>
+<p>
+Automatic blocking enabled for high-risk transactions.</p>
 
 </div>
 
 
 </div>
+
 
 </section>
 
 
+
+<footer>
+
+<span>
+© 2026 SecureFlow-AI
+</span>
+
+<span>
+AI-Powered UPI Fraud Detection
+</span>
+
+<span>
+Live Monitoring: ACTIVE
+</span>
+
+</footer>
+
+
 </main>
+
 
 </body>
 
