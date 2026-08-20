@@ -2,111 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Fraud Feedback</title>
+    <title>Fraud Explanation</title>
 
     <style>
         body {
             background: #f4f7fb;
             font-family: Arial;
+            padding: 40px;
         }
 
-        .box {
-            max-width: 550px;
-            margin: 80px auto;
-            padding: 35px;
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
+
+        .score {
             background: white;
-            border-radius: 15px;
+            padding: 30px;
             text-align: center;
+            border-radius: 15px;
+            margin-bottom: 20px;
         }
 
-        button {
-            padding: 14px 25px;
-            border: none;
+        .score-number {
+            font-size: 60px;
+            font-weight: bold;
+            color: #dc2626;
+        }
+
+        .reason {
+            background: white;
+            padding: 20px;
+            margin-bottom: 12px;
+            border-left: 5px solid #dc2626;
             border-radius: 8px;
-            margin: 10px;
-            cursor: pointer;
-            color: white;
-        }
-
-        .fraud {
-            background: #dc2626;
-        }
-
-        .legit {
-            background: #16a34a;
         }
     </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="container">
 
-    <h1>Transaction Feedback</h1>
+    <div class="score">
 
-    <p>
-        Was this transaction actually fraudulent?
-    </p>
+        <h1>Fraud Risk</h1>
+
+        <div class="score-number">
+            87
+        </div>
+
+        <h2>BLOCK</h2>
+
+    </div>
+
+    <h2>Why was this transaction blocked?</h2>
 
     <br>
 
-    <button
-        class="fraud"
-        onclick="sendFeedback('FRAUD')">
-        Yes, Fraud
-    </button>
+    <div class="reason">
+        ⚠ Transaction amount is significantly different
+        from normal behavior.
+    </div>
 
-    <button
-        class="legit"
-        onclick="sendFeedback('LEGITIMATE')">
-        No, Legitimate
-    </button>
+    <div class="reason">
+        ⚠ Transaction originated from a new device.
+    </div>
 
-    <p id="response"></p>
+    <div class="reason">
+        ⚠ Unusually high transaction frequency detected.
+    </div>
+
+    <div class="reason">
+        ⚠ User behavior does not match historical activity.
+    </div>
 
 </div>
-
-<script>
-
-async function sendFeedback(decision) {
-
-    const data = {
-        transaction_id: "TXN10003",
-        user_id: "USER001",
-        user_decision: decision,
-        system_decision: "FRAUD",
-        risk_score: 91
-    };
-
-    try {
-
-        const response = await fetch(
-            "http://localhost:8000/api/feedback/submit",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            }
-        );
-
-        const result = await response.json();
-
-        document.getElementById("response")
-            .innerHTML =
-            "Thank you. Feedback recorded for adaptive learning.";
-
-    } catch(error) {
-
-        document.getElementById("response")
-            .innerHTML =
-            "Unable to connect to backend.";
-
-    }
-}
-
-</script>
 
 </body>
 </html>
