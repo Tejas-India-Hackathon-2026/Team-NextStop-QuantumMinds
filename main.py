@@ -1,172 +1,52 @@
 # =========================================================
 # SECUREFLOW-AI
-# CODE 6 — AI / ML RISK SCORING ENGINE
+# CODE 7 — DECISION ENGINE
 # =========================================================
 
 
-def calculate_risk_score(
-    amount,
-    average_amount,
-    new_device,
-    new_location,
-    new_beneficiary,
-    recent_transactions,
-    unusual_time
-):
+def make_decision(risk_score):
     """
-    Calculates a prototype fraud risk score from 0 to 100.
+    Converts the risk score into a security decision.
 
-    Higher score = higher probability of suspicious activity.
+    LOW risk     -> ALLOW
+    MEDIUM risk  -> ALERT
+    HIGH risk    -> BLOCK
     """
 
-    score = 0
-    reasons = []
+    # -----------------------------------------------------
+    # LOW RISK
+    # -----------------------------------------------------
+
+    if risk_score <= 30:
+
+        return {
+            "decision": "ALLOW",
+            "risk_level": "LOW",
+            "message": "Transaction appears normal."
+        }
 
 
     # -----------------------------------------------------
-    # 1. TRANSACTION AMOUNT
+    # MEDIUM RISK
     # -----------------------------------------------------
 
-    if average_amount > 0:
+    elif risk_score <= 70:
 
-        ratio = amount / average_amount
-
-        if ratio >= 10:
-
-            score += 30
-
-            reasons.append(
-                "Transaction amount is extremely high compared with normal behaviour."
-            )
-
-        elif ratio >= 5:
-
-            score += 25
-
-            reasons.append(
-                "Transaction amount is significantly higher than normal."
-            )
-
-        elif ratio >= 3:
-
-            score += 18
-
-            reasons.append(
-                "Transaction amount is considerably higher than normal."
-            )
-
-        elif ratio >= 2:
-
-            score += 10
-
-            reasons.append(
-                "Transaction amount is higher than normal."
-            )
+        return {
+            "decision": "ALERT",
+            "risk_level": "MEDIUM",
+            "message": "Transaction requires user verification."
+        }
 
 
     # -----------------------------------------------------
-    # 2. NEW DEVICE
+    # HIGH RISK
     # -----------------------------------------------------
-
-    if new_device:
-
-        score += 20
-
-        reasons.append(
-            "Transaction originated from an unknown device."
-        )
-
-
-    # -----------------------------------------------------
-    # 3. NEW LOCATION
-    # -----------------------------------------------------
-
-    if new_location:
-
-        score += 15
-
-        reasons.append(
-            "Transaction originated from an unusual location."
-        )
-
-
-    # -----------------------------------------------------
-    # 4. NEW BENEFICIARY
-    # -----------------------------------------------------
-
-    if new_beneficiary:
-
-        score += 15
-
-        reasons.append(
-            "Payment is being made to a new beneficiary."
-        )
-
-
-    # -----------------------------------------------------
-    # 5. TRANSACTION FREQUENCY
-    # -----------------------------------------------------
-
-    if recent_transactions >= 8:
-
-        score += 15
-
-        reasons.append(
-            "Very high transaction frequency detected."
-        )
-
-    elif recent_transactions >= 5:
-
-        score += 8
-
-        reasons.append(
-            "Higher-than-normal transaction frequency detected."
-        )
-
-
-    # -----------------------------------------------------
-    # 6. UNUSUAL TIME
-    # -----------------------------------------------------
-
-    if unusual_time:
-
-        score += 15
-
-        reasons.append(
-            "Transaction occurred during unusual hours."
-        )
-
-
-    # -----------------------------------------------------
-    # LIMIT SCORE TO 100
-    # -----------------------------------------------------
-
-    score = min(score, 100)
-
-
-    # -----------------------------------------------------
-    # RISK LEVEL
-    # -----------------------------------------------------
-
-    if score <= 30:
-
-        risk_level = "LOW"
-
-    elif score <= 70:
-
-        risk_level = "MEDIUM"
 
     else:
 
-        risk_level = "HIGH"
-
-
-    return {
-
-        "score": score,
-
-        "risk_level": risk_level,
-
-        "reasons": reasons
-
-    }
+        return {
+            "decision": "BLOCK",
+            "risk_level": "HIGH",
+            "message": "Transaction blocked due to high fraud risk."
+        }
