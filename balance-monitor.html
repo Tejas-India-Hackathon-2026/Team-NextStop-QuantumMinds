@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureFlow-AI | Account Security</title>
-    <link rel="stylesheet" href="style10.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SecureFlow-AI | Payment Decisions</title>
+
+<link rel="stylesheet" href="style10.css">
 </head>
 
 <body>
@@ -12,34 +14,36 @@
 <main class="main">
 
 <header class="header">
-    <div>
-        <h1>Account Security</h1>
-        <p>Monitor account-level security conditions</p>
-    </div>
 
-    <div class="avatar">AS</div>
+<div>
+<h1>Payment Decisions</h1>
+<p>AI decisions for payment transactions</p>
+</div>
+
+<div class="avatar">PD</div>
+
 </header>
 
 <section class="stats">
 
 <div class="stat">
-    <div class="stat-title">SECURE ACCOUNTS</div>
-    <div class="stat-number green">06</div>
+<div class="stat-title">ALLOW</div>
+<div class="stat-number green">18</div>
 </div>
 
 <div class="stat">
-    <div class="stat-title">MONITORED</div>
-    <div class="stat-number orange">01</div>
+<div class="stat-title">ALERT</div>
+<div class="stat-number orange">12</div>
 </div>
 
 <div class="stat">
-    <div class="stat-title">RESTRICTED</div>
-    <div class="stat-number red">01</div>
+<div class="stat-title">BLOCK</div>
+<div class="stat-number red">10</div>
 </div>
 
 <div class="stat">
-    <div class="stat-title">SECURITY SCORE</div>
-    <div class="stat-number blue">94%</div>
+<div class="stat-title">TOTAL</div>
+<div class="stat-number blue">40</div>
 </div>
 
 </section>
@@ -47,41 +51,54 @@
 <section class="panel factors">
 
 <div class="panel-title">
-    <h2>Account Security Status</h2>
-    <p>Security checks performed by SecureFlow-AI</p>
+
+<h2>Decision History</h2>
+<p>Recent AI transaction decisions</p>
+
 </div>
 
 <table>
 
 <thead>
+
 <tr>
-    <th>Account</th>
-    <th>User</th>
-    <th>Device</th>
-    <th>Risk</th>
-    <th>Security</th>
-    <th>Status</th>
+<th>Transaction</th>
+<th>Amount</th>
+<th>Risk</th>
+<th>AI Decision</th>
+<th>Balance Action</th>
+<th>Status</th>
 </tr>
+
 </thead>
 
 <tbody>
 
 <tr>
-    <td>ACC001</td>
-    <td>Rahul Sharma</td>
-    <td>Trusted</td>
-    <td>12</td>
-    <td>Strong</td>
-    <td><span class="badge safe">SECURE</span></td>
+<td>TXN1001</td>
+<td>₹2,500</td>
+<td>12</td>
+<td>ALLOW</td>
+<td>Balance Debited</td>
+<td><span class="badge safe">SUCCESS</span></td>
 </tr>
 
 <tr>
-    <td>ACC002</td>
-    <td>Amit Kumar</td>
-    <td>Unknown</td>
-    <td>91</td>
-    <td>Weak</td>
-    <td><span class="badge high">RESTRICTED</span></td>
+<td>TXN1004</td>
+<td>₹18,500</td>
+<td>67</td>
+<td>ALERT</td>
+<td>Pending Verification</td>
+<td><span class="badge review">REVIEW</span></td>
+</tr>
+
+<tr>
+<td>TXN1006</td>
+<td>₹75,000</td>
+<td>96</td>
+<td>BLOCK</td>
+<td>No Debit</td>
+<td><span class="badge high">BLOCKED</span></td>
 </tr>
 
 </tbody>
