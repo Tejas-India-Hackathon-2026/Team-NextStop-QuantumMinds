@@ -1,41 +1,33 @@
-# routes/websocket.py
+# routes/feedback.py
 
-from fastapi import APIRouter, WebSocket
+from fastapi import APIRouter
+from pydantic import BaseModel
 
 router = APIRouter()
 
-connected_users = {}
 
+class FraudFeedback(BaseModel):
 
-@router.websocket("/ws/{user_id}")
-async def websocket_endpoint(
-    websocket: WebSocket,
+    transaction_id: str
     user_id: str
-):
 
-    await websocket.accept()
+    user_decision: str
+    # "FRAUD" or "LEGITIMATE"
 
-    connected_users[user_id] = websocket
-
-    try:
-
-        while True:
-
-            await websocket.receive_text()
-
-    except Exception:
-
-        if user_id in connected_users:
-            del connected_users[user_id]
+    system_decision: str
+    risk_score: int
 
 
-async def send_alert(user_id, message):
+@router.post("/submit")
+def submit_feedback(feedback: FraudFeedback):
 
-    websocket = connected_users.get(user_id)
+    correct = (
+        feedback.user_decision
+        == feedback.system_decision
+    )
 
-    if websocket:
-
-        await websocket.send_json({
-            "type": "fraud_alert",
-            "message": message
-        })
+    return {
+        "transaction_id": feedback.transaction_id,
+        "feedback_received": True,
+        "model_decision_correct": correct
+    }
