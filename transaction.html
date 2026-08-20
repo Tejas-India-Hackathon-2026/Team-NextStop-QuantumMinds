@@ -2,141 +2,117 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Fraud Investigation</title>
+<title>SecureFlow Assistant</title>
 
 <style>
 body{
 margin:0;
-font-family:monospace;
-background:#111;
-color:#ddd;
+font-family:Arial;
+background:#e0f2fe;
 }
 
-header{
-background:#222;
-padding:20px;
-border-bottom:2px solid #777;
+.chat{
+width:650px;
+max-width:94%;
+margin:40px auto;
+background:white;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 10px 30px #94a3b8;
 }
 
-.container{
-max-width:1000px;
-margin:30px auto;
-padding:20px;
-}
-
-.case{
-background:#1b1b1b;
-border:1px solid #555;
+.header{
+background:#0369a1;
+color:white;
 padding:25px;
 }
 
-input[type=number]{
-background:#111;
-color:white;
-border:1px solid #777;
+.messages{
+padding:25px;
+min-height:400px;
+}
+
+.bot{
+background:#e0f2fe;
 padding:15px;
+border-radius:15px;
+margin:10px 0;
+}
+
+.user{
+background:#0369a1;
+color:white;
+padding:15px;
+border-radius:15px;
+margin:10px 0 10px auto;
+width:70%;
+}
+
+.controls{
+padding:20px;
+border-top:1px solid #ddd;
+}
+
+input[type=number]{
 width:100%;
+padding:15px;
 box-sizing:border-box;
 }
 
-table{
-width:100%;
-margin-top:20px;
-border-collapse:collapse;
-}
-
-td,th{
-padding:15px;
-border:1px solid #444;
+label{
+display:block;
+padding:6px;
 }
 
 button{
-padding:15px;
 width:100%;
-background:#444;
+padding:15px;
+background:#0369a1;
 color:white;
-border:1px solid #aaa;
-margin-top:20px;
-}
-
-#result{
-margin-top:25px;
+border:0;
+border-radius:8px;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>SECUREFLOW // FRAUD INVESTIGATION CONSOLE</h1>
-</header>
+<div class="chat">
 
-<div class="container">
+<div class="header">
+<h2>🤖 SecureFlow Assistant</h2>
+<p>AI Transaction Verification</p>
+</div>
 
-<div class="case">
+<div class="messages" id="messages">
 
-<h2>CASE #SF-001</h2>
-
-<input id="amount" type="number" placeholder="Transaction Amount">
-
-<table>
-
-<tr>
-<th>Security Indicator</th>
-<th>Detected</th>
-</tr>
-
-<tr>
-<td>Unusual Time</td>
-<td><input id="unusual_time" type="checkbox"></td>
-</tr>
-
-<tr>
-<td>Unusual Frequency</td>
-<td><input id="unusual_frequency" type="checkbox"></td>
-</tr>
-
-<tr>
-<td>New Device</td>
-<td><input id="new_device" type="checkbox"></td>
-</tr>
-
-<tr>
-<td>Unusual Location</td>
-<td><input id="unusual_location" type="checkbox"></td>
-</tr>
-
-<tr>
-<td>Sudden Location Change</td>
-<td><input id="sudden_location_change" type="checkbox"></td>
-</tr>
-
-<tr>
-<td>Unknown Beneficiary</td>
-<td><input id="unknown_beneficiary" type="checkbox"></td>
-</tr>
-
-<tr>
-<td>No Previous Transaction</td>
-<td><input id="no_previous_transactions" type="checkbox"></td>
-</tr>
-
-<tr>
-<td>Unusual Beneficiary Amount</td>
-<td><input id="unusual_beneficiary_amount" type="checkbox"></td>
-</tr>
-
-</table>
-
-<button onclick="investigate()">START INVESTIGATION</button>
-
-<div id="result"></div>
+<div class="bot">
+Hello! I am SecureFlow AI. I will check this transaction for suspicious activity.
+</div>
 
 </div>
+
+<div class="controls">
+
+<input id="amount" type="number" placeholder="Transaction Amount ₹">
+
+<label><input id="unusual_time" type="checkbox"> Unusual Time</label>
+<label><input id="unusual_frequency" type="checkbox"> Unusual Frequency</label>
+<label><input id="new_device" type="checkbox"> New Device</label>
+<label><input id="unusual_location" type="checkbox"> Unusual Location</label>
+<label><input id="sudden_location_change" type="checkbox"> Location Change</label>
+<label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label>
+<label><input id="no_previous_transactions" type="checkbox"> First Transaction</label>
+<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
+
+<button onclick="chat()">START AI INTERVIEW</button>
+
+</div>
+
 </div>
 
 <script>
-async function investigate(){
+async function chat(){
 
 const ids=["unusual_time","unusual_frequency","new_device","unusual_location","sudden_location_change","unknown_beneficiary","no_previous_transactions","unusual_beneficiary_amount"];
 
@@ -151,12 +127,22 @@ body:JSON.stringify(data)
 
 const r=await response.json();
 
-document.getElementById("result").innerHTML=`
-<h2>RISK SCORE: ${r.risk_score}</h2>
-<h2>DECISION: ${r.decision}</h2>
-<h3>Evidence</h3>
-${r.reasons.map(x=>`<p>→ ${x}</p>`).join("")}
+let html=`
+<div class="user">
+Transaction submitted for verification.
+</div>
+
+<div class="bot">
+<b>Risk Score:</b> ${r.risk_score}<br>
+<b>Decision:</b> ${r.decision}
+</div>
 `;
+
+r.ai_questions.forEach(q=>{
+html+=`<div class="bot">🤖 ${q}</div>`;
+});
+
+document.getElementById("messages").innerHTML+=html;
 }
 </script>
 
