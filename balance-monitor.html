@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Access Control</title>
+<title>SecureFlow-AI | Backup Status</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -18,19 +18,43 @@
 <header class="header">
 
 <div>
-<h1>Access Control</h1>
-<p>Admin and security permissions</p>
+<h1>Backup Status</h1>
+<p>Database and security data backup monitoring</p>
 </div>
 
-<div class="avatar">AC</div>
+<div class="avatar">BK</div>
 
 </header>
+
+<section class="stats">
+
+<div class="stat">
+<div class="stat-title">BACKUP STATUS</div>
+<div class="stat-number green">SAFE</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">LAST BACKUP</div>
+<div class="stat-number blue">12:00</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">DATABASE</div>
+<div class="stat-number green">100%</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">ERRORS</div>
+<div class="stat-number green">00</div>
+</div>
+
+</section>
 
 <section class="panel factors">
 
 <div class="panel-title">
-<h2>System Access</h2>
-<p>Authorized SecureFlow-AI users</p>
+<h2>Backup History</h2>
+<p>Recent database backups</p>
 </div>
 
 <table>
@@ -38,11 +62,11 @@
 <thead>
 
 <tr>
-<th>User</th>
-<th>Role</th>
-<th>Dashboard</th>
-<th>Transactions</th>
-<th>Reports</th>
+<th>Backup ID</th>
+<th>Date</th>
+<th>Size</th>
+<th>Records</th>
+<th>Duration</th>
 <th>Status</th>
 </tr>
 
@@ -51,30 +75,21 @@
 <tbody>
 
 <tr>
-<td>Admin</td>
-<td>Administrator</td>
-<td>Full</td>
-<td>Full</td>
-<td>Full</td>
-<td><span class="badge safe">ACTIVE</span></td>
+<td>BK001</td>
+<td>21 Aug 2026</td>
+<td>2.4 MB</td>
+<td>180</td>
+<td>4 sec</td>
+<td><span class="badge safe">SUCCESS</span></td>
 </tr>
 
 <tr>
-<td>Analyst</td>
-<td>Security Analyst</td>
-<td>View</td>
-<td>Review</td>
-<td>View</td>
-<td><span class="badge safe">ACTIVE</span></td>
-</tr>
-
-<tr>
-<td>Viewer</td>
-<td>Read Only</td>
-<td>View</td>
-<td>View</td>
-<td>View</td>
-<td><span class="badge review">LIMITED</span></td>
+<td>BK002</td>
+<td>20 Aug 2026</td>
+<td>2.3 MB</td>
+<td>170</td>
+<td>4 sec</td>
+<td><span class="badge safe">SUCCESS</span></td>
 </tr>
 
 </tbody>
