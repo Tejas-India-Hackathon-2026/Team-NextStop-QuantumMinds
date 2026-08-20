@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Security Settings</title>
+    <title>System Health - SecureFlow-AI</title>
 
     <style>
         body {
@@ -11,132 +11,134 @@
             padding: 30px;
         }
 
-        .settings {
-            max-width: 700px;
+        .services {
+            max-width: 800px;
             margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
         }
 
-        .setting {
+        .service {
+            background: white;
+            margin: 15px 0;
+            padding: 22px;
+            border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid #eee;
         }
 
-        button {
-            padding: 10px 18px;
-            border: none;
-            border-radius: 7px;
-            cursor: pointer;
+        .online {
+            color: green;
+            font-weight: bold;
         }
 
-        .enabled {
-            background: #16a34a;
-            color: white;
+        .offline {
+            color: red;
+            font-weight: bold;
         }
 
-        .save {
-            margin-top: 25px;
-            background: #111827;
-            color: white;
-            padding: 13px 25px;
+        .indicator {
+            font-size: 20px;
         }
     </style>
 </head>
 
 <body>
 
-<div class="settings">
+<div class="services">
 
-    <h1>Security Settings</h1>
+    <h1>SecureFlow-AI System Health</h1>
 
-    <div class="setting">
+    <div class="service">
 
         <div>
-            <h3>Real-Time Fraud Alerts</h3>
-            <p>Receive immediate transaction alerts.</p>
+            <h3>FastAPI Backend</h3>
+            <p>REST API Service</p>
         </div>
 
-        <button
-            class="enabled"
-            onclick="toggle(this)">
-            ON
-        </button>
+        <div class="online">
+            ● ONLINE
+        </div>
 
     </div>
 
-    <div class="setting">
+    <div class="service">
 
         <div>
-            <h3>New Device Detection</h3>
-            <p>Detect transactions from unknown devices.</p>
+            <h3>XGBoost Fraud Model</h3>
+            <p>AI Prediction Engine</p>
         </div>
 
-        <button
-            class="enabled"
-            onclick="toggle(this)">
-            ON
-        </button>
+        <div class="online">
+            ● ONLINE
+        </div>
 
     </div>
 
-    <div class="setting">
+    <div class="service">
 
         <div>
-            <h3>Location Monitoring</h3>
-            <p>Monitor unusual transaction locations.</p>
+            <h3>MongoDB</h3>
+            <p>Transaction Database</p>
         </div>
 
-        <button
-            class="enabled"
-            onclick="toggle(this)">
-            ON
-        </button>
+        <div class="online">
+            ● ONLINE
+        </div>
 
     </div>
 
-    <div class="setting">
+    <div class="service">
 
         <div>
-            <h3>Dynamic Verification</h3>
-            <p>Ask additional questions for suspicious transactions.</p>
+            <h3>Redis</h3>
+            <p>Real-Time Cache</p>
         </div>
 
-        <button
-            class="enabled"
-            onclick="toggle(this)">
-            ON
-        </button>
+        <div class="online">
+            ● ONLINE
+        </div>
 
     </div>
 
-    <button class="save">
-        Save Settings
-    </button>
+    <div class="service">
+
+        <div>
+            <h3>WebSocket</h3>
+            <p>Real-Time Notification Service</p>
+        </div>
+
+        <div class="online">
+            ● ONLINE
+        </div>
+
+    </div>
 
 </div>
 
 <script>
 
-function toggle(button) {
+async function checkHealth() {
 
-    if (button.innerText === "ON") {
+    try {
 
-        button.innerText = "OFF";
-        button.style.background = "#6b7280";
+        const response = await fetch(
+            "http://localhost:8000/health"
+        );
 
-    } else {
+        const data = await response.json();
 
-        button.innerText = "ON";
-        button.style.background = "#16a34a";
+        console.log(data);
+
+    } catch(error) {
+
+        console.log(
+            "Backend health endpoint unavailable."
+        );
 
     }
-
 }
+
+checkHealth();
 
 </script>
 
