@@ -1,48 +1,41 @@
-from risk_engine import calculate_risk
+import joblib
+import pandas as pd
 
 
-transaction = {
-
-    "amount": 85000,
-
-    "hour": 2,
-
-    "sender_txn_count_24h": 25,
-
-    "receiver_txn_count_24h": 1,
-
-    "new_recipient": 1,
-
-    "previous_connection": 0,
-
-    "device_match": 0,
-
-    "location_change_km": 850,
-
-    "name_match": 0,
-
-    "beneficiary_age_days": 1,
-
-    "amount_deviation": 4.8,
-
-    "failed_attempts": 3,
-
-    "velocity": 20
-}
+# Load trained model
+model = joblib.load("secureflow_fraud_model.pkl")
+features = joblib.load("model_features.pkl")
 
 
-result = calculate_risk(transaction)
+def calculate_risk(transaction):
 
+    # Convert transaction into dataframe
+    data = pd.DataFrame([transaction])
 
-print("\n========== SECUREFLOW AI ==========")
+    # Select required features
+    X = data[features]
 
-print("Fraud Probability:",
-      result["fraud_probability"])
+    # Fraud probability
+    fraud_probability = model.predict_proba(X)[0][1]
 
-print("Risk Score:",
-      result["risk_score"])
+    # Convert probability to 0-100
+    risk_score = round(fraud_probability * 100, 2)
 
-print("Decision:",
-      result["decision"])
+    # Decision
+    if risk_score <= 30:
 
-print("===================================")
+        decision = "ALLOW"
+
+    elif risk_score <= 70:
+
+        decision = "ALERT"
+
+    else:
+
+        decision = "BLOCK"
+
+    return {
+        "fraud_probability": round(fraud_probability, 4),
+        "risk_score": risk_score,
+        "decision": decision
+    }
