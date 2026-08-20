@@ -1,0 +1,3227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SecureFlow-AI</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #5b5cf0;
+            --primary-dark: #4445c7;
+            --cyan: #20d6ff;
+            --green: #16c784;
+            --red: #ff4d67;
+            --orange: #ffad33;
+            --dark: #101225;
+            --dark2: #171a32;
+            --card: rgba(255,255,255,0.075);
+            --border: rgba(255,255,255,0.12);
+            --text: #ffffff;
+            --muted: #a9acc5;
+        }
+
+        body {
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            min-height: 100vh;
+
+            color: var(--text);
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(91,92,240,.28),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 90% 20%,
+                    rgba(32,214,255,.18),
+                    transparent 25%
+                ),
+                linear-gradient(
+                    135deg,
+                    #0b0d1c,
+                    #151831,
+                    #0b0d1c
+                );
+
+            overflow-x: hidden;
+        }
+
+        /* ==================================================
+           BACKGROUND
+        ================================================== */
+
+        .background-orb {
+            position: fixed;
+
+            width: 280px;
+            height: 280px;
+
+            border-radius: 50%;
+
+            filter: blur(70px);
+
+            opacity: .25;
+
+            pointer-events: none;
+
+            animation: floatOrb 8s ease-in-out infinite;
+        }
+
+        .orb1 {
+            background: #5b5cf0;
+            top: -80px;
+            left: -80px;
+        }
+
+        .orb2 {
+            background: #20d6ff;
+            right: -100px;
+            bottom: 10%;
+            animation-delay: 2s;
+        }
+
+        .orb3 {
+            background: #8b5cf6;
+            left: 40%;
+            bottom: -150px;
+            animation-delay: 4s;
+        }
+
+        @keyframes floatOrb {
+
+            0%,100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-30px);
+            }
+
+        }
+
+        /* ==================================================
+           APP
+        ================================================== */
+
+        .app {
+            width: min(1100px, 94%);
+            margin: auto;
+            padding: 25px 0 80px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ==================================================
+           NAVBAR
+        ================================================== */
+
+        .navbar {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 16px 20px;
+
+            margin-bottom: 25px;
+
+            border: 1px solid var(--border);
+
+            border-radius: 22px;
+
+            background: rgba(20,23,48,.72);
+
+            backdrop-filter: blur(20px);
+
+            box-shadow:
+                0 15px 50px rgba(0,0,0,.25);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+
+            width: 45px;
+            height: 45px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #6466ff,
+                    #20d6ff
+                );
+
+            box-shadow:
+                0 0 25px rgba(91,92,240,.45);
+
+            font-size: 21px;
+        }
+
+        .brand-text h1 {
+            font-size: 19px;
+            letter-spacing: -.4px;
+        }
+
+        .brand-text span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .secure-status {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            font-size: 12px;
+
+            color: #9df4d2;
+
+            background: rgba(22,199,132,.09);
+
+            padding: 9px 13px;
+
+            border-radius: 30px;
+
+            border: 1px solid rgba(22,199,132,.2);
+        }
+
+        .status-dot {
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--green);
+
+            box-shadow:
+                0 0 12px var(--green);
+
+            animation: pulse 1.6s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: .45;
+                transform: scale(.7);
+            }
+
+        }
+
+        /* ==================================================
+           MAIN GRID
+        ================================================== */
+
+        .grid {
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.25fr)
+                minmax(300px, .75fr);
+
+            gap: 22px;
+        }
+
+        .card {
+
+            background: var(--card);
+
+            border: 1px solid var(--border);
+
+            border-radius: 26px;
+
+            backdrop-filter: blur(22px);
+
+            box-shadow:
+                0 25px 70px rgba(0,0,0,.25);
+        }
+
+        /* ==================================================
+           PAYMENT CARD
+        ================================================== */
+
+        .payment-card {
+            padding: 28px;
+        }
+
+        .heading {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-start;
+
+            margin-bottom: 26px;
+        }
+
+        .heading h2 {
+            font-size: 27px;
+            margin-bottom: 5px;
+        }
+
+        .heading p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .shield {
+
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 16px;
+
+            background:
+                rgba(91,92,240,.15);
+
+            border:
+                1px solid rgba(91,92,240,.3);
+
+            font-size: 22px;
+        }
+
+        /* ==================================================
+           FORM
+        ================================================== */
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field label {
+
+            display: block;
+
+            margin-bottom: 8px;
+
+            font-size: 12px;
+
+            color: #b9bcd2;
+
+            text-transform: uppercase;
+
+            letter-spacing: .8px;
+        }
+
+        select,
+        input[type="number"] {
+
+            width: 100%;
+
+            padding: 15px 16px;
+
+            border-radius: 15px;
+
+            border: 1px solid var(--border);
+
+            background:
+                rgba(8,10,25,.7);
+
+            color: white;
+
+            outline: none;
+
+            font-size: 15px;
+
+            transition: .25s;
+        }
+
+        select:focus,
+        input[type="number"]:focus {
+
+            border-color:
+                rgba(91,92,240,.8);
+
+            box-shadow:
+                0 0 0 4px
+                rgba(91,92,240,.1);
+        }
+
+        select option {
+            background: #171a32;
+            color: white;
+        }
+
+        /* ==================================================
+           AMOUNT
+        ================================================== */
+
+        .amount-wrap {
+            position: relative;
+        }
+
+        .rupee {
+
+            position: absolute;
+
+            left: 16px;
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            font-size: 21px;
+
+            color: #8f92b1;
+        }
+
+        .amount-input {
+            padding-left: 40px !important;
+            font-size: 21px !important;
+            font-weight: 600;
+        }
+
+        /* ==================================================
+           RISK SIGNALS
+        ================================================== */
+
+        .signals-title {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin:
+                27px 0 13px;
+        }
+
+        .signals-title h3 {
+            font-size: 15px;
+        }
+
+        .signals-title span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .signals {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 10px;
+        }
+
+        .signal {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 10px;
+
+            padding: 13px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 15px;
+
+            background:
+                rgba(255,255,255,.025);
+
+            transition: .25s;
+        }
+
+        .signal:hover {
+
+            border-color:
+                rgba(91,92,240,.45);
+
+            transform:
+                translateY(-2px);
+        }
+
+        .signal-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .signal-name {
+            font-size: 12px;
+        }
+
+        .signal-points {
+
+            color: #7e81a2;
+
+            font-size: 10px;
+        }
+
+        /* ==================================================
+           TOGGLE
+        ================================================== */
+
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .toggle input {
+            display: none;
+        }
+
+        .slider {
+
+            position: absolute;
+
+            inset: 0;
+
+            cursor: pointer;
+
+            border-radius: 30px;
+
+            background: #292c46;
+
+            transition: .3s;
+        }
+
+        .slider:before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 18px;
+            height: 18px;
+
+            left: 3px;
+            top: 3px;
+
+            border-radius: 50%;
+
+            background: #9b9eb9;
+
+            transition: .3s;
+        }
+
+        .toggle input:checked + .slider {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #5b5cf0,
+                    #20d6ff
+                );
+
+            box-shadow:
+                0 0 15px
+                rgba(91,92,240,.35);
+        }
+
+        .toggle input:checked + .slider:before {
+
+            transform:
+                translateX(20px);
+
+            background: white;
+        }
+
+        /* ==================================================
+           PAY BUTTON
+        ================================================== */
+
+        .pay-btn {
+
+            width: 100%;
+
+            margin-top: 24px;
+
+            border: none;
+
+            border-radius: 17px;
+
+            padding: 17px;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            background:
+                linear-gradient(
+                    100deg,
+                    #5b5cf0,
+                    #706cff,
+                    #20d6ff
+                );
+
+            background-size: 200% 100%;
+
+            box-shadow:
+                0 12px 35px
+                rgba(91,92,240,.28);
+
+            transition: .3s;
+
+            animation:
+                gradientMove 4s ease infinite;
+        }
+
+        @keyframes gradientMove {
+
+            0%,100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+        }
+
+        .pay-btn:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 17px 40px
+                rgba(91,92,240,.38);
+        }
+
+        .pay-btn:active {
+            transform: scale(.98);
+        }
+
+        .pay-btn:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ==================================================
+           SECURITY CARD
+        ================================================== */
+
+        .security-card {
+            padding: 25px;
+        }
+
+        .security-head {
+
+            display: flex;
+
+            gap: 12px;
+
+            align-items: center;
+
+            margin-bottom: 24px;
+        }
+
+        .ai-icon {
+
+            width: 43px;
+            height: 43px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(32,214,255,.18),
+                    rgba(91,92,240,.2)
+                );
+
+            font-size: 20px;
+        }
+
+        .security-head h3 {
+            font-size: 16px;
+        }
+
+        .security-head p {
+
+            font-size: 11px;
+
+            color: var(--muted);
+
+            margin-top: 3px;
+        }
+
+        /* ==================================================
+           RISK METER
+        ================================================== */
+
+        .risk-circle {
+
+            width: 190px;
+            height: 190px;
+
+            margin: 15px auto 20px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            position: relative;
+
+            background:
+                conic-gradient(
+                    #5b5cf0 0deg,
+                    #292c46 0deg
+                );
+
+            transition:
+                background 1s ease;
+        }
+
+        .risk-circle:before {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 10px;
+
+            border-radius: 50%;
+
+            background:
+                #11142a;
+
+            box-shadow:
+                inset 0 0 25px
+                rgba(0,0,0,.3);
+        }
+
+        .risk-number {
+
+            position: relative;
+
+            text-align: center;
+        }
+
+        .risk-number strong {
+
+            display: block;
+
+            font-size: 42px;
+
+            line-height: 1;
+        }
+
+        .risk-number span {
+
+            color: var(--muted);
+
+            font-size: 11px;
+
+            letter-spacing: 1px;
+        }
+
+        .decision {
+
+            text-align: center;
+
+            padding: 11px;
+
+            border-radius: 13px;
+
+            background:
+                rgba(255,255,255,.04);
+
+            color: var(--muted);
+
+            font-size: 12px;
+
+            margin-bottom: 17px;
+        }
+
+        .decision.safe {
+            color: #72edbb;
+            background:
+                rgba(22,199,132,.08);
+        }
+
+        .decision.warning {
+            color: #ffd27a;
+            background:
+                rgba(255,173,51,.09);
+        }
+
+        .decision.danger {
+            color: #ff8c9d;
+            background:
+                rgba(255,77,103,.09);
+        }
+
+        /* ==================================================
+           AI STATUS
+        ================================================== */
+
+        .ai-status {
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 15px;
+
+            padding: 14px;
+
+            background:
+                rgba(255,255,255,.025);
+        }
+
+        .ai-status-row {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            font-size: 12px;
+
+            margin-bottom: 9px;
+        }
+
+        .ai-status-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .online {
+            color: #73eabd;
+        }
+
+        /* ==================================================
+           MODAL
+        ================================================== */
+
+        .overlay {
+
+            position: fixed;
+
+            inset: 0;
+
+            display: none;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(3,5,15,.78);
+
+            backdrop-filter:
+                blur(15px);
+
+            z-index: 100;
+        }
+
+        .overlay.show {
+            display: flex;
+        }
+
+        .modal {
+
+            width: min(470px, 100%);
+
+            border-radius: 28px;
+
+            padding: 28px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #171a35,
+                    #0f1228
+                );
+
+            border:
+                1px solid var(--border);
+
+            box-shadow:
+                0 35px 100px
+                rgba(0,0,0,.5);
+
+            animation:
+                modalIn .4s ease;
+        }
+
+        @keyframes modalIn {
+
+            from {
+                opacity: 0;
+                transform:
+                    translateY(25px)
+                    scale(.96);
+            }
+
+            to {
+                opacity: 1;
+                transform:
+                    translateY(0)
+                    scale(1);
+            }
+
+        }
+
+        .modal-icon {
+
+            width: 62px;
+            height: 62px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 17px;
+
+            border-radius: 20px;
+
+            font-size: 27px;
+
+            background:
+                rgba(255,173,51,.12);
+
+            border:
+                1px solid rgba(255,173,51,.25);
+        }
+
+        .modal h2 {
+            font-size: 24px;
+            margin-bottom: 7px;
+        }
+
+        .modal-subtitle {
+
+            color: var(--muted);
+
+            font-size: 12px;
+
+            line-height: 1.6;
+
+            margin-bottom: 22px;
+        }
+
+        /* ==================================================
+           AI PROCESSING
+        ================================================== */
+
+        .processing {
+
+            text-align: center;
+
+            padding: 20px 0;
+
+        }
+
+        .brain {
+
+            width: 75px;
+            height: 75px;
+
+            margin: auto;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 31px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(91,92,240,.3),
+                    rgba(32,214,255,.2)
+                );
+
+            box-shadow:
+                0 0 0 8px
+                rgba(91,92,240,.05),
+                0 0 35px
+                rgba(91,92,240,.3);
+
+            animation:
+                brainPulse 1.2s infinite;
+        }
+
+        @keyframes brainPulse {
+
+            0%,100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.08);
+            }
+
+        }
+
+        .processing p {
+
+            margin-top: 16px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+        }
+
+        .dots span {
+
+            display: inline-block;
+
+            animation:
+                dot 1.2s infinite;
+
+        }
+
+        .dots span:nth-child(2) {
+            animation-delay: .2s;
+        }
+
+        .dots span:nth-child(3) {
+            animation-delay: .4s;
+        }
+
+        @keyframes dot {
+
+            0%,100% {
+                opacity: .2;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+        }
+
+        /* ==================================================
+           QUESTION
+        ================================================== */
+
+        .question-box {
+
+            padding: 18px;
+
+            border-radius: 18px;
+
+            background:
+                rgba(91,92,240,.08);
+
+            border:
+                1px solid
+                rgba(91,92,240,.22);
+
+            margin-bottom: 17px;
+        }
+
+        .question-label {
+
+            color: #8f91ff;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+
+            font-size: 16px;
+
+            line-height: 1.55;
+
+            font-weight: 600;
+        }
+
+        .answer-input {
+
+            width: 100%;
+
+            padding: 15px;
+
+            border-radius: 15px;
+
+            background:
+                rgba(0,0,0,.25);
+
+            color: white;
+
+            border:
+                1px solid var(--border);
+
+            outline: none;
+
+            font-size: 15px;
+
+            margin-bottom: 12px;
+        }
+
+        .answer-input:focus {
+
+            border-color:
+                rgba(91,92,240,.7);
+
+            box-shadow:
+                0 0 0 4px
+                rgba(91,92,240,.08);
+        }
+
+        .verify-btn {
+
+            width: 100%;
+
+            padding: 15px;
+
+            border: none;
+
+            border-radius: 15px;
+
+            color: white;
+
+            font-weight: 700;
+
+            font-size: 14px;
+
+            cursor: pointer;
+
+            background:
+                linear-gradient(
+                    100deg,
+                    #5b5cf0,
+                    #20aee8
+                );
+
+            transition: .25s;
+        }
+
+        .verify-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .cancel-btn {
+
+            width: 100%;
+
+            margin-top: 9px;
+
+            padding: 12px;
+
+            border: none;
+
+            background: transparent;
+
+            color: #888ba8;
+
+            cursor: pointer;
+
+            font-size: 12px;
+        }
+
+        /* ==================================================
+           RESULT
+        ================================================== */
+
+        .result-screen {
+            text-align: center;
+            padding: 15px 0;
+        }
+
+        .result-icon {
+
+            width: 80px;
+            height: 80px;
+
+            margin: auto auto 18px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 35px;
+
+            animation:
+                resultPop .5s ease;
+        }
+
+        .result-icon.success {
+
+            background:
+                rgba(22,199,132,.12);
+
+            border:
+                1px solid
+                rgba(22,199,132,.3);
+        }
+
+        .result-icon.failed {
+
+            background:
+                rgba(255,77,103,.12);
+
+            border:
+                1px solid
+                rgba(255,77,103,.3);
+        }
+
+        @keyframes resultPop {
+
+            from {
+                transform: scale(.5);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+        }
+
+        .result-screen h2 {
+            margin-bottom: 7px;
+        }
+
+        .result-screen p {
+
+            color: var(--muted);
+
+            font-size: 13px;
+
+            line-height: 1.6;
+
+            margin-bottom: 22px;
+        }
+
+        .done-btn {
+
+            width: 100%;
+
+            padding: 14px;
+
+            border: none;
+
+            border-radius: 15px;
+
+            background:
+                rgba(255,255,255,.08);
+
+            color: white;
+
+            cursor: pointer;
+
+            font-weight: 600;
+        }
+
+        /* ==================================================
+           FLOATING BUTTON
+        ================================================== */
+
+        .floating {
+
+            position: fixed;
+
+            right: 22px;
+
+            bottom: 22px;
+
+            width: 51px;
+            height: 51px;
+
+            border-radius: 50%;
+
+            border:
+                1px solid var(--border);
+
+            background:
+                rgba(22,25,52,.82);
+
+            backdrop-filter: blur(15px);
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            box-shadow:
+                0 12px 35px
+                rgba(0,0,0,.3);
+
+            cursor: pointer;
+
+            z-index: 20;
+
+            transition: .25s;
+        }
+
+        .floating:hover {
+            transform: translateY(-4px);
+        }
+
+        /* ==================================================
+           TOAST
+        ================================================== */
+
+        .toast {
+
+            position: fixed;
+
+            top: 25px;
+
+            left: 50%;
+
+            transform:
+                translate(-50%, -120px);
+
+            padding: 13px 18px;
+
+            border-radius: 14px;
+
+            background:
+                #181b38;
+
+            border:
+                1px solid var(--border);
+
+            box-shadow:
+                0 15px 50px
+                rgba(0,0,0,.35);
+
+            font-size: 12px;
+
+            z-index: 200;
+
+            transition: .4s;
+        }
+
+        .toast.show {
+
+            transform:
+                translate(-50%, 0);
+        }
+
+        /* ==================================================
+           RESPONSIVE
+        ================================================== */
+
+        @media(max-width: 820px) {
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .security-card {
+                order: -1;
+            }
+
+        }
+
+        @media(max-width: 550px) {
+
+            .app {
+                width: 94%;
+                padding-top: 12px;
+            }
+
+            .navbar {
+                padding: 13px;
+            }
+
+            .brand-icon {
+                width: 39px;
+                height: 39px;
+            }
+
+            .secure-status {
+                padding: 7px 9px;
+                font-size: 10px;
+            }
+
+            .payment-card,
+            .security-card {
+                padding: 20px;
+            }
+
+            .heading h2 {
+                font-size: 23px;
+            }
+
+            .signals {
+                grid-template-columns: 1fr;
+            }
+
+            .risk-circle {
+                width: 160px;
+                height: 160px;
+            }
+
+        }
+
+
+        /* ==================================================
+           LIVE BALANCE
+        ================================================== */
+        .balance-panel {
+            background: rgba(22,199,132,.07);
+            border: 1px solid rgba(22,199,132,.22);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .balance-value {
+            font-size: 28px;
+            font-weight: 800;
+            margin-top: 4px;
+        }
+
+        .balance-sub {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="background-orb orb1"></div>
+    <div class="background-orb orb2"></div>
+    <div class="background-orb orb3"></div>
+
+
+    <!-- ==================================================
+         APP
+    ================================================== -->
+
+    <main class="app">
+
+
+        <!-- ==================================================
+             NAVBAR
+        ================================================== -->
+
+        <nav class="navbar">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    🛡️
+                </div>
+
+                <div class="brand-text">
+
+                    <h1>
+                        SecureFlow-AI
+                    </h1>
+
+                    <span>
+                        Behavioural Payment Security
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="secure-status">
+
+                <span class="status-dot"></span>
+
+                Secure Engine Online
+
+            </div>
+
+        </nav>
+
+
+        <!-- ==================================================
+             MAIN
+        ================================================== -->
+
+        <section class="grid">
+
+
+            <!-- ==================================================
+                 PAYMENT
+            ================================================== -->
+
+            <div class="card payment-card">
+
+                <div class="heading">
+
+                    <div>
+
+                        <h2>
+                            Send Money
+                        </h2>
+
+                        <p>
+                            Protected by SecureFlow behavioural analysis
+                        </p>
+
+                    </div>
+
+                    <div class="shield">
+                        🔐
+                    </div>
+
+                </div>
+
+
+                <!-- PAYER -->
+
+                <div class="field">
+
+                    <label>
+                        Payer
+                    </label>
+
+                    <select id="payer">
+
+                        <option>
+                            Loading users...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- RECIPIENT -->
+
+                <div class="field">
+
+                    <label>
+                        Recipient
+                    </label>
+
+                    <select id="recipient">
+
+                        <option>
+                            Loading recipients...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- AMOUNT -->
+
+                <div class="field">
+
+                    <label>
+                        Amount
+                    </label>
+
+                    <div class="amount-wrap">
+
+                        <span class="rupee">
+                            ₹
+                        </span>
+
+                        <input
+                            id="amount"
+                            class="amount-input"
+                            type="number"
+                            min="1"
+                            placeholder="0.00"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================================
+                     RISK ENGINE
+                ================================================== -->
+
+                <div class="signals-title">
+
+                    <h3>
+                        Risk Engine
+                    </h3>
+
+                    <span>
+                        Simulation controls
+                    </span>
+
+                </div>
+
+
+                <div class="signals">
+
+
+                    <!-- Amount -->
+
+                    <div class="signal">
+
+                        <div class="signal-info">
+
+                            <span class="signal-name">
+                                Amount deviation
+                            </span>
+
+                            <span class="signal-points">
+                                +10 risk
+                            </span>
+
+                        </div>
+
+                        <label class="toggle">
+
+                            <input
+                                type="checkbox"
+                                id="amount_deviation"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- Time -->
+
+                    <div class="signal">
+
+                        <div class="signal-info">
+
+                            <span class="signal-name">
+                                Time anomaly
+                            </span>
+
+                            <span class="signal-points">
+                                +7 risk
+                            </span>
+
+                        </div>
+
+                        <label class="toggle">
+
+                            <input
+                                type="checkbox"
+                                id="time_anomaly"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- Frequency -->
+
+                    <div class="signal">
+
+                        <div class="signal-info">
+
+                            <span class="signal-name">
+                                Transaction velocity
+                            </span>
+
+                            <span class="signal-points">
+                                +12 risk
+                            </span>
+
+                        </div>
+
+                        <label class="toggle">
+
+                            <input
+                                type="checkbox"
+                                id="frequency_anomaly"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- Device -->
+
+                    <div class="signal">
+
+                        <div class="signal-info">
+
+                            <span class="signal-name">
+                                New device/session
+                            </span>
+
+                            <span class="signal-points">
+                                +15 risk
+                            </span>
+
+                        </div>
+
+                        <label class="toggle">
+
+                            <input
+                                type="checkbox"
+                                id="new_device"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- Location -->
+
+                    <div class="signal">
+
+                        <div class="signal-info">
+
+                            <span class="signal-name">
+                                Location anomaly
+                            </span>
+
+                            <span class="signal-points">
+                                +15 risk
+                            </span>
+
+                        </div>
+
+                        <label class="toggle">
+
+                            <input
+                                type="checkbox"
+                                id="unusual_location"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- Sudden location -->
+
+                    <div class="signal">
+
+                        <div class="signal-info">
+
+                            <span class="signal-name">
+                                Sudden location change
+                            </span>
+
+                            <span class="signal-points">
+                                +6 risk
+                            </span>
+
+                        </div>
+
+                        <label class="toggle">
+
+                            <input
+                                type="checkbox"
+                                id="sudden_location_change"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- Beneficiary -->
+
+                    <div class="signal">
+
+                        <div class="signal-info">
+
+                            <span class="signal-name">
+                                Unknown beneficiary
+                            </span>
+
+                            <span class="signal-points">
+                                +12 risk
+                            </span>
+
+                        </div>
+
+                        <label class="toggle">
+
+                            <input
+                                type="checkbox"
+                                id="unknown_beneficiary"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- History -->
+
+                    <div class="signal">
+
+                        <div class="signal-info">
+
+                            <span class="signal-name">
+                                No previous transaction
+                            </span>
+
+                            <span class="signal-points">
+                                +13 risk
+                            </span>
+
+                        </div>
+
+                        <label class="toggle">
+
+                            <input
+                                type="checkbox"
+                                id="no_previous_transaction"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- Amount recipient -->
+
+                    <div class="signal">
+
+                        <div class="signal-info">
+
+                            <span class="signal-name">
+                                Beneficiary amount deviation
+                            </span>
+
+                            <span class="signal-points">
+                                +10 risk
+                            </span>
+
+                        </div>
+
+                        <label class="toggle">
+
+                            <input
+                                type="checkbox"
+                                id="unusual_beneficiary_amount"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                </div>
+
+
+                <button
+                    id="payBtn"
+                    class="pay-btn"
+                    onclick="startPayment()"
+                >
+
+                    🔒
+                    Analyze & Pay
+
+                </button>
+
+
+            </div>
+
+
+            <!-- ==================================================
+                 SECURITY PANEL
+            ================================================== -->
+
+            <aside class="card security-card">
+
+
+                <div class="security-head">
+
+                    <div class="ai-icon">
+                        ✨
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            SecureFlow Intelligence
+                        </h3>
+
+                        <p>
+                            Real-time behavioural protection
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="riskCircle"
+                    class="risk-circle"
+                >
+
+                    <div class="risk-number">
+
+                        <strong id="riskNumber">
+                            0
+                        </strong>
+
+                        <span>
+                            RISK / 100
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="decision"
+                    class="decision safe"
+                >
+
+                    Ready for secure analysis
+
+                </div>
+
+
+                <div class="ai-status">
+
+                    <div class="ai-status-row">
+
+                        <span>
+                            Behaviour Engine
+                        </span>
+
+                        <span class="online">
+                            ● ACTIVE
+                        </span>
+
+                    </div>
+
+                    <div class="ai-status-row">
+
+                        <span>
+                            Database
+                        </span>
+
+                        <span class="online">
+                            ● CONNECTED
+                        </span>
+
+                    </div>
+
+                    <div class="ai-status-row">
+
+                        <span>
+                            Dynamic Verification
+                        </span>
+
+                        <span class="online">
+                            ● READY
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==================================================
+         FLOATING BUTTON
+    ================================================== -->
+
+    <button
+        class="floating"
+        onclick="resetPage()"
+        title="Reset payment"
+    >
+        ↻
+    </button>
+
+
+    <!-- ==================================================
+         TOAST
+    ================================================== -->
+
+    <div
+        id="toast"
+        class="toast"
+    >
+        SecureFlow
+    </div>
+
+
+    <!-- ==================================================
+         VERIFICATION MODAL
+    ================================================== -->
+
+    <div
+        id="overlay"
+        class="overlay"
+    >
+
+        <div
+            id="modal"
+            class="modal"
+        >
+
+            <!-- CONTENT CREATED BY JAVASCRIPT -->
+
+        </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         JAVASCRIPT
+    ================================================== -->
+
+
+    <script>
+        // ==================================================
+        // SECUREFLOW-AI FRONTEND
+        // Compatible with the Version 7 database/backend
+        //
+        // Important:
+        // - Backend is authoritative for risk + balance.
+        // - Historical transactions do NOT reduce the live balance.
+        // - ALLOW deducts immediately.
+        // - ALERT creates a HELD transaction; balance is unchanged
+        //   until verification succeeds.
+        // - BLOCK never deducts money.
+        // ==================================================
+
+        const API = "http://127.0.0.1:8000";
+
+        let currentTransactionId = null;
+        let currentVerification = null;
+        let currentBalance = 0;
+
+        // ==================================================
+        // ELEMENTS
+        // ==================================================
+
+        const payer = document.getElementById("payer");
+        const recipient = document.getElementById("recipient");
+        const amount = document.getElementById("amount");
+        const payBtn = document.getElementById("payBtn");
+        const riskNumber = document.getElementById("riskNumber");
+        const riskCircle = document.getElementById("riskCircle");
+        const decision = document.getElementById("decision");
+        const overlay = document.getElementById("overlay");
+        const modal = document.getElementById("modal");
+
+        const balanceValue =
+            document.getElementById("balanceValue");
+
+        const balanceStatus =
+            document.getElementById("balanceStatus");
+
+        const afterBalance =
+            document.getElementById("afterBalance");
+
+        // ==================================================
+        // HELPERS
+        // ==================================================
+
+        function money(value) {
+            return "₹" + Number(value || 0).toLocaleString(
+                "en-IN",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            );
+        }
+
+        function escapeHtml(value) {
+            const div = document.createElement("div");
+            div.textContent = String(value ?? "");
+            return div.innerHTML;
+        }
+
+        function toast(message) {
+            const element = document.getElementById("toast");
+
+            element.textContent = message;
+            element.classList.add("show");
+
+            setTimeout(() => {
+                element.classList.remove("show");
+            }, 2800);
+        }
+
+        function signal(id) {
+            const element = document.getElementById(id);
+            return element ? element.checked : false;
+        }
+
+        function getSignals() {
+            return {
+                amount_deviation: signal("amount_deviation"),
+                time_anomaly: signal("time_anomaly"),
+                frequency_anomaly: signal("frequency_anomaly"),
+                new_device: signal("new_device"),
+                unusual_location: signal("unusual_location"),
+                sudden_location_change:
+                    signal("sudden_location_change"),
+                unknown_beneficiary:
+                    signal("unknown_beneficiary"),
+                no_previous_transaction:
+                    signal("no_previous_transaction"),
+                unusual_beneficiary_amount:
+                    signal("unusual_beneficiary_amount")
+            };
+        }
+
+        // ==================================================
+        // BALANCE DISPLAY
+        // ==================================================
+
+        function updateBalanceDisplay(balance, status = "") {
+            currentBalance = Number(balance || 0);
+
+            balanceValue.textContent =
+                money(currentBalance);
+
+            balanceStatus.textContent =
+                status ||
+                "Live balance from SecureFlow database";
+
+            updateProjectedBalance();
+        }
+
+        function updateProjectedBalance() {
+            const selectedAmount = Number(amount.value || 0);
+
+            if (!selectedAmount) {
+                afterBalance.textContent =
+                    "Final balance after payment: —";
+                return;
+            }
+
+            const projected =
+                currentBalance - selectedAmount;
+
+            if (projected < 0) {
+                afterBalance.textContent =
+                    "Insufficient balance";
+                return;
+            }
+
+            afterBalance.textContent =
+                "Final balance after payment: " +
+                money(projected);
+        }
+
+        async function loadUserBalance(userId) {
+            if (!userId) {
+                updateBalanceDisplay(
+                    0,
+                    "Select a payer to load the live balance"
+                );
+                return;
+            }
+
+            try {
+                // Preferred endpoint.
+                let response =
+                    await fetch(
+                        `${API}/users/${encodeURIComponent(userId)}`
+                    );
+
+                // Compatibility fallback if backend exposes
+                // only /account/{user_id}.
+                if (!response.ok) {
+                    response =
+                        await fetch(
+                            `${API}/account/${encodeURIComponent(userId)}`
+                        );
+                }
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Unable to load account balance"
+                    );
+                }
+
+                const data = await response.json();
+
+                const user = data.user || data.account || data;
+
+                const balance =
+                    user.current_bank_balance ??
+                    user.balance ??
+                    data.current_bank_balance ??
+                    data.balance ??
+                    0;
+
+                updateBalanceDisplay(
+                    balance,
+                    "Live balance • " +
+                    (user.name || payer.selectedOptions[0]?.text || "")
+                );
+            }
+            catch (error) {
+                console.error(error);
+
+                updateBalanceDisplay(
+                    0,
+                    "Could not load live balance"
+                );
+
+                toast(
+                    "Could not load account balance"
+                );
+            }
+        }
+
+        // ==================================================
+        // LOAD USERS
+        // ==================================================
+
+        async function loadUsers() {
+            try {
+                const response =
+                    await fetch(`${API}/users`);
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Unable to load users"
+                    );
+                }
+
+                const data =
+                    await response.json();
+
+                payer.innerHTML = "";
+
+                const users =
+                    Array.isArray(data)
+                        ? data
+                        : (data.users || []);
+
+                users.forEach(user => {
+                    const option =
+                        document.createElement("option");
+
+                    option.value =
+                        user.user_id;
+
+                    option.textContent =
+                        user.name;
+
+                    payer.appendChild(option);
+                });
+
+                if (!users.length) {
+                    throw new Error(
+                        "No users returned by backend"
+                    );
+                }
+
+                await loadUserBalance(
+                    payer.value
+                );
+            }
+            catch (error) {
+                payer.innerHTML =
+                    `<option value="">
+                        Database unavailable
+                    </option>`;
+
+                toast(
+                    "Could not load payer database"
+                );
+
+                console.error(error);
+            }
+        }
+
+        // ==================================================
+        // LOAD RECIPIENTS
+        // ==================================================
+
+        async function loadRecipients() {
+            try {
+                const response =
+                    await fetch(`${API}/recipients`);
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Unable to load recipients"
+                    );
+                }
+
+                const data =
+                    await response.json();
+
+                recipient.innerHTML = "";
+
+                const recipients =
+                    Array.isArray(data)
+                        ? data
+                        : (data.recipients || []);
+
+                recipients.forEach(person => {
+                    const option =
+                        document.createElement("option");
+
+                    option.value =
+                        person.upi_id;
+
+                    option.textContent =
+                        `${person.recipient_name} • ${person.upi_id}`;
+
+                    recipient.appendChild(option);
+                });
+
+                if (!recipients.length) {
+                    throw new Error(
+                        "No recipients returned by backend"
+                    );
+                }
+            }
+            catch (error) {
+                recipient.innerHTML =
+                    `<option value="">
+                        Database unavailable
+                    </option>`;
+
+                toast(
+                    "Could not load recipient database"
+                );
+
+                console.error(error);
+            }
+        }
+
+        // ==================================================
+        // RISK PREVIEW
+        // ==================================================
+
+        function calculatePreviewRisk() {
+            let score = 0;
+
+            if (signal("amount_deviation"))
+                score += 10;
+
+            if (signal("time_anomaly"))
+                score += 7;
+
+            if (signal("frequency_anomaly"))
+                score += 12;
+
+            if (signal("new_device"))
+                score += 15;
+
+            if (signal("unusual_location"))
+                score += 15;
+
+            if (signal("sudden_location_change"))
+                score += 6;
+
+            if (signal("unknown_beneficiary"))
+                score += 12;
+
+            if (signal("no_previous_transaction"))
+                score += 13;
+
+            if (signal("unusual_beneficiary_amount"))
+                score += 10;
+
+            return Math.min(100, score);
+        }
+
+        function previewRisk() {
+            animateRisk(
+                calculatePreviewRisk()
+            );
+        }
+
+        // ==================================================
+        // RISK ANIMATION
+        // ==================================================
+
+        function animateRisk(target) {
+            target = Math.max(
+                0,
+                Math.min(100, Number(target || 0))
+            );
+
+            const start =
+                Number(riskNumber.textContent || 0);
+
+            const duration = 450;
+            const startTime = performance.now();
+
+            function update(now) {
+                const progress =
+                    Math.min(
+                        1,
+                        (now - startTime) / duration
+                    );
+
+                const value =
+                    Math.round(
+                        start +
+                        (target - start) * progress
+                    );
+
+                riskNumber.textContent = value;
+
+                const degrees =
+                    value * 3.6;
+
+                riskCircle.style.background =
+                    `conic-gradient(
+                        ${
+                            value >= 70
+                                ? "#ff4d67"
+                                : value >= 50
+                                ? "#ffad33"
+                                : "#5b5cf0"
+                        }
+                        ${degrees}deg,
+                        #292c46 ${degrees}deg
+                    )`;
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+
+            requestAnimationFrame(update);
+
+            if (target < 50) {
+                decision.className =
+                    "decision safe";
+
+                decision.textContent =
+                    target === 0
+                        ? "Ready for secure analysis"
+                        : "Low risk • Payment can proceed";
+            }
+            else if (target < 70) {
+                decision.className =
+                    "decision warning";
+
+                decision.textContent =
+                    "Alert • Security verification required";
+            }
+            else {
+                decision.className =
+                    "decision warning";
+
+                decision.textContent =
+                    "High risk • Payment may be blocked";
+            }
+        }
+
+        // ==================================================
+        // EVENT LISTENERS
+        // ==================================================
+
+        document
+            .querySelectorAll(".toggle input")
+            .forEach(checkbox => {
+                checkbox.addEventListener(
+                    "change",
+                    previewRisk
+                );
+            });
+
+        payer.addEventListener(
+            "change",
+            async () => {
+                await loadUserBalance(
+                    payer.value
+                );
+
+                previewRisk();
+            }
+        );
+
+        amount.addEventListener(
+            "input",
+            updateProjectedBalance
+        );
+
+        // ==================================================
+        // PROCESSING MODAL
+        // ==================================================
+
+        function showProcessing() {
+            overlay.classList.add("show");
+
+            modal.innerHTML = `
+                <div class="processing">
+                    <div class="brain">✨</div>
+
+                    <h2 style="margin-top:22px;">
+                        SecureFlow is analyzing
+                    </h2>
+
+                    <p>
+                        Evaluating behavioural signals,
+                        transaction history and security context
+                        <span class="dots">
+                            <span>.</span>
+                            <span>.</span>
+                            <span>.</span>
+                        </span>
+                    </p>
+                </div>
+            `;
+        }
+
+        // ==================================================
+        // START PAYMENT
+        // ==================================================
+
+        async function startPayment() {
+            const selectedAmount =
+                Number(amount.value);
+
+            if (
+                !selectedAmount ||
+                selectedAmount <= 0
+            ) {
+                toast(
+                    "Enter a valid payment amount"
+                );
+
+                amount.focus();
+                return;
+            }
+
+            if (
+                !payer.value ||
+                !recipient.value
+            ) {
+                toast(
+                    "Select payer and recipient"
+                );
+                return;
+            }
+
+            if (
+                selectedAmount >
+                currentBalance
+            ) {
+                toast(
+                    "Insufficient bank balance"
+                );
+                return;
+            }
+
+            payBtn.disabled = true;
+
+            showProcessing();
+
+            try {
+                const response =
+                    await fetch(
+                        `${API}/transaction`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    user_id:
+                                        payer.value,
+
+                                    recipient_upi_id:
+                                        recipient.value,
+
+                                    amount:
+                                        selectedAmount,
+
+                                    ...getSignals()
+                                })
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.detail ||
+                        "Transaction failed"
+                    );
+                }
+
+                currentTransactionId =
+                    data.transaction_id;
+
+                const riskScore =
+                    Number(
+                        data.risk_score || 0
+                    );
+
+                animateRisk(riskScore);
+
+                // Backend is authoritative.
+                // Always update the balance returned by backend.
+                if (
+                    data.current_bank_balance !==
+                    undefined
+                ) {
+                    updateBalanceDisplay(
+                        data.current_bank_balance,
+                        "Updated from transaction result"
+                    );
+                }
+
+                const decisionValue =
+                    String(
+                        data.risk_decision ||
+                        data.decision ||
+                        ""
+                    ).toUpperCase();
+
+                const statusValue =
+                    String(
+                        data.transaction_status ||
+                        data.status ||
+                        ""
+                    ).toUpperCase();
+
+                // ==================================================
+                // BLOCK
+                // ==================================================
+
+                if (
+                    decisionValue === "BLOCK" ||
+                    statusValue === "BLOCKED"
+                ) {
+                    setTimeout(() => {
+                        showResult(
+                            false,
+                            data.message ||
+                            "Payment blocked by SecureFlow AI.",
+                            data
+                        );
+                    }, 650);
+
+                    return;
+                }
+
+                // ==================================================
+                // ALLOW
+                // ==================================================
+
+                if (
+                    decisionValue === "ALLOW" &&
+                    statusValue === "SUCCESS"
+                ) {
+                    setTimeout(() => {
+                        showResult(
+                            true,
+                            data.message ||
+                            "Payment successful.",
+                            data
+                        );
+                    }, 650);
+
+                    return;
+                }
+
+                // ==================================================
+                // ALERT / HELD
+                // ==================================================
+
+                if (
+                    decisionValue === "ALERT" ||
+                    statusValue === "HELD" ||
+                    statusValue === "PENDING"
+                ) {
+                    setTimeout(() => {
+                        showVerification(data);
+                    }, 700);
+
+                    return;
+                }
+
+                // Fallback: respect backend's success flag.
+                if (data.success === true) {
+                    setTimeout(() => {
+                        showResult(
+                            true,
+                            data.message ||
+                            "Payment successful.",
+                            data
+                        );
+                    }, 650);
+                }
+                else {
+                    setTimeout(() => {
+                        showResult(
+                            false,
+                            data.message ||
+                            "Payment could not be completed.",
+                            data
+                        );
+                    }, 650);
+                }
+            }
+            catch (error) {
+                overlay.classList.remove("show");
+
+                toast(error.message);
+
+                console.error(error);
+
+                payBtn.disabled = false;
+            }
+        }
+
+        // ==================================================
+        // SHOW VERIFICATION
+        // ==================================================
+
+        function showVerification(data) {
+            currentVerification =
+                data.verification || null;
+
+            const verification =
+                data.verification || {};
+
+            modal.innerHTML = `
+                <div class="modal-icon">
+                    🛡️
+                </div>
+
+                <h2>
+                    Payment temporarily held
+                </h2>
+
+                <p class="modal-subtitle">
+                    SecureFlow detected unusual
+                    behavioural activity.
+                    Your payment has not been completed.
+                    Complete the security verification
+                    to continue.
+                </p>
+
+                <div class="question-box">
+                    <div class="question-label">
+                        ✨ SecureFlow AI
+                    </div>
+
+                    <div class="question-text">
+                        ${escapeHtml(
+                            verification.question ||
+                            data.question ||
+                            "Please verify this payment."
+                        )}
+                    </div>
+                </div>
+
+                <input
+                    id="answer"
+                    class="answer-input"
+                    type="text"
+                    placeholder="Enter your answer"
+                    autocomplete="off"
+                >
+
+                <button
+                    class="verify-btn"
+                    onclick="submitAnswer()"
+                >
+                    Verify & Continue
+                </button>
+
+                <button
+                    class="cancel-btn"
+                    onclick="cancelHeldPayment()"
+                >
+                    Cancel payment
+                </button>
+            `;
+
+            const answer =
+                document.getElementById("answer");
+
+            answer.focus();
+
+            answer.addEventListener(
+                "keydown",
+                event => {
+                    if (event.key === "Enter") {
+                        submitAnswer();
+                    }
+                }
+            );
+        }
+
+        // ==================================================
+        // VERIFY HELD PAYMENT
+        // ==================================================
+
+        async function submitAnswer() {
+            const answerElement =
+                document.getElementById("answer");
+
+            if (!answerElement) {
+                return;
+            }
+
+            const answer =
+                answerElement.value.trim();
+
+            if (!answer) {
+                toast(
+                    "Please answer the security question"
+                );
+
+                answerElement.focus();
+                return;
+            }
+
+            const button =
+                document.querySelector(
+                    ".verify-btn"
+                );
+
+            if (button) {
+                button.disabled = true;
+                button.textContent =
+                    "Verifying...";
+            }
+
+            try {
+                const response =
+                    await fetch(
+                        `${API}/verify`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    transaction_id:
+                                        currentTransactionId,
+
+                                    answer:
+                                        answer
+                                })
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.detail ||
+                        "Verification failed"
+                    );
+                }
+
+                // Backend may return the final balance
+                // after successful verification.
+                if (
+                    data.current_bank_balance !==
+                    undefined
+                ) {
+                    updateBalanceDisplay(
+                        data.current_bank_balance,
+                        "Final live balance"
+                    );
+                }
+                else {
+                    await loadUserBalance(
+                        payer.value
+                    );
+                }
+
+                const verified =
+                    data.verified === true ||
+                    data.success === true;
+
+                showResult(
+                    verified,
+                    data.message ||
+                    (
+                        verified
+                            ? "Payment verified and completed."
+                            : "Verification failed. Payment was not completed."
+                    ),
+                    data
+                );
+            }
+            catch (error) {
+                toast(error.message);
+
+                if (button) {
+                    button.disabled = false;
+                    button.textContent =
+                        "Verify & Continue";
+                }
+
+                console.error(error);
+            }
+        }
+
+        // ==================================================
+        // CANCEL HELD PAYMENT
+        // ==================================================
+
+        async function cancelHeldPayment() {
+            try {
+                // If your backend provides a cancellation
+                // endpoint, use it.
+                const response =
+                    await fetch(
+                        `${API}/transaction/${encodeURIComponent(
+                            currentTransactionId
+                        )}/cancel`,
+                        {
+                            method: "POST"
+                        }
+                    );
+
+                // A missing optional cancel endpoint should
+                // not break the UI.
+                if (response.ok) {
+                    const data =
+                        await response.json();
+
+                    await loadUserBalance(
+                        payer.value
+                    );
+
+                    showResult(
+                        false,
+                        data.message ||
+                        "Payment cancelled.",
+                        {
+                            transaction_id:
+                                currentTransactionId
+                        }
+                    );
+
+                    return;
+                }
+            }
+            catch (error) {
+                console.warn(
+                    "Optional cancel endpoint unavailable:",
+                    error
+                );
+            }
+
+            // UI fallback.
+            showResult(
+                false,
+                "Payment cancelled by user. No money was deducted.",
+                {
+                    transaction_id:
+                        currentTransactionId
+                }
+            );
+        }
+
+        // ==================================================
+        // RESULT
+        // ==================================================
+
+        function showResult(
+            success,
+            message,
+            data = {}
+        ) {
+            overlay.classList.add("show");
+
+            const finalBalance =
+                data.current_bank_balance ??
+                data.final_balance ??
+                null;
+
+            const transactionId =
+                data.transaction_id ||
+                currentTransactionId ||
+                "";
+
+            const status =
+                String(
+                    data.transaction_status ||
+                    data.status ||
+                    ""
+                ).toUpperCase();
+
+            const risk =
+                data.risk_score !== undefined
+                    ? Number(data.risk_score)
+                    : null;
+
+            const balanceText =
+                finalBalance !== null
+                    ? money(finalBalance)
+                    : money(currentBalance);
+
+            modal.innerHTML = `
+                <div class="result-screen">
+
+                    <div class="
+                        result-icon
+                        ${success ? "success" : "failed"}
+                    ">
+                        ${success ? "✓" : "✕"}
+                    </div>
+
+                    <h2>
+                        ${
+                            success
+                                ? "Payment Successful"
+                                : (
+                                    status === "BLOCKED"
+                                        ? "Payment Blocked"
+                                        : "Payment Cancelled"
+                                )
+                        }
+                    </h2>
+
+                    <p>
+                        ${escapeHtml(message)}
+                    </p>
+
+                    <div class="question-box"
+                         style="margin-top:18px;">
+
+                        <div class="question-label">
+                            Transaction Summary
+                        </div>
+
+                        <div style="
+                            margin-top:8px;
+                            line-height:1.8;
+                            font-size:14px;
+                        ">
+
+                            <div>
+                                Transaction ID:
+                                <strong>
+                                    ${escapeHtml(transactionId)}
+                                </strong>
+                            </div>
+
+                            ${
+                                risk !== null
+                                    ? `
+                                        <div>
+                                            Risk Score:
+                                            <strong>
+                                                ${risk}/100
+                                            </strong>
+                                        </div>
+                                      `
+                                    : ""
+                            }
+
+                            <div>
+                                Final Bank Balance:
+                                <strong>
+                                    ${balanceText}
+                                </strong>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <button
+                        class="done-btn"
+                        onclick="closeResult()"
+                    >
+                        Done
+                    </button>
+                </div>
+            `;
+
+            if (finalBalance !== null) {
+                updateBalanceDisplay(
+                    finalBalance,
+                    success
+                        ? "Payment completed • live balance updated"
+                        : "Payment not completed • balance unchanged"
+                );
+            }
+        }
+
+        // ==================================================
+        // CLOSE RESULT
+        // ==================================================
+
+        function closeResult() {
+            overlay.classList.remove("show");
+            resetPage();
+        }
+
+        // ==================================================
+        // RESET
+        // ==================================================
+
+        function resetPage() {
+            overlay.classList.remove("show");
+
+            currentTransactionId = null;
+            currentVerification = null;
+
+            amount.value = "";
+
+            document
+                .querySelectorAll(".toggle input")
+                .forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+
+            animateRisk(0);
+
+            decision.className =
+                "decision safe";
+
+            decision.textContent =
+                "Ready for secure analysis";
+
+            payBtn.disabled = false;
+
+            updateProjectedBalance();
+
+            loadUserBalance(
+                payer.value
+            );
+        }
+
+        // ==================================================
+        // INITIALIZE
+        // ==================================================
+
+        async function initialize() {
+            await Promise.all([
+                loadUsers(),
+                loadRecipients()
+            ]);
+
+            previewRisk();
+            updateProjectedBalance();
+        }
+
+        initialize();
+    </script>
+
+
+</body>
+
+</html>
