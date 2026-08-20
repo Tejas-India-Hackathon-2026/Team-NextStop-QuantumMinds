@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Notifications</title>
+<title>SecureFlow-AI | Access Control</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -18,22 +18,19 @@
 <header class="header">
 
 <div>
-<h1>Notification Center</h1>
-<p>System and security notifications</p>
+<h1>Access Control</h1>
+<p>Admin and security permissions</p>
 </div>
 
-<div class="avatar">N</div>
+<div class="avatar">AC</div>
 
 </header>
 
 <section class="panel factors">
 
 <div class="panel-title">
-
-<h2>Recent Notifications</h2>
-
-<p>Important SecureFlow-AI events</p>
-
+<h2>System Access</h2>
+<p>Authorized SecureFlow-AI users</p>
 </div>
 
 <table>
@@ -41,10 +38,11 @@
 <thead>
 
 <tr>
-<th>Time</th>
-<th>Notification</th>
-<th>Category</th>
-<th>Priority</th>
+<th>User</th>
+<th>Role</th>
+<th>Dashboard</th>
+<th>Transactions</th>
+<th>Reports</th>
 <th>Status</th>
 </tr>
 
@@ -53,27 +51,30 @@
 <tbody>
 
 <tr>
-<td>12:45 PM</td>
-<td>High-risk transaction blocked</td>
-<td>Fraud</td>
-<td>Critical</td>
-<td><span class="badge high">NEW</span></td>
+<td>Admin</td>
+<td>Administrator</td>
+<td>Full</td>
+<td>Full</td>
+<td>Full</td>
+<td><span class="badge safe">ACTIVE</span></td>
 </tr>
 
 <tr>
-<td>12:40 PM</td>
-<td>Transaction requires review</td>
-<td>Security</td>
-<td>Medium</td>
-<td><span class="badge review">NEW</span></td>
+<td>Analyst</td>
+<td>Security Analyst</td>
+<td>View</td>
+<td>Review</td>
+<td>View</td>
+<td><span class="badge safe">ACTIVE</span></td>
 </tr>
 
 <tr>
-<td>12:30 PM</td>
-<td>Database backup completed</td>
-<td>System</td>
-<td>Low</td>
-<td><span class="badge safe">READ</span></td>
+<td>Viewer</td>
+<td>Read Only</td>
+<td>View</td>
+<td>View</td>
+<td>View</td>
+<td><span class="badge review">LIMITED</span></td>
 </tr>
 
 </tbody>
