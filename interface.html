@@ -2,45 +2,65 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CyberShield AI</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Secure UPI</title>
 
 <style>
+
 body{
     margin:0;
-    background:#000;
-    color:#00ff88;
-    font-family:monospace;
+    background:#f1f5f9;
+    font-family:Arial;
 }
 
-header{
+.phone{
+    width:390px;
+    max-width:94%;
+    margin:30px auto;
+    background:white;
+    min-height:700px;
+    border-radius:30px;
     padding:25px;
-    border-bottom:1px solid #00ff88;
+    box-shadow:0 10px 30px #aaa;
+}
+
+.logo{
     text-align:center;
+    color:#673ab7;
+    font-size:28px;
+    font-weight:bold;
 }
 
-.dashboard{
-    width:900px;
-    max-width:90%;
-    margin:40px auto;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
+.recipient{
+    text-align:center;
+    margin:30px 0;
 }
 
-.panel{
-    border:1px solid #00ff88;
-    padding:25px;
-    background:#03140c;
-    box-shadow:0 0 20px rgba(0,255,100,.2);
+.avatar{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    background:#673ab7;
+    color:white;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
 }
 
-input[type=number]{
+.amount input{
     width:100%;
+    border:0;
+    text-align:center;
+    font-size:40px;
+    outline:none;
+}
+
+.security{
+    background:#f8fafc;
     padding:15px;
-    background:#000;
-    color:#00ff88;
-    border:1px solid #00ff88;
-    margin:15px 0;
+    border-radius:15px;
 }
 
 label{
@@ -50,72 +70,69 @@ label{
 
 button{
     width:100%;
-    padding:15px;
-    background:#00ff88;
-    color:#000;
-    font-weight:bold;
+    padding:17px;
     border:0;
-    cursor:pointer;
+    border-radius:12px;
+    background:#673ab7;
+    color:white;
+    font-size:17px;
+    margin-top:20px;
 }
 
-.score{
-    font-size:70px;
-    text-align:center;
+#result{
+    margin-top:20px;
+    padding:15px;
+    background:#f3e8ff;
+    border-radius:12px;
 }
+
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>⚡ CYBERSHIELD AI</h1>
-<p>UPI FRAUD DETECTION TERMINAL</p>
-</header>
+<div class="phone">
 
-<div class="dashboard">
+<div class="logo">SecureFlow</div>
 
-<div class="panel">
+<div class="recipient">
 
-<h2>> TRANSACTION_INPUT</h2>
+<div class="avatar">R</div>
 
-<input id="amount" type="number" placeholder="AMOUNT">
+<h3>UPI Payment</h3>
 
-<label><input id="unusual_time" type="checkbox"> TIME_ANOMALY</label>
-<label><input id="unusual_frequency" type="checkbox"> FREQUENCY_ANOMALY</label>
-<label><input id="new_device" type="checkbox"> NEW_DEVICE</label>
-<label><input id="unusual_location" type="checkbox"> LOCATION_ANOMALY</label>
-<label><input id="sudden_location_change" type="checkbox"> LOCATION_CHANGE</label>
-<label><input id="unknown_beneficiary" type="checkbox"> UNKNOWN_RECIPIENT</label>
-<label><input id="no_previous_transactions" type="checkbox"> FIRST_TRANSACTION</label>
-<label><input id="unusual_beneficiary_amount" type="checkbox"> AMOUNT_ANOMALY</label>
-
-<button onclick="scan()">[ RUN SECURITY SCAN ]</button>
+<p>Secure Transaction Check</p>
 
 </div>
 
-<div class="panel">
+<div class="amount">
 
-<h2>> SYSTEM_RESULT</h2>
-
-<div class="score" id="score">0</div>
-
-<h2 id="decision">SYSTEM READY</h2>
-
-<p>THREATS:</p>
-
-<ul id="reasons"></ul>
-
-<p>AI_QUERY:</p>
-
-<ul id="questions"></ul>
+<input id="amount" type="number" placeholder="₹0">
 
 </div>
+
+<div class="security">
+
+<label><input id="unusual_time" type="checkbox"> Unusual Time</label>
+<label><input id="unusual_frequency" type="checkbox"> Frequent Payment</label>
+<label><input id="new_device" type="checkbox"> New Device</label>
+<label><input id="unusual_location" type="checkbox"> New Location</label>
+<label><input id="sudden_location_change" type="checkbox"> Travel Detected</label>
+<label><input id="unknown_beneficiary" type="checkbox"> Unknown Recipient</label>
+<label><input id="no_previous_transactions" type="checkbox"> First Payment</label>
+<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
+
+</div>
+
+<button onclick="verify()">VERIFY & PAY</button>
+
+<div id="result">Waiting for verification...</div>
 
 </div>
 
 <script>
 
-async function scan(){
+async function verify(){
 
 const ids=[
 "unusual_time",
@@ -136,7 +153,7 @@ ids.forEach(id=>{
 data[id]=document.getElementById(id).checked;
 });
 
-const r=await fetch(
+const response=await fetch(
 "http://127.0.0.1:8000/transaction",
 {
 method:"POST",
@@ -144,17 +161,13 @@ headers:{"Content-Type":"application/json"},
 body:JSON.stringify(data)
 });
 
-const result=await r.json();
+const r=await response.json();
 
-document.getElementById("score").innerText=result.risk_score;
-document.getElementById("decision").innerText=
-"DECISION: "+result.decision;
-
-document.getElementById("reasons").innerHTML=
-result.reasons.map(x=>`<li>${x}</li>`).join("");
-
-document.getElementById("questions").innerHTML=
-result.ai_questions.map(x=>`<li>${x}</li>`).join("");
+document.getElementById("result").innerHTML=`
+<h2>${r.decision}</h2>
+<p>Risk Score: ${r.risk_score}</p>
+<ul>${r.reasons.map(x=>`<li>${x}</li>`).join("")}</ul>
+`;
 
 }
 
