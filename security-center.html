@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Location Monitor</title>
+<title>SecureFlow-AI | Transaction Analysis</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -18,45 +18,23 @@
 <header class="header">
 
 <div>
-<h1>Location Monitor</h1>
-<p>Detection of unusual transaction locations</p>
+<h1>Transaction Analysis</h1>
+<p>Detailed AI analysis of UPI transactions</p>
 </div>
 
-<div class="avatar">L</div>
+<div class="avatar">TA</div>
 
 </header>
-
-
-<section class="stats">
-
-<div class="stat">
-<div class="stat-title">LOCATIONS</div>
-<div class="stat-number blue">18</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">NORMAL</div>
-<div class="stat-number green">14</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">ANOMALIES</div>
-<div class="stat-number red">04</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">MONITORING</div>
-<div class="stat-number green">ON</div>
-</div>
-
-</section>
 
 
 <section class="panel factors">
 
 <div class="panel-title">
-<h2>Location Activity</h2>
-<p>Transaction locations analyzed by AI</p>
+
+<h2>Transaction Risk Factors</h2>
+
+<p>Signals contributing to transaction risk</p>
+
 </div>
 
 
@@ -65,12 +43,12 @@
 <thead>
 
 <tr>
-<th>User</th>
-<th>Normal Location</th>
-<th>Current Location</th>
-<th>Risk Score</th>
-<th>Detection</th>
-<th>Status</th>
+<th>Transaction</th>
+<th>Amount</th>
+<th>Amount Risk</th>
+<th>Recipient Risk</th>
+<th>Behaviour Risk</th>
+<th>Final Score</th>
 </tr>
 
 </thead>
@@ -79,36 +57,30 @@
 <tbody>
 
 <tr>
-<td>Rahul Sharma</td>
-<td>Kolkata</td>
-<td>Kolkata</td>
-<td>08</td>
-<td>Normal</td>
-<td>
-<span class="badge safe">SAFE</span>
-</td>
+<td>TXN1001</td>
+<td>₹2,500</td>
+<td>05</td>
+<td>02</td>
+<td>05</td>
+<td>12</td>
 </tr>
 
 <tr>
-<td>Rohan Gupta</td>
-<td>Kolkata</td>
-<td>Delhi</td>
+<td>TXN1004</td>
+<td>₹18,500</td>
+<td>31</td>
+<td>15</td>
+<td>21</td>
 <td>67</td>
-<td>Location Change</td>
-<td>
-<span class="badge review">REVIEW</span>
-</td>
 </tr>
 
 <tr>
-<td>Amit Kumar</td>
-<td>Kolkata</td>
-<td>Mumbai</td>
-<td>91</td>
-<td>Major Anomaly</td>
-<td>
-<span class="badge high">BLOCKED</span>
-</td>
+<td>TXN1006</td>
+<td>₹75,000</td>
+<td>38</td>
+<td>29</td>
+<td>29</td>
+<td>96</td>
 </tr>
 
 </tbody>
