@@ -1,46 +1,87 @@
-import sqlite3
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
-DATABASE_NAME = "transactions.db"
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
-def get_connection():
-
-    connection = sqlite3.connect(
-        DATABASE_NAME,
-        check_same_thread=False
-    )
-
-    return connection
+class Transaction(BaseModel):
+    amount: float
+    new_device: bool
+    new_recipient: bool
+    location_change: bool
 
 
-def create_tables():
+@app.get("/")
+def home():
+    return {"message": "SecureFlow-AI is running"}
 
-    connection = get_connection()
 
-    cursor = connection.cursor()
+@app.post("/transaction")
+def transaction(tx: Transaction):
 
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS transactions (
+    risk = 0
+    reasons = []
 
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+    if tx.amount > 10000:
+        risk += 20
+        reasons.append("High amount")
 
-            amount REAL NOT NULL,
+    if tx.new_device:
+        risk += 20
+        reasons.append("New device")
 
-            timestamp TEXT,
+    if tx.new_recipient:
+        risk += 15
+        reasons.append("New recipient")
 
-            device TEXT,
+    if tx.location_change:
+        risk += 15
+        reasons.append("Location change")
 
-            location TEXT,
+    if risk <= 30:
+        decision = "ALLOW"
+    elif risk <= 70:
+        decision = "ALERT"
+    else:
+        decision = "BLOCK"
 
-            beneficiary TEXT,
+    ai_questions = []
 
-            risk_score INTEGER,
+    for reason in reasons:
 
-            decision TEXT
+        if reason == "High amount":
+            ai_questions.append(
+                f"Can you confirm the payment of ₹{tx.amount}?"
+            )
 
-        )
-    """)
+        elif reason == "New device":
+            ai_questions.append(
+                "Please verify that this device belongs to you."
+            )
 
-    connection.commit()
+        elif reason == "New recipient":
+            ai_questions.append(
+                "What is your relationship with this recipient?"
+            )
 
-    connection.close()
+        elif reason == "Location change":
+            ai_questions.append(
+                "Can you confirm your current location?"
+            )
+
+    return {
+        "risk_score": risk,
+        "decision": decision,
+        "reasons": reasons,
+        "transaction_delayed": risk >= 50,
+        "ai_questions": ai_questions
+    }
