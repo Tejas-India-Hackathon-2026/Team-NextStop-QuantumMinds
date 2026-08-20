@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | System Monitor</title>
+<title>SecureFlow-AI | Suspicious Activity</title>
 
 <link rel="stylesheet"
 href="style10.css">
@@ -25,12 +25,16 @@ href="style10.css">
 
 <div>
 
-<h1>System Health Monitor</h1>
+<h1>Suspicious Activity Monitor</h1>
 
 <p>
-SecureFlow-AI infrastructure and AI engine status
+Real-time abnormal behaviour detection
 </p>
 
+</div>
+
+<div class="avatar">
+AI
 </div>
 
 </header>
@@ -42,24 +46,11 @@ SecureFlow-AI infrastructure and AI engine status
 <div class="stat">
 
 <div class="stat-title">
-AI ENGINE
+SUSPICIOUS EVENTS
 </div>
 
-<div class="stat-number green">
-ONLINE
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-DATABASE
-</div>
-
-<div class="stat-number green">
-ONLINE
+<div class="stat-number red">
+08
 </div>
 
 </div>
@@ -68,11 +59,11 @@ ONLINE
 <div class="stat">
 
 <div class="stat-title">
-API
+UNKNOWN DEVICES
 </div>
 
-<div class="stat-number green">
-ONLINE
+<div class="stat-number orange">
+03
 </div>
 
 </div>
@@ -81,11 +72,24 @@ ONLINE
 <div class="stat">
 
 <div class="stat-title">
-UPTIME
+NEW RECIPIENTS
 </div>
 
-<div class="stat-number blue">
-99.9%
+<div class="stat-number orange">
+05
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+BLOCKED
+</div>
+
+<div class="stat-number green">
+04
 </div>
 
 </div>
@@ -100,99 +104,88 @@ UPTIME
 <div class="panel-title">
 
 <h2>
-System Components
+Suspicious Events
 </h2>
 
 <p>
-Current operational status
+Live behavioural anomalies
 </p>
 
 </div>
 
 
-<div class="factor-grid">
+<table>
 
 
-<div class="factor">
+<thead>
 
-<h3>
-FastAPI Backend
-</h3>
+<tr>
 
-<p>
-Operational
-</p>
+<th>Time</th>
+<th>User</th>
+<th>Event</th>
+<th>Risk</th>
+<th>AI Reason</th>
+<th>Status</th>
 
-<div class="progress">
+</tr>
 
-<div style="width:100%"></div>
-
-</div>
-
-</div>
+</thead>
 
 
-<div class="factor">
-
-<h3>
-SQLite Database
-</h3>
-
-<p>
-Connected
-</p>
-
-<div class="progress">
-
-<div style="width:100%"></div>
-
-</div>
-
-</div>
+<tbody>
 
 
-<div class="factor">
+<tr>
 
-<h3>
-Fraud Engine
-</h3>
+<td>12:45</td>
+<td>Amit Kumar</td>
+<td>Payment</td>
+<td>91</td>
+<td>Unknown Recipient</td>
 
-<p>
-Monitoring
-</p>
+<td>
+<span class="badge high">BLOCKED</span>
+</td>
 
-<div class="progress">
-
-<div style="width:98%"></div>
-
-</div>
-
-</div>
+</tr>
 
 
-<div class="factor">
+<tr>
 
-<h3>
-Alert System
-</h3>
+<td>12:42</td>
+<td>Rohan Gupta</td>
+<td>Payment</td>
+<td>67</td>
+<td>Rapid Transactions</td>
 
-<p>
-Operational
-</p>
+<td>
+<span class="badge review">REVIEW</span>
+</td>
 
-<div class="progress">
-
-<div style="width:99%"></div>
-
-</div>
-
-</div>
+</tr>
 
 
-</div>
+<tr>
+
+<td>12:39</td>
+<td>Priya Das</td>
+<td>Login</td>
+<td>72</td>
+<td>New Device</td>
+
+<td>
+<span class="badge review">REVIEW</span>
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
 
 </section>
-
 
 </main>
 
