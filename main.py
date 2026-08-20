@@ -1,19 +1,46 @@
-cursor.execute(
+import sqlite3
 
-"""
+DATABASE_NAME = "transactions.db"
 
-SELECT AVG(amount)
 
-FROM transactions
+def get_connection():
 
-"""
+    connection = sqlite3.connect(
+        DATABASE_NAME,
+        check_same_thread=False
+    )
 
-)
+    return connection
 
-average = cursor.fetchone()[0]
 
-if average:
+def create_tables():
 
-    if tx.amount > average * 2:
+    connection = get_connection()
 
-        risk += 10
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS transactions (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            amount REAL NOT NULL,
+
+            timestamp TEXT,
+
+            device TEXT,
+
+            location TEXT,
+
+            beneficiary TEXT,
+
+            risk_score INTEGER,
+
+            decision TEXT
+
+        )
+    """)
+
+    connection.commit()
+
+    connection.close()
