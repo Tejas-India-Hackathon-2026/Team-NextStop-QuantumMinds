@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Amount Analysis</title>
+<title>SecureFlow-AI | Behaviour Analysis</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -18,92 +18,58 @@
 <header class="header">
 
 <div>
-<h1>Amount Analysis</h1>
-<p>Detection of unusual payment amounts</p>
+<h1>Behaviour Analysis</h1>
+<p>AI-powered analysis of user transaction behaviour</p>
 </div>
 
-<div class="avatar">₹</div>
+<div class="avatar">BA</div>
 
 </header>
-
-<section class="stats">
-
-<div class="stat">
-<div class="stat-title">TOTAL VALUE</div>
-<div class="stat-number blue">₹8.4L</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">AVERAGE</div>
-<div class="stat-number green">₹21K</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">UNUSUAL</div>
-<div class="stat-number red">08</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">NORMAL</div>
-<div class="stat-number green">32</div>
-</div>
-
-</section>
 
 <section class="panel factors">
 
 <div class="panel-title">
-<h2>Amount Risk Analysis</h2>
-<p>AI analysis of transaction amounts</p>
+
+<h2>Behavioural Signals</h2>
+<p>Signals used for fraud detection</p>
+
 </div>
 
-<table>
+<div class="factor-grid">
 
-<thead>
+<div class="factor">
+<h3>Transaction Frequency</h3>
+<p>Measures unusual payment frequency.</p>
+<div class="progress">
+<div style="width:82%"></div>
+</div>
+</div>
 
-<tr>
-<th>Transaction</th>
-<th>Amount</th>
-<th>User Average</th>
-<th>Deviation</th>
-<th>Risk</th>
-<th>Result</th>
-</tr>
+<div class="factor">
+<h3>Amount Deviation</h3>
+<p>Compares payment amount with historical behaviour.</p>
+<div class="progress">
+<div style="width:91%"></div>
+</div>
+</div>
 
-</thead>
+<div class="factor">
+<h3>Recipient Behaviour</h3>
+<p>Checks whether recipients are familiar.</p>
+<div class="progress">
+<div style="width:76%"></div>
+</div>
+</div>
 
-<tbody>
+<div class="factor">
+<h3>Device Behaviour</h3>
+<p>Checks device changes and unusual access.</p>
+<div class="progress">
+<div style="width:68%"></div>
+</div>
+</div>
 
-<tr>
-<td>TXN1001</td>
-<td>₹2,500</td>
-<td>₹2,800</td>
-<td>Low</td>
-<td>12</td>
-<td><span class="badge safe">NORMAL</span></td>
-</tr>
-
-<tr>
-<td>TXN1004</td>
-<td>₹18,500</td>
-<td>₹7,500</td>
-<td>High</td>
-<td>67</td>
-<td><span class="badge review">ALERT</span></td>
-</tr>
-
-<tr>
-<td>TXN1006</td>
-<td>₹75,000</td>
-<td>₹9,000</td>
-<td>Extreme</td>
-<td>96</td>
-<td><span class="badge high">BLOCKED</span></td>
-</tr>
-
-</tbody>
-
-</table>
+</div>
 
 </section>
 
