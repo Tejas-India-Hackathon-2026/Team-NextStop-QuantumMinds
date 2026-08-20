@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureFlow-AI | Payment Monitor</title>
+
+    <title>SecureFlow-AI | AI Engine</title>
+
     <link rel="stylesheet" href="style10.css">
 </head>
 
@@ -14,34 +16,34 @@
 <header class="header">
 
     <div>
-        <h1>Payment Monitor</h1>
-        <p>UPI payment activity and security decisions</p>
+        <h1>AI Fraud Engine</h1>
+        <p>Artificial intelligence decision engine</p>
     </div>
 
-    <div class="avatar">₹</div>
+    <div class="avatar">AI</div>
 
 </header>
 
 <section class="stats">
 
     <div class="stat">
-        <div class="stat-title">PAYMENTS</div>
+        <div class="stat-title">ENGINE</div>
+        <div class="stat-number green">ON</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-title">ANALYZED</div>
         <div class="stat-number blue">40</div>
     </div>
 
     <div class="stat">
-        <div class="stat-title">ALLOWED</div>
-        <div class="stat-number green">18</div>
+        <div class="stat-title">DETECTED</div>
+        <div class="stat-number red">07</div>
     </div>
 
     <div class="stat">
-        <div class="stat-title">ALERTS</div>
-        <div class="stat-number orange">12</div>
-    </div>
-
-    <div class="stat">
-        <div class="stat-title">BLOCKED</div>
-        <div class="stat-number red">10</div>
+        <div class="stat-title">ACCURACY</div>
+        <div class="stat-number green">94%</div>
     </div>
 
 </section>
@@ -49,61 +51,50 @@
 <section class="panel factors">
 
     <div class="panel-title">
-        <h2>Payment Decisions</h2>
-        <p>AI decisions for recent UPI payments</p>
+
+        <h2>AI Processing Modules</h2>
+
+        <p>
+            Behavioural fraud detection components
+        </p>
+
     </div>
 
-    <table>
+    <div class="factor-grid">
 
-        <thead>
-            <tr>
-                <th>Transaction</th>
-                <th>Sender</th>
-                <th>Recipient</th>
-                <th>Amount</th>
-                <th>Risk</th>
-                <th>Decision</th>
-            </tr>
-        </thead>
+        <div class="factor">
+            <h3>Behaviour Analysis</h3>
+            <p>Analyzing historical transaction behaviour.</p>
+            <div class="progress">
+                <div style="width:92%"></div>
+            </div>
+        </div>
 
-        <tbody>
+        <div class="factor">
+            <h3>Risk Scoring</h3>
+            <p>Calculating transaction risk scores.</p>
+            <div class="progress">
+                <div style="width:95%"></div>
+            </div>
+        </div>
 
-            <tr>
-                <td>TXN1001</td>
-                <td>Rahul Sharma</td>
-                <td>Priya Singh</td>
-                <td>₹2,500</td>
-                <td>12</td>
-                <td>
-                    <span class="badge safe">ALLOW</span>
-                </td>
-            </tr>
+        <div class="factor">
+            <h3>Anomaly Detection</h3>
+            <p>Detecting unusual payment patterns.</p>
+            <div class="progress">
+                <div style="width:88%"></div>
+            </div>
+        </div>
 
-            <tr>
-                <td>TXN1004</td>
-                <td>Rohan Gupta</td>
-                <td>Merchant XYZ</td>
-                <td>₹18,500</td>
-                <td>67</td>
-                <td>
-                    <span class="badge review">ALERT</span>
-                </td>
-            </tr>
+        <div class="factor">
+            <h3>Decision Engine</h3>
+            <p>Generating Allow, Alert or Block decisions.</p>
+            <div class="progress">
+                <div style="width:97%"></div>
+            </div>
+        </div>
 
-            <tr>
-                <td>TXN1006</td>
-                <td>Vikash Das</td>
-                <td>Unknown Account</td>
-                <td>₹75,000</td>
-                <td>96</td>
-                <td>
-                    <span class="badge high">BLOCK</span>
-                </td>
-            </tr>
-
-        </tbody>
-
-    </table>
+    </div>
 
 </section>
 
