@@ -1,20 +1,20 @@
 # =========================================================
-# BACKEND 12
-# TRANSACTION STATISTICS API
+# BACKEND 14
+# FRAUD PATTERN DETECTION
 # =========================================================
 
-@app.get("/api/statistics/{user_id}")
-def transaction_statistics(user_id: str):
+@app.get("/api/fraud-patterns/{user_id}")
+def detect_fraud_patterns(user_id: str):
 
     db = get_db()
 
-    # ---------------------------------------------
-    # Check user
-    # ---------------------------------------------
+    # -----------------------------------------------------
+    # CHECK USER
+    # -----------------------------------------------------
 
     user = db.execute(
         """
-        SELECT user_id
+        SELECT *
         FROM users
         WHERE user_id = ?
         """,
@@ -30,133 +30,310 @@ def transaction_statistics(user_id: str):
             detail="User not found"
         )
 
-    # ---------------------------------------------
-    # Total transactions
-    # ---------------------------------------------
 
-    total = db.execute(
+    # -----------------------------------------------------
+    # GET RECENT TRANSACTIONS
+    # -----------------------------------------------------
+
+    transactions = db.execute(
         """
-        SELECT COUNT(*) AS count
+        SELECT *
         FROM transactions
         WHERE user_id = ?
+        ORDER BY id DESC
+        LIMIT 10
         """,
         (user_id,)
-    ).fetchone()["count"]
+    ).fetchall()
 
-    # ---------------------------------------------
-    # Total transaction amount
-    # ---------------------------------------------
-
-    total_amount = db.execute(
-        """
-        SELECT COALESCE(SUM(amount), 0) AS amount
-        FROM transactions
-        WHERE user_id = ?
-        """,
-        (user_id,)
-    ).fetchone()["amount"]
-
-    # ---------------------------------------------
-    # Average transaction
-    # ---------------------------------------------
-
-    average_amount = db.execute(
-        """
-        SELECT COALESCE(AVG(amount), 0) AS amount
-        FROM transactions
-        WHERE user_id = ?
-        """,
-        (user_id,)
-    ).fetchone()["amount"]
-
-    # ---------------------------------------------
-    # Allowed
-    # ---------------------------------------------
-
-    allowed = db.execute(
-        """
-        SELECT COUNT(*) AS count
-        FROM transactions
-        WHERE user_id = ?
-        AND decision = 'ALLOW'
-        """,
-        (user_id,)
-    ).fetchone()["count"]
-
-    # ---------------------------------------------
-    # Alerts
-    # ---------------------------------------------
-
-    alert_count = db.execute(
-        """
-        SELECT COUNT(*) AS count
-        FROM transactions
-        WHERE user_id = ?
-        AND decision = 'ALERT'
-        """,
-        (user_id,)
-    ).fetchone()["count"]
-
-    # ---------------------------------------------
-    # Blocked
-    # ---------------------------------------------
-
-    blocked = db.execute(
-        """
-        SELECT COUNT(*) AS count
-        FROM transactions
-        WHERE user_id = ?
-        AND decision = 'BLOCK'
-        """,
-        (user_id,)
-    ).fetchone()["count"]
-
-    # ---------------------------------------------
-    # High-risk transactions
-    # ---------------------------------------------
-
-    high_risk = db.execute(
-        """
-        SELECT COUNT(*) AS count
-        FROM transactions
-        WHERE user_id = ?
-        AND risk_level = 'HIGH'
-        """,
-        (user_id,)
-    ).fetchone()["count"]
-
-    # ---------------------------------------------
-    # Average risk score
-    # ---------------------------------------------
-
-    average_risk = db.execute(
-        """
-        SELECT COALESCE(AVG(risk_score), 0) AS score
-        FROM transactions
-        WHERE user_id = ?
-        """,
-        (user_id,)
-    ).fetchone()["score"]
 
     db.close()
 
-    # ---------------------------------------------
-    # Fraud rate
-    # ---------------------------------------------
 
-    if total > 0:
+    patterns = []
 
-        fraud_rate = (
-            (alert_count + blocked) / total
-        ) * 100
+
+    # -----------------------------------------------------
+    # NO TRANSACTIONS
+    # -----------------------------------------------------
+
+    if len(transactions) == 0:
+
+        return {
+
+            "success": True,
+
+            "user_id": user_id,
+
+            "fraud_detected": False,
+
+            "risk_level": "LOW",
+
+            "patterns": []
+
+        }
+
+
+    # -----------------------------------------------------
+    # PATTERN 1:
+    # MULTIPLE HIGH-RISK TRANSACTIONS
+    # -----------------------------------------------------
+
+    high_risk_count = 0
+
+    for transaction in transactions:
+
+        if transaction["risk_level"] == "HIGH":
+
+            high_risk_count += 1
+
+
+    if high_risk_count >= 3:
+
+        patterns.append({
+
+            "type":
+                "REPEATED_HIGH_RISK",
+
+            "severity":
+                "HIGH",
+
+            "message":
+                "Multiple high-risk transactions detected."
+
+        })
+
+
+    # -----------------------------------------------------
+    # PATTERN 2:
+    # MULTIPLE BLOCKED TRANSACTIONS
+    # -----------------------------------------------------
+
+    blocked_count = 0
+
+    for transaction in transactions:
+
+        if transaction["decision"] == "BLOCK":
+
+            blocked_count += 1
+
+
+    if blocked_count >= 2:
+
+        patterns.append({
+
+            "type":
+                "REPEATED_BLOCKED",
+
+            "severity":
+                "HIGH",
+
+            "message":
+                "Multiple transactions were blocked recently."
+
+        })
+
+
+    # -----------------------------------------------------
+    # PATTERN 3:
+    # UNUSUALLY HIGH AMOUNTS
+    # -----------------------------------------------------
+
+    average_amount = user["average_amount"]
+
+
+    if average_amount > 0:
+
+        for transaction in transactions:
+
+            if transaction["amount"] >= (
+                average_amount * 5
+            ):
+
+                patterns.append({
+
+                    "type":
+                        "UNUSUAL_AMOUNT",
+
+                    "severity":
+                        "HIGH",
+
+                    "message":
+                        "A transaction is significantly higher than the user's normal amount.",
+
+                    "transaction_id":
+                        transaction["id"],
+
+                    "amount":
+                        transaction["amount"]
+
+                })
+
+                break
+
+
+    # -----------------------------------------------------
+    # PATTERN 4:
+    # UNKNOWN DEVICE
+    # -----------------------------------------------------
+
+    unknown_device_found = False
+
+
+    for transaction in transactions:
+
+        if (
+            transaction["device"]
+            and
+            transaction["device"]
+            != user["known_device"]
+        ):
+
+            unknown_device_found = True
+
+            break
+
+
+    if unknown_device_found:
+
+        patterns.append({
+
+            "type":
+                "UNKNOWN_DEVICE",
+
+            "severity":
+                "MEDIUM",
+
+            "message":
+                "Transactions from an unknown device were detected."
+
+        })
+
+
+    # -----------------------------------------------------
+    # PATTERN 5:
+    # UNUSUAL LOCATION
+    # -----------------------------------------------------
+
+    unusual_location_found = False
+
+
+    for transaction in transactions:
+
+        if (
+            transaction["location"]
+            and
+            transaction["location"]
+            != user["known_location"]
+        ):
+
+            unusual_location_found = True
+
+            break
+
+
+    if unusual_location_found:
+
+        patterns.append({
+
+            "type":
+                "UNUSUAL_LOCATION",
+
+            "severity":
+                "MEDIUM",
+
+            "message":
+                "Transactions from an unusual location were detected."
+
+        })
+
+
+    # -----------------------------------------------------
+    # PATTERN 6:
+    # NEW BENEFICIARY
+    # -----------------------------------------------------
+
+    new_beneficiary_found = False
+
+
+    for transaction in transactions:
+
+        if (
+            transaction["beneficiary"]
+            and
+            transaction["beneficiary"]
+            != user["known_beneficiary"]
+        ):
+
+            new_beneficiary_found = True
+
+            break
+
+
+    if new_beneficiary_found:
+
+        patterns.append({
+
+            "type":
+                "NEW_BENEFICIARY",
+
+            "severity":
+                "MEDIUM",
+
+            "message":
+                "A transaction to a new beneficiary was detected."
+
+        })
+
+
+    # -----------------------------------------------------
+    # DETERMINE OVERALL RISK
+    # -----------------------------------------------------
+
+    high_patterns = 0
+
+    medium_patterns = 0
+
+
+    for pattern in patterns:
+
+        if pattern["severity"] == "HIGH":
+
+            high_patterns += 1
+
+        elif pattern["severity"] == "MEDIUM":
+
+            medium_patterns += 1
+
+
+    if high_patterns >= 1:
+
+        overall_risk = "HIGH"
+
+        fraud_detected = True
+
+    elif medium_patterns >= 2:
+
+        overall_risk = "MEDIUM"
+
+        fraud_detected = True
+
+    elif medium_patterns == 1:
+
+        overall_risk = "MEDIUM"
+
+        fraud_detected = False
 
     else:
 
-        fraud_rate = 0
+        overall_risk = "LOW"
 
-    # ---------------------------------------------
-    # Response
-    # ---------------------------------------------
+        fraud_detected = False
+
+
+    # -----------------------------------------------------
+    # RESPONSE
+    # -----------------------------------------------------
 
     return {
 
@@ -164,35 +341,16 @@ def transaction_statistics(user_id: str):
 
         "user_id": user_id,
 
-        "statistics": {
+        "fraud_detected":
+            fraud_detected,
 
-            "total_transactions":
-                total,
+        "risk_level":
+            overall_risk,
 
-            "total_amount":
-                round(total_amount, 2),
+        "patterns_detected":
+            len(patterns),
 
-            "average_transaction":
-                round(average_amount, 2),
-
-            "allowed":
-                allowed,
-
-            "alerts":
-                alert_count,
-
-            "blocked":
-                blocked,
-
-            "high_risk":
-                high_risk,
-
-            "average_risk_score":
-                round(average_risk, 2),
-
-            "fraud_rate":
-                round(fraud_rate, 2)
-
-        }
+        "patterns":
+            patterns
 
     }
