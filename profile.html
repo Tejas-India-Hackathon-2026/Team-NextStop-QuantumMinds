@@ -2,35 +2,44 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Fraud Decision Center</title>
+<title>Fraud Control Room</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:#0f172a;
-color:white;
+background:#020617;
+color:#e2e8f0;
 }
 
-.container{
-max-width:900px;
-margin:40px auto;
+header{
+background:#111827;
 padding:20px;
+border-bottom:1px solid #334155;
 }
 
-.card{
-background:#1e293b;
-padding:30px;
-border-radius:20px;
+.dashboard{
+max-width:1100px;
+margin:30px auto;
+display:grid;
+grid-template-columns:2fr 1fr;
+gap:20px;
+}
+
+.panel{
+background:#111827;
+border:1px solid #334155;
+padding:25px;
+border-radius:15px;
 }
 
 input[type=number]{
 width:100%;
 padding:15px;
 box-sizing:border-box;
-background:#0f172a;
-border:1px solid #475569;
+background:#020617;
 color:white;
+border:1px solid #475569;
 }
 
 label{
@@ -41,16 +50,24 @@ padding:8px;
 button{
 width:100%;
 padding:15px;
-background:#06b6d4;
-border:0;
+background:#7c3aed;
 color:white;
+border:0;
 border-radius:8px;
+margin-top:15px;
 }
 
-.decision{
+.score{
+font-size:70px;
 text-align:center;
-font-size:45px;
-margin:25px;
+}
+
+.log{
+background:#020617;
+padding:20px;
+margin-top:20px;
+font-family:monospace;
+min-height:150px;
 }
 
 </style>
@@ -58,44 +75,55 @@ margin:25px;
 
 <body>
 
-<div class="container">
+<header>
+<h1>🖥 SecureFlow-AI Fraud Control Room</h1>
+</header>
 
-<div class="card">
+<div class="dashboard">
 
-<h1>⚖ UPI Fraud Decision Center</h1>
+<div class="panel">
 
-<p>SecureFlow-AI automated payment decision system</p>
+<h2>Transaction Input</h2>
 
 <input id="amount" type="number"
-placeholder="Transaction Amount ₹">
+placeholder="UPI Transaction Amount ₹">
 
-<label><input id="unusual_time" type="checkbox"> Time anomaly</label>
-<label><input id="unusual_frequency" type="checkbox"> Frequency anomaly</label>
-<label><input id="new_device" type="checkbox"> Device anomaly</label>
-<label><input id="unusual_location" type="checkbox"> Location anomaly</label>
-<label><input id="sudden_location_change" type="checkbox"> Location movement</label>
-<label><input id="unknown_beneficiary" type="checkbox"> Beneficiary anomaly</label>
-<label><input id="no_previous_transactions" type="checkbox"> Transaction history anomaly</label>
-<label><input id="unusual_beneficiary_amount" type="checkbox"> Amount anomaly</label>
+<label><input id="unusual_time" type="checkbox"> Unusual Time</label>
+<label><input id="unusual_frequency" type="checkbox"> Unusual Frequency</label>
+<label><input id="new_device" type="checkbox"> New Device</label>
+<label><input id="unusual_location" type="checkbox"> Unusual Location</label>
+<label><input id="sudden_location_change" type="checkbox"> Location Change</label>
+<label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label>
+<label><input id="no_previous_transactions" type="checkbox"> No Previous Transactions</label>
+<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
 
-<button onclick="decide()">MAKE AI DECISION</button>
-
-<div class="decision" id="decision">
-WAITING
-</div>
-
-<h2 style="text-align:center" id="score"></h2>
-
-<div id="reasons"></div>
+<button onclick="run()">RUN DETECTION ENGINE</button>
 
 </div>
+
+<div class="panel">
+
+<h2>Risk Monitor</h2>
+
+<div class="score" id="score">0</div>
+
+<h2 id="decision" style="text-align:center">
+SYSTEM READY
+</h2>
+
+<div class="log" id="log">
+Waiting for transaction...
+</div>
+
+</div>
+
 </div>
 
 <script>
 
-async function decide(){
+async function run(){
 
-const ids=[
+let ids=[
 "unusual_time",
 "unusual_frequency",
 "new_device",
@@ -114,26 +142,23 @@ ids.forEach(id=>{
 data[id]=document.getElementById(id).checked;
 });
 
-const response=await fetch(
+let response=await fetch(
 "http://127.0.0.1:8000/transaction",
 {
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
+headers:{"Content-Type":"application/json"},
 body:JSON.stringify(data)
 }
 );
 
-const r=await response.json();
+let r=await response.json();
+
+document.getElementById("score").innerText=r.risk_score;
 
 document.getElementById("decision").innerText=r.decision;
 
-document.getElementById("score").innerText=
-"Risk Score: "+r.risk_score;
-
-document.getElementById("reasons").innerHTML=
-r.reasons.map(x=>`<p>⚠ ${x}</p>`).join("");
+document.getElementById("log").innerHTML=
+r.reasons.map(x=>"⚠ "+x+"<br>").join("");
 }
 
 </script>
