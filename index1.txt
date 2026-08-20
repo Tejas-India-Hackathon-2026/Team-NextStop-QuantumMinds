@@ -2,77 +2,111 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Fraud Analytics</title>
+    <title>Fraud Feedback</title>
 
     <style>
         body {
-            font-family: Arial;
             background: #f4f7fb;
-            padding: 30px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            font-family: Arial;
         }
 
         .box {
+            max-width: 550px;
+            margin: 80px auto;
+            padding: 35px;
             background: white;
-            padding: 25px;
-            border-radius: 12px;
+            border-radius: 15px;
+            text-align: center;
         }
 
-        .number {
-            font-size: 36px;
-            font-weight: bold;
-            margin-top: 10px;
+        button {
+            padding: 14px 25px;
+            border: none;
+            border-radius: 8px;
+            margin: 10px;
+            cursor: pointer;
+            color: white;
         }
 
-        .bar {
-            margin-top: 15px;
-            background: #e5e7eb;
-            height: 12px;
-            border-radius: 10px;
+        .fraud {
+            background: #dc2626;
         }
 
-        .fill {
-            height: 100%;
-            width: 75%;
-            background: #111827;
-            border-radius: 10px;
+        .legit {
+            background: #16a34a;
         }
     </style>
 </head>
 
 <body>
 
-<h1>Fraud Analytics</h1>
+<div class="box">
 
-<br>
+    <h1>Transaction Feedback</h1>
 
-<div class="grid">
+    <p>
+        Was this transaction actually fraudulent?
+    </p>
 
-    <div class="box">
-        <h3>Fraud Detected</h3>
-        <div class="number">476</div>
-    </div>
+    <br>
 
-    <div class="box">
-        <h3>Detection Rate</h3>
-        <div class="number">94.7%</div>
+    <button
+        class="fraud"
+        onclick="sendFeedback('FRAUD')">
+        Yes, Fraud
+    </button>
 
-        <div class="bar">
-            <div class="fill"></div>
-        </div>
-    </div>
+    <button
+        class="legit"
+        onclick="sendFeedback('LEGITIMATE')">
+        No, Legitimate
+    </button>
 
-    <div class="box">
-        <h3>Blocked Amount</h3>
-        <div class="number">₹8.4L</div>
-    </div>
+    <p id="response"></p>
 
 </div>
+
+<script>
+
+async function sendFeedback(decision) {
+
+    const data = {
+        transaction_id: "TXN10003",
+        user_id: "USER001",
+        user_decision: decision,
+        system_decision: "FRAUD",
+        risk_score: 91
+    };
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:8000/api/feedback/submit",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            }
+        );
+
+        const result = await response.json();
+
+        document.getElementById("response")
+            .innerHTML =
+            "Thank you. Feedback recorded for adaptive learning.";
+
+    } catch(error) {
+
+        document.getElementById("response")
+            .innerHTML =
+            "Unable to connect to backend.";
+
+    }
+}
+
+</script>
 
 </body>
 </html>
