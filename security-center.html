@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | System Logs</title>
+<title>SecureFlow-AI | Security Rules</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -18,11 +18,11 @@
 <header class="header">
 
 <div>
-<h1>System Logs</h1>
-<p>SecureFlow-AI backend monitoring logs</p>
+<h1>Security Rules</h1>
+<p>AI transaction decision rules</p>
 </div>
 
-<div class="avatar">LOG</div>
+<div class="avatar">SR</div>
 
 </header>
 
@@ -31,9 +31,9 @@
 
 <div class="panel-title">
 
-<h2>Recent System Logs</h2>
+<h2>Fraud Detection Rules</h2>
 
-<p>Backend and AI engine events</p>
+<p>Rules used by SecureFlow-AI</p>
 
 </div>
 
@@ -43,10 +43,10 @@
 <thead>
 
 <tr>
-<th>Time</th>
-<th>Service</th>
-<th>Event</th>
-<th>Response</th>
+<th>Rule ID</th>
+<th>Rule</th>
+<th>Risk Added</th>
+<th>Action</th>
 <th>Status</th>
 </tr>
 
@@ -56,32 +56,42 @@
 <tbody>
 
 <tr>
-<td>12:45:21</td>
-<td>Fraud Engine</td>
-<td>Risk score generated</td>
-<td>12</td>
+<td>RULE001</td>
+<td>Unknown Recipient</td>
+<td>+25</td>
+<td>Alert</td>
 <td>
-<span class="badge safe">SUCCESS</span>
+<span class="badge safe">ACTIVE</span>
 </td>
 </tr>
 
 <tr>
-<td>12:45:18</td>
-<td>Fraud Engine</td>
-<td>High risk detected</td>
-<td>91</td>
+<td>RULE002</td>
+<td>Unusual Amount</td>
+<td>+30</td>
+<td>Review</td>
 <td>
-<span class="badge high">ALERT</span>
+<span class="badge safe">ACTIVE</span>
 </td>
 </tr>
 
 <tr>
-<td>12:45:10</td>
-<td>Database</td>
-<td>Transaction inserted</td>
-<td>12ms</td>
+<td>RULE003</td>
+<td>High Behaviour Deviation</td>
+<td>+40</td>
+<td>Block</td>
 <td>
-<span class="badge safe">SUCCESS</span>
+<span class="badge safe">ACTIVE</span>
+</td>
+</tr>
+
+<tr>
+<td>RULE004</td>
+<td>New Device</td>
+<td>+15</td>
+<td>Alert</td>
+<td>
+<span class="badge safe">ACTIVE</span>
 </td>
 </tr>
 
