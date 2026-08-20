@@ -1,43 +1,44 @@
-# security/encryption.py
+# security/rate_limiter.py
 
-import os
-from cryptography.fernet import Fernet
+import time
 
 
-class DataEncryption:
+class RateLimiter:
 
-    def __init__(self, key=None):
+    def __init__(
+        self,
+        max_requests=30,
+        window_seconds=60
+    ):
 
-        if key is None:
+        self.max_requests = max_requests
+        self.window_seconds = window_seconds
+        self.requests = {}
 
-            key = os.environ.get(
-                "SECUREFLOW_ENCRYPTION_KEY"
-            )
+    def allow(self, client_id):
 
-        if not key:
+        now = time.time()
 
-            raise ValueError(
-                "Encryption key is missing"
-            )
-
-        self.cipher = Fernet(
-            key.encode()
-            if isinstance(key, str)
-            else key
+        timestamps = self.requests.get(
+            client_id,
+            []
         )
 
-    def encrypt(self, value):
+        timestamps = [
+            timestamp
+            for timestamp in timestamps
+            if now - timestamp
+            < self.window_seconds
+        ]
 
-        encrypted = self.cipher.encrypt(
-            value.encode()
-        )
+        if len(timestamps) >= self.max_requests:
 
-        return encrypted.decode()
+            self.requests[client_id] = timestamps
 
-    def decrypt(self, encrypted_value):
+            return False
 
-        decrypted = self.cipher.decrypt(
-            encrypted_value.encode()
-        )
+        timestamps.append(now)
 
-        return decrypted.decode()
+        self.requests[client_id] = timestamps
+
+        return True
