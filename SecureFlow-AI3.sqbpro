@@ -1,0 +1,2213 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="SecureFlow-AI2.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="14995"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="authentication" custom_title="0" dock_id="1" table="4,14:mainauthentication"/><dock_state state="000000ff00000000fd00000001000000020000062000000390fc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000000006200000011e00ffffff000002690000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="authentication" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort><column index="5" mode="0"/></sort><column_widths><column index="1" value="108"/><column index="2" value="92"/><column index="3" value="146"/><column index="4" value="215"/><column index="5" value="134"/><column index="6" value="70"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">-- ============================================================
+-- SECUREFLOW-AI
+-- BEHAVIOURAL UPI FRAUD DETECTION
+-- DATABASE: SQLite / DB Browser for SQLite
+-- ============================================================
+
+PRAGMA foreign_keys = ON;
+
+-- ============================================================
+-- 1. DROP OLD TABLES AND VIEWS
+-- ============================================================
+
+DROP VIEW IF EXISTS security_flow;
+DROP VIEW IF EXISTS fraud_alerts;
+DROP VIEW IF EXISTS risk_analysis;
+
+DROP TABLE IF EXISTS final_answers;
+DROP TABLE IF EXISTS dynamic_questions;
+DROP TABLE IF EXISTS independent_signals;
+DROP TABLE IF EXISTS authentication;
+DROP TABLE IF EXISTS risk_analysis_data;
+DROP TABLE IF EXISTS transaction_history;
+DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS beneficiaries;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS risk_factor_definitions;
+
+
+-- ============================================================
+-- 2. RISK FACTOR DEFINITIONS
+-- ============================================================
+
+CREATE TABLE risk_factor_definitions
+(
+    factor_id INTEGER PRIMARY KEY,
+    factor_name TEXT NOT NULL UNIQUE,
+    weight INTEGER NOT NULL,
+    description TEXT NOT NULL,
+
+    CHECK (weight &gt;= 0)
+);
+
+
+INSERT INTO risk_factor_definitions
+(
+    factor_id,
+    factor_name,
+    weight,
+    description
+)
+VALUES
+(1, 'Amount', 10,
+ 'Unusual transaction amount'),
+
+(2, 'Time', 7,
+ 'Transaction occurs at an unusual time'),
+
+(3, 'Frequency', 12,
+ 'Unusually high transaction frequency'),
+
+(4, 'New Device', 15,
+ 'Transaction originates from a new device'),
+
+(5, 'Unusual Location', 15,
+ 'Transaction originates from an unusual location'),
+
+(6, 'Sudden Location Change', 6,
+ 'Sudden change from previous transaction location'),
+
+(7, 'Unknown Beneficiary', 12,
+ 'Beneficiary is unknown to the user'),
+
+(8, 'No Previous Transaction', 13,
+ 'No previous transaction exists with beneficiary'),
+
+(9, 'Typical Amount With Beneficiary', 10,
+ 'Transaction amount is unusual for this beneficiary');
+
+
+-- ============================================================
+-- 3. USERS
+-- ============================================================
+
+CREATE TABLE users
+(
+    user_id TEXT PRIMARY KEY,
+
+    name TEXT NOT NULL,
+
+    phone TEXT,
+
+    date_of_birth TEXT NOT NULL,
+
+    college_name TEXT NOT NULL,
+
+    living_area TEXT NOT NULL,
+
+    average_transaction REAL DEFAULT 0,
+
+    normal_start_time TEXT DEFAULT '08:00',
+
+    normal_end_time TEXT DEFAULT '23:00',
+
+    typical_daily_transactions INTEGER DEFAULT 0,
+
+    known_device TEXT NOT NULL,
+
+    common_location TEXT NOT NULL,
+
+    total_transactions INTEGER DEFAULT 0,
+
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- USER 1
+INSERT INTO users
+(
+    user_id,
+    name,
+    phone,
+    date_of_birth,
+    college_name,
+    living_area,
+    average_transaction,
+    normal_start_time,
+    normal_end_time,
+    typical_daily_transactions,
+    known_device,
+    common_location,
+    total_transactions
+)
+VALUES
+(
+    'U001',
+    'Soumadip Das',
+    'XXXXXXXXXX',
+    '2005-04-18',
+    'Haldia Institute of Technology',
+    'Haldia',
+    1850,
+    '08:00',
+    '23:00',
+    3,
+    'Android-SOUMADIP-01',
+    'Haldia',
+    42
+);
+
+
+-- USER 2
+INSERT INTO users
+(
+    user_id,
+    name,
+    phone,
+    date_of_birth,
+    college_name,
+    living_area,
+    average_transaction,
+    normal_start_time,
+    normal_end_time,
+    typical_daily_transactions,
+    known_device,
+    common_location,
+    total_transactions
+)
+VALUES
+(
+    'U002',
+    'Shubham Paul',
+    'XXXXXXXXXX',
+    '2004-11-07',
+    'Haldia Institute of Technology',
+    'Haldia',
+    2100,
+    '08:00',
+    '23:00',
+    4,
+    'Android-SHUBHAM-01',
+    'Kolkata',
+    55
+);
+
+
+-- USER 3
+INSERT INTO users
+(
+    user_id,
+    name,
+    phone,
+    date_of_birth,
+    college_name,
+    living_area,
+    average_transaction,
+    normal_start_time,
+    normal_end_time,
+    typical_daily_transactions,
+    known_device,
+    common_location,
+    total_transactions
+)
+VALUES
+(
+    'U003',
+    'Shubham Mukherjee',
+    'XXXXXXXXXX',
+    '2005-02-21',
+    'Haldia Institute of Technology',
+    'Haldia',
+    2500,
+    '08:00',
+    '23:00',
+    3,
+    'Android-MUKHERJEE-01',
+    'Haldia',
+    38
+);
+
+
+-- USER 4
+INSERT INTO users
+(
+    user_id,
+    name,
+    phone,
+    date_of_birth,
+    college_name,
+    living_area,
+    average_transaction,
+    normal_start_time,
+    normal_end_time,
+    typical_daily_transactions,
+    known_device,
+    common_location,
+    total_transactions
+)
+VALUES
+(
+    'U004',
+    'Tridip Debroy',
+    'XXXXXXXXXX',
+    '2004-08-13',
+    'Haldia Institute of Technology',
+    'Haldia',
+    1750,
+    '08:00',
+    '23:00',
+    3,
+    'Android-TRIDIP-01',
+    'Kolkata',
+    47
+);
+
+
+-- ============================================================
+-- 4. BENEFICIARIES
+-- 5 BENEFICIARIES FOR EACH USER
+-- TOTAL = 20
+-- ============================================================
+
+CREATE TABLE beneficiaries
+(
+    beneficiary_id TEXT PRIMARY KEY,
+
+    user_id TEXT NOT NULL,
+
+    beneficiary_name TEXT NOT NULL,
+
+    upi_id TEXT NOT NULL,
+
+    recipient_type TEXT NOT NULL,
+
+    living_area TEXT NOT NULL,
+
+    transaction_count INTEGER DEFAULT 0,
+
+    average_amount REAL DEFAULT 0,
+
+    typical_amount REAL DEFAULT 0,
+
+    last_transaction_time TEXT,
+
+    is_known INTEGER DEFAULT 1,
+
+    previously_used INTEGER DEFAULT 0,
+
+    FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    CHECK (transaction_count &gt;= 0),
+
+    CHECK (average_amount &gt;= 0),
+
+    CHECK (typical_amount &gt;= 0),
+
+    CHECK (is_known IN (0,1)),
+
+    CHECK (previously_used IN (0,1))
+);
+
+
+-- -------------------------
+-- USER 1 BENEFICIARIES
+-- -------------------------
+
+INSERT INTO beneficiaries VALUES
+(
+    'B001','U001','Mom','mom@upi',
+    'Family','Haldia',
+    20,1800,1800,
+    '2026-08-19 18:30',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B002','U001','Rahul','rahul@upi',
+    'Friend','Kolkata',
+    15,2400,2400,
+    '2026-08-18 20:10',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B003','U001','College Canteen','canteen@upi',
+    'Merchant','Haldia',
+    30,180,180,
+    '2026-08-20 13:15',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B004','U001','Amit','amit@upi',
+    'Friend','Durgapur',
+    8,1200,1200,
+    '2026-08-10 17:40',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B005','U001','Electricity Bill','electricity@upi',
+    'Utility','Haldia',
+    12,950,950,
+    '2026-08-15 10:20',
+    1,1
+);
+
+
+-- -------------------------
+-- USER 2 BENEFICIARIES
+-- -------------------------
+
+INSERT INTO beneficiaries VALUES
+(
+    'B006','U002','Rahul','rahul2@upi',
+    'Friend','Kolkata',
+    12,2000,2000,
+    '2026-08-19 19:20',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B007','U002','Father','father@upi',
+    'Family','Kolkata',
+    18,2500,2500,
+    '2026-08-18 21:10',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B008','U002','Book Store','books@upi',
+    'Merchant','Haldia',
+    9,750,750,
+    '2026-08-17 15:30',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B009','U002','Priya','priya2@upi',
+    'Friend','Howrah',
+    7,1500,1500,
+    '2026-08-12 18:00',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B010','U002','Hostel Fee','hostel@upi',
+    'Institution','Haldia',
+    6,4200,4200,
+    '2026-08-05 11:00',
+    1,1
+);
+
+
+-- -------------------------
+-- USER 3 BENEFICIARIES
+-- -------------------------
+
+INSERT INTO beneficiaries VALUES
+(
+    'B011','U003','Amit','amit2@upi',
+    'Friend','Haldia',
+    8,2200,2200,
+    '2026-08-18 18:10',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B012','U003','Mother','mother3@upi',
+    'Family','Kolkata',
+    21,2800,2800,
+    '2026-08-19 20:00',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B013','U003','Food Court','foodcourt@upi',
+    'Merchant','Haldia',
+    25,450,450,
+    '2026-08-20 14:00',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B014','U003','Library','library@upi',
+    'Institution','Haldia',
+    10,300,300,
+    '2026-08-16 12:00',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B015','U003','Rohan','rohan@upi',
+    'Friend','Midnapore',
+    5,1800,1800,
+    '2026-08-09 19:00',
+    1,1
+);
+
+
+-- -------------------------
+-- USER 4 BENEFICIARIES
+-- -------------------------
+
+INSERT INTO beneficiaries VALUES
+(
+    'B016','U004','Priya','priya@upi',
+    'Friend','Kolkata',
+    18,1600,1600,
+    '2026-08-19 17:45',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B017','U004','Brother','brother@upi',
+    'Family','Kolkata',
+    16,1900,1900,
+    '2026-08-18 19:10',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B018','U004','Grocery Store','grocery@upi',
+    'Merchant','Haldia',
+    22,900,900,
+    '2026-08-20 16:30',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B019','U004','College Fees','fees@upi',
+    'Institution','Haldia',
+    5,5000,5000,
+    '2026-08-01 10:30',
+    1,1
+);
+
+INSERT INTO beneficiaries VALUES
+(
+    'B020','U004','Arjun','arjun@upi',
+    'Friend','Durgapur',
+    6,1300,1300,
+    '2026-08-11 18:30',
+    1,1
+);
+
+
+-- ============================================================
+-- 5. TRANSACTIONS
+-- ============================================================
+
+CREATE TABLE transactions
+(
+    transaction_id TEXT PRIMARY KEY,
+
+    user_id TEXT NOT NULL,
+
+    beneficiary_id TEXT,
+
+    amount REAL NOT NULL,
+
+    transaction_time TEXT NOT NULL,
+
+    transaction_frequency INTEGER DEFAULT 1,
+
+    sender_device_id TEXT NOT NULL,
+
+    payment_device TEXT NOT NULL,
+
+    location TEXT NOT NULL,
+
+    previous_location TEXT,
+
+    recipient_type TEXT,
+
+    beneficiary_name TEXT,
+
+    beneficiary_typical_amount REAL,
+
+    beneficiary_previously_used INTEGER DEFAULT 0,
+
+    status TEXT DEFAULT 'PENDING',
+
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (beneficiary_id)
+        REFERENCES beneficiaries(beneficiary_id),
+
+    CHECK (amount &gt;= 0),
+
+    CHECK (beneficiary_previously_used IN (0,1)),
+
+    CHECK
+    (
+        status IN
+        (
+            'PENDING',
+            'SUCCESS',
+            'FAILED',
+            'BLOCKED',
+            'HELD'
+        )
+    )
+);
+
+
+-- ============================================================
+-- 6. TRANSACTION HISTORY
+-- ============================================================
+
+CREATE TABLE transaction_history
+(
+    history_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    transaction_id TEXT NOT NULL,
+
+    user_id TEXT NOT NULL,
+
+    beneficiary_id TEXT,
+
+    transaction_time TEXT NOT NULL,
+
+    amount REAL NOT NULL,
+
+    sender_device_id TEXT NOT NULL,
+
+    payment_device TEXT NOT NULL,
+
+    location TEXT NOT NULL,
+
+    previous_location TEXT,
+
+    recipient_type TEXT,
+
+    beneficiary_name TEXT,
+
+    beneficiary_typical_amount REAL,
+
+    beneficiary_previously_used INTEGER DEFAULT 0,
+
+    transaction_status TEXT NOT NULL,
+
+    FOREIGN KEY (transaction_id)
+        REFERENCES transactions(transaction_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE
+);
+
+
+-- ============================================================
+-- 7. RISK ANALYSIS
+-- ============================================================
+
+CREATE TABLE risk_analysis_data
+(
+    risk_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    transaction_id TEXT NOT NULL UNIQUE,
+
+    amount_flag INTEGER NOT NULL DEFAULT 0,
+
+    time_flag INTEGER NOT NULL DEFAULT 0,
+
+    frequency_flag INTEGER NOT NULL DEFAULT 0,
+
+    new_device_flag INTEGER NOT NULL DEFAULT 0,
+
+    unusual_location_flag INTEGER NOT NULL DEFAULT 0,
+
+    sudden_location_change_flag INTEGER NOT NULL DEFAULT 0,
+
+    unknown_beneficiary_flag INTEGER NOT NULL DEFAULT 0,
+
+    no_previous_transaction_flag INTEGER NOT NULL DEFAULT 0,
+
+    typical_amount_flag INTEGER NOT NULL DEFAULT 0,
+
+    risk_score INTEGER GENERATED ALWAYS AS
+    (
+        amount_flag * 10 +
+        time_flag * 7 +
+        frequency_flag * 12 +
+        new_device_flag * 15 +
+        unusual_location_flag * 15 +
+        sudden_location_change_flag * 6 +
+        unknown_beneficiary_flag * 12 +
+        no_previous_transaction_flag * 13 +
+        typical_amount_flag * 10
+    ) STORED,
+
+    risk_level TEXT GENERATED ALWAYS AS
+    (
+        CASE
+
+            WHEN
+            (
+                amount_flag * 10 +
+                time_flag * 7 +
+                frequency_flag * 12 +
+                new_device_flag * 15 +
+                unusual_location_flag * 15 +
+                sudden_location_change_flag * 6 +
+                unknown_beneficiary_flag * 12 +
+                no_previous_transaction_flag * 13 +
+                typical_amount_flag * 10
+            ) &lt;= 40
+
+            THEN 'LOW'
+
+            WHEN
+            (
+                amount_flag * 10 +
+                time_flag * 7 +
+                frequency_flag * 12 +
+                new_device_flag * 15 +
+                unusual_location_flag * 15 +
+                sudden_location_change_flag * 6 +
+                unknown_beneficiary_flag * 12 +
+                no_previous_transaction_flag * 13 +
+                typical_amount_flag * 10
+            ) &lt;= 70
+
+            THEN 'MEDIUM'
+
+            ELSE 'HIGH'
+
+        END
+    ) STORED,
+
+    action TEXT GENERATED ALWAYS AS
+    (
+        CASE
+
+            WHEN
+            (
+                amount_flag * 10 +
+                time_flag * 7 +
+                frequency_flag * 12 +
+                new_device_flag * 15 +
+                unusual_location_flag * 15 +
+                sudden_location_change_flag * 6 +
+                unknown_beneficiary_flag * 12 +
+                no_previous_transaction_flag * 13 +
+                typical_amount_flag * 10
+            ) &lt;= 40
+
+            THEN 'ALLOW'
+
+            WHEN
+            (
+                amount_flag * 10 +
+                time_flag * 7 +
+                frequency_flag * 12 +
+                new_device_flag * 15 +
+                unusual_location_flag * 15 +
+                sudden_location_change_flag * 6 +
+                unknown_beneficiary_flag * 12 +
+                no_previous_transaction_flag * 13 +
+                typical_amount_flag * 10
+            ) &lt;= 70
+
+            THEN 'ALERT'
+
+            ELSE 'BLOCK'
+
+        END
+    ) STORED,
+
+    FOREIGN KEY (transaction_id)
+        REFERENCES transactions(transaction_id)
+        ON DELETE CASCADE,
+
+    CHECK (amount_flag IN (0,1)),
+    CHECK (time_flag IN (0,1)),
+    CHECK (frequency_flag IN (0,1)),
+    CHECK (new_device_flag IN (0,1)),
+    CHECK (unusual_location_flag IN (0,1)),
+    CHECK (sudden_location_change_flag IN (0,1)),
+    CHECK (unknown_beneficiary_flag IN (0,1)),
+    CHECK (no_previous_transaction_flag IN (0,1)),
+    CHECK (typical_amount_flag IN (0,1))
+);
+
+
+-- ============================================================
+-- 8. AUTHENTICATION
+-- ============================================================
+
+CREATE TABLE authentication
+(
+    authentication_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    transaction_id TEXT NOT NULL UNIQUE,
+
+    authentication_required INTEGER DEFAULT 0,
+
+    authentication_method TEXT,
+
+    authentication_status TEXT DEFAULT 'NOT_REQUIRED',
+
+    verified_at TEXT,
+
+    FOREIGN KEY (transaction_id)
+        REFERENCES transactions(transaction_id)
+        ON DELETE CASCADE,
+
+    CHECK (authentication_required IN (0,1)),
+
+    CHECK
+    (
+        authentication_status IN
+        (
+            'NOT_REQUIRED',
+            'PENDING',
+            'SUCCESS',
+            'FAILED'
+        )
+    )
+);
+
+
+-- ============================================================
+-- 9. INDEPENDENT SECURITY SIGNALS
+-- ============================================================
+
+CREATE TABLE independent_signals
+(
+    signal_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    transaction_id TEXT NOT NULL UNIQUE,
+
+    device_signal TEXT,
+
+    location_signal TEXT,
+
+    transaction_history_signal TEXT,
+
+    beneficiary_signal TEXT,
+
+    signal_result TEXT,
+
+    FOREIGN KEY (transaction_id)
+        REFERENCES transactions(transaction_id)
+        ON DELETE CASCADE
+);
+
+
+-- ============================================================
+-- 10. DYNAMIC QUESTIONS
+-- ============================================================
+
+CREATE TABLE dynamic_questions
+(
+    question_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    transaction_id TEXT NOT NULL,
+
+    question TEXT NOT NULL,
+
+    expected_answer TEXT,
+
+    user_answer TEXT,
+
+    status TEXT DEFAULT 'PENDING',
+
+    FOREIGN KEY (transaction_id)
+        REFERENCES transactions(transaction_id)
+        ON DELETE CASCADE,
+
+    CHECK
+    (
+        status IN
+        (
+            'PENDING',
+            'CORRECT',
+            'INCORRECT'
+        )
+    )
+);
+
+
+-- ============================================================
+-- 11. FINAL ANSWERS
+-- ============================================================
+
+CREATE TABLE final_answers
+(
+    final_answer_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    transaction_id TEXT NOT NULL UNIQUE,
+
+    final_decision TEXT NOT NULL,
+
+    final_message TEXT,
+
+    answered_at TEXT,
+
+    FOREIGN KEY (transaction_id)
+        REFERENCES transactions(transaction_id)
+        ON DELETE CASCADE,
+
+    CHECK
+    (
+        final_decision IN
+        (
+            'ALLOW',
+            'BLOCK',
+            'PENDING_AUTHENTICATION'
+        )
+    )
+);
+
+
+-- ============================================================
+-- 12. TRANSACTION TEST CASES
+-- ============================================================
+
+
+-- ============================================================
+-- T001
+-- NORMAL TRANSACTION
+-- SCORE = 0
+-- LOW -&gt; ALLOW
+-- ============================================================
+
+INSERT INTO transactions
+(
+    transaction_id,
+    user_id,
+    beneficiary_id,
+    amount,
+    transaction_time,
+    transaction_frequency,
+    sender_device_id,
+    payment_device,
+    location,
+    previous_location,
+    recipient_type,
+    beneficiary_name,
+    beneficiary_typical_amount,
+    beneficiary_previously_used,
+    status
+)
+VALUES
+(
+    'T001',
+    'U001',
+    'B001',
+    1800,
+    '2026-08-20 18:30',
+    1,
+    'Android-SOUMADIP-01',
+    'Android-SOUMADIP-01',
+    'Haldia',
+    'Haldia',
+    'Family',
+    'Mom',
+    1800,
+    1,
+    'PENDING'
+);
+
+INSERT INTO risk_analysis_data
+(
+    transaction_id,
+    amount_flag,
+    time_flag,
+    frequency_flag,
+    new_device_flag,
+    unusual_location_flag,
+    sudden_location_change_flag,
+    unknown_beneficiary_flag,
+    no_previous_transaction_flag,
+    typical_amount_flag
+)
+VALUES
+(
+    'T001',
+    0,0,0,0,0,0,0,0,0
+);
+
+
+-- ============================================================
+-- T002
+-- MEDIUM RISK
+-- SCORE = 44
+-- ============================================================
+
+INSERT INTO transactions
+VALUES
+(
+    'T002',
+    'U001',
+    'B001',
+    8500,
+    '2026-08-20 02:30',
+    8,
+    'Unknown-Device-01',
+    'Unknown-Device-01',
+    'Haldia',
+    'Haldia',
+    'Family',
+    'Mom',
+    1800,
+    1,
+    'PENDING',
+    CURRENT_TIMESTAMP
+);
+
+INSERT INTO risk_analysis_data
+VALUES
+(
+    NULL,
+    'T002',
+    1,1,1,1,0,0,0,0,0
+);
+
+INSERT INTO authentication
+(
+    transaction_id,
+    authentication_required,
+    authentication_method,
+    authentication_status
+)
+VALUES
+(
+    'T002',
+    1,
+    'Behavioural Authentication',
+    'PENDING'
+);
+
+INSERT INTO dynamic_questions
+(
+    transaction_id,
+    question,
+    expected_answer,
+    status
+)
+VALUES
+(
+    'T002',
+    'Which beneficiary do you use most frequently?',
+    'Mom',
+    'PENDING'
+);
+
+
+-- ============================================================
+-- T003
+-- HIGH RISK
+-- ALL 9 FACTORS
+-- SCORE = 100
+-- ============================================================
+
+INSERT INTO transactions
+VALUES
+(
+    'T003',
+    'U001',
+    NULL,
+    25000,
+    '2026-08-20 03:15',
+    12,
+    'Unknown-Device-99',
+    'Unknown-Device-99',
+    'Delhi',
+    'Haldia',
+    'Unknown',
+    'Unknown',
+    0,
+    0,
+    'PENDING',
+    CURRENT_TIMESTAMP
+);
+
+INSERT INTO risk_analysis_data
+VALUES
+(
+    NULL,
+    'T003',
+    1,1,1,1,1,1,1,1,1
+);
+
+
+-- ============================================================
+-- T004
+-- LOW RISK
+-- SCORE = 15
+-- ============================================================
+
+INSERT INTO transactions
+VALUES
+(
+    'T004',
+    'U002',
+    'B006',
+    1900,
+    '2026-08-20 18:20',
+    1,
+    'Android-SHUBHAM-01',
+    'Android-SHUBHAM-01',
+    'Haldia',
+    'Kolkata',
+    'Friend',
+    'Rahul',
+    2000,
+    1,
+    'PENDING',
+    CURRENT_TIMESTAMP
+);
+
+INSERT INTO risk_analysis_data
+VALUES
+(
+    NULL,
+    'T004',
+    0,0,0,0,1,0,0,0,0
+);
+
+
+-- ============================================================
+-- T005
+-- MEDIUM RISK
+-- SCORE = 44
+-- ============================================================
+
+INSERT INTO transactions
+VALUES
+(
+    'T005',
+    'U002',
+    'B006',
+    9500,
+    '2026-08-20 02:45',
+    9,
+    'Unknown-Device-02',
+    'Unknown-Device-02',
+    'Kolkata',
+    'Kolkata',
+    'Friend',
+    'Rahul',
+    2000,
+    1,
+    'PENDING',
+    CURRENT_TIMESTAMP
+);
+
+INSERT INTO risk_analysis_data
+VALUES
+(
+    NULL,
+    'T005',
+    1,1,1,1,0,0,0,0,0
+);
+
+INSERT INTO authentication
+(
+    transaction_id,
+    authentication_required,
+    authentication_method,
+    authentication_status
+)
+VALUES
+(
+    'T005',
+    1,
+    'Behavioural Authentication',
+    'PENDING'
+);
+
+
+-- ============================================================
+-- T006
+-- MEDIUM RISK
+-- SCORE = 58
+-- ============================================================
+
+INSERT INTO transactions
+VALUES
+(
+    'T006',
+    'U002',
+    NULL,
+    15000,
+    '2026-08-20 03:10',
+    2,
+    'Unknown-Device-03',
+    'Unknown-Device-03',
+    'Mumbai',
+    'Kolkata',
+    'Unknown',
+    'Unknown',
+    0,
+    0,
+    'PENDING',
+    CURRENT_TIMESTAMP
+);
+
+INSERT INTO risk_analysis_data
+VALUES
+(
+    NULL,
+    'T006',
+    1,0,0,1,1,1,1,0,0
+);
+
+
+-- ============================================================
+-- T007
+-- LOW RISK
+-- SCORE = 0
+-- ============================================================
+
+INSERT INTO transactions
+VALUES
+(
+    'T007',
+    'U003',
+    'B011',
+    2200,
+    '2026-08-20 18:10',
+    1,
+    'Android-MUKHERJEE-01',
+    'Android-MUKHERJEE-01',
+    'Haldia',
+    'Haldia',
+    'Friend',
+    'Amit',
+    2200,
+    1,
+    'PENDING',
+    CURRENT_TIMESTAMP
+);
+
+INSERT INTO risk_analysis_data
+VALUES
+(
+    NULL,
+    'T007',
+    0,0,0,0,0,0,0,0,0
+);
+
+
+-- ============================================================
+-- T008
+-- HIGH RISK
+-- SCORE = 77
+-- ============================================================
+
+INSERT INTO transactions
+VALUES
+(
+    'T008',
+    'U003',
+    'B011',
+    18000,
+    '2026-08-20 03:10',
+    10,
+    'Unknown-Device-03',
+    'Unknown-Device-03',
+    'Delhi',
+    'Haldia',
+    'Friend',
+    'Amit',
+    2200,
+    1,
+    'PENDING',
+    CURRENT_TIMESTAMP
+);
+
+INSERT INTO risk_analysis_data
+VALUES
+(
+    NULL,
+    'T008',
+    1,1,1,1,1,1,1,0,0
+);
+
+
+-- ============================================================
+-- T009
+-- LOW RISK
+-- SCORE = 35
+-- ============================================================
+
+INSERT INTO transactions
+VALUES
+(
+    'T009',
+    'U003',
+    NULL,
+    9000,
+    '2026-08-20 19:00',
+    1,
+    'Android-MUKHERJEE-01',
+    'Android-MUKHERJEE-01',
+    'Haldia',
+    'Haldia',
+    'Merchant',
+    'New Shop',
+    0,
+    0,
+    'PENDING',
+    CURRENT_TIMESTAMP
+);
+
+INSERT INTO risk_analysis_data
+VALUES
+(
+    NULL,
+    'T009',
+    1,0,0,0,0,0,1,1,1
+);
+
+
+-- ============================================================
+-- T010
+-- LOW RISK
+-- SCORE = 32
+-- ============================================================
+
+INSERT INTO transactions
+VALUES
+(
+    'T010',
+    'U004',
+    'B016',
+    5000,
+    '2026-08-20 17:30',
+    7,
+    'Android-TRIDIP-01',
+    'Android-TRIDIP-01',
+    'Kolkata',
+    'Kolkata',
+    'Friend',
+    'Priya',
+    1600,
+    1,
+    'PENDING',
+    CURRENT_TIMESTAMP
+);
+
+INSERT INTO risk_analysis_data
+VALUES
+(
+    NULL,
+    'T010',
+    1,0,1,0,0,0,0,0,1
+);
+
+
+-- ============================================================
+-- T011
+-- MEDIUM RISK
+-- SCORE = 52
+-- ============================================================
+
+INSERT INTO transactions
+VALUES
+(
+    'T011',
+    'U004',
+    NULL,
+    7000,
+    '2026-08-20 20:10',
+    2,
+    'Unknown-Device-77',
+    'Unknown-Device-77',
+    'Delhi',
+    'Kolkata',
+    'Unknown',
+    'New Recipient',
+    0,
+    0,
+    'PENDING',
+    CURRENT_TIMESTAMP
+);
+
+INSERT INTO risk_analysis_data
+VALUES
+(
+    NULL,
+    'T011',
+    1,0,0,1,1,1,1,0,0
+);
+
+INSERT INTO authentication
+(
+    transaction_id,
+    authentication_required,
+    authentication_method,
+    authentication_status
+)
+VALUES
+(
+    'T011',
+    1,
+    'Behavioural Authentication',
+    'PENDING'
+);
+
+INSERT INTO dynamic_questions
+(
+    transaction_id,
+    question,
+    expected_answer,
+    status
+)
+VALUES
+(
+    'T011',
+    'Which beneficiary did you previously use most often?',
+    'Priya',
+    'PENDING'
+);
+
+
+-- ============================================================
+-- T012
+-- HIGH RISK
+-- ALL 9 FACTORS
+-- SCORE = 100
+-- ============================================================
+
+INSERT INTO transactions
+VALUES
+(
+    'T012',
+    'U004',
+    NULL,
+    30000,
+    '2026-08-20 03:30',
+    15,
+    'Unknown-Device-99',
+    'Unknown-Device-99',
+    'Mumbai',
+    'Kolkata',
+    'Unknown',
+    'Unknown',
+    0,
+    0,
+    'PENDING',
+    CURRENT_TIMESTAMP
+);
+
+INSERT INTO risk_analysis_data
+VALUES
+(
+    NULL,
+    'T012',
+    1,1,1,1,1,1,1,1,1
+);
+
+
+-- ============================================================
+-- 13. INDEPENDENT SECURITY SIGNALS
+-- ============================================================
+
+INSERT INTO independent_signals
+(
+    transaction_id,
+    device_signal,
+    location_signal,
+    transaction_history_signal,
+    beneficiary_signal,
+    signal_result
+)
+VALUES
+(
+    'T002',
+    'NEW_DEVICE',
+    'NORMAL_LOCATION',
+    'HIGH_FREQUENCY',
+    'KNOWN_BENEFICIARY',
+    'AUTHENTICATION_REQUIRED'
+);
+
+INSERT INTO independent_signals
+VALUES
+(
+    NULL,
+    'T003',
+    'NEW_DEVICE',
+    'UNUSUAL_LOCATION',
+    'NO_HISTORY',
+    'UNKNOWN_BENEFICIARY',
+    'BLOCK'
+);
+
+INSERT INTO independent_signals
+VALUES
+(
+    NULL,
+    'T005',
+    'NEW_DEVICE',
+    'NORMAL_LOCATION',
+    'HIGH_FREQUENCY',
+    'KNOWN_BENEFICIARY',
+    'AUTHENTICATION_REQUIRED'
+);
+
+INSERT INTO independent_signals
+VALUES
+(
+    NULL,
+    'T006',
+    'NEW_DEVICE',
+    'UNUSUAL_LOCATION',
+    'NO_HISTORY',
+    'UNKNOWN_BENEFICIARY',
+    'AUTHENTICATION_REQUIRED'
+);
+
+INSERT INTO independent_signals
+VALUES
+(
+    NULL,
+    'T008',
+    'NEW_DEVICE',
+    'UNUSUAL_LOCATION',
+    'HIGH_FREQUENCY',
+    'KNOWN_BENEFICIARY',
+    'BLOCK'
+);
+
+INSERT INTO independent_signals
+VALUES
+(
+    NULL,
+    'T011',
+    'NEW_DEVICE',
+    'UNUSUAL_LOCATION',
+    'NO_HISTORY',
+    'UNKNOWN_BENEFICIARY',
+    'AUTHENTICATION_REQUIRED'
+);
+
+INSERT INTO independent_signals
+VALUES
+(
+    NULL,
+    'T012',
+    'NEW_DEVICE',
+    'UNUSUAL_LOCATION',
+    'NO_HISTORY',
+    'UNKNOWN_BENEFICIARY',
+    'BLOCK'
+);
+
+
+-- ============================================================
+-- 14. TRANSACTION HISTORY
+-- ============================================================
+
+INSERT INTO transaction_history
+(
+    transaction_id,
+    user_id,
+    beneficiary_id,
+    transaction_time,
+    amount,
+    sender_device_id,
+    payment_device,
+    location,
+    previous_location,
+    recipient_type,
+    beneficiary_name,
+    beneficiary_typical_amount,
+    beneficiary_previously_used,
+    transaction_status
+)
+SELECT
+    transaction_id,
+    user_id,
+    beneficiary_id,
+    transaction_time,
+    amount,
+    sender_device_id,
+    payment_device,
+    location,
+    previous_location,
+    recipient_type,
+    beneficiary_name,
+    beneficiary_typical_amount,
+    beneficiary_previously_used,
+    status
+FROM transactions;
+
+
+-- ============================================================
+-- 15. RISK ANALYSIS VIEW
+-- ============================================================
+
+CREATE VIEW risk_analysis AS
+
+SELECT
+
+    t.transaction_id,
+
+    t.user_id,
+
+    u.name AS user_name,
+
+    u.date_of_birth,
+
+    u.college_name,
+
+    u.living_area AS user_living_area,
+
+    u.average_transaction,
+
+    u.typical_daily_transactions,
+
+    t.beneficiary_id,
+
+    t.beneficiary_name,
+
+    t.recipient_type,
+
+    b.living_area AS beneficiary_area,
+
+    t.amount,
+
+    t.beneficiary_typical_amount,
+
+    t.beneficiary_previously_used,
+
+    t.transaction_frequency,
+
+    t.transaction_time,
+
+    t.sender_device_id,
+
+    t.payment_device,
+
+    t.location,
+
+    t.previous_location,
+
+    t.status,
+
+    r.amount_flag,
+
+    r.time_flag,
+
+    r.frequency_flag,
+
+    r.new_device_flag,
+
+    r.unusual_location_flag,
+
+    r.sudden_location_change_flag,
+
+    r.unknown_beneficiary_flag,
+
+    r.no_previous_transaction_flag,
+
+    r.typical_amount_flag,
+
+    r.risk_score,
+
+    r.risk_level,
+
+    r.action
+
+FROM risk_analysis_data r
+
+JOIN transactions t
+    ON r.transaction_id = t.transaction_id
+
+JOIN users u
+    ON t.user_id = u.user_id
+
+LEFT JOIN beneficiaries b
+    ON t.beneficiary_id = b.beneficiary_id;
+
+
+-- ============================================================
+-- 16. FRAUD ALERT VIEW
+-- ============================================================
+
+CREATE VIEW fraud_alerts AS
+
+SELECT
+
+    transaction_id,
+
+    user_name,
+
+    amount,
+
+    beneficiary_name,
+
+    recipient_type,
+
+    location,
+
+    sender_device_id,
+
+    risk_score,
+
+    risk_level,
+
+    action
+
+FROM risk_analysis
+
+WHERE risk_level IN ('MEDIUM','HIGH')
+
+ORDER BY risk_score DESC;
+
+
+-- ============================================================
+-- 17. SECURITY FLOW VIEW
+-- ============================================================
+
+CREATE VIEW security_flow AS
+
+SELECT
+
+    r.transaction_id,
+
+    r.user_name,
+
+    r.amount,
+
+    r.beneficiary_name,
+
+    r.risk_score,
+
+    r.risk_level,
+
+    r.action,
+
+    CASE
+
+        WHEN r.risk_level = 'LOW'
+        THEN 'ALLOW'
+
+        WHEN r.risk_level = 'MEDIUM'
+        THEN 'ALERT -&gt; HOLD/SLOW -&gt; AUTHENTICATION'
+
+        WHEN r.risk_level = 'HIGH'
+        THEN 'BLOCK'
+
+    END AS security_flow,
+
+    a.authentication_status,
+
+    i.signal_result,
+
+    q.status AS dynamic_question_status,
+
+    f.final_decision
+
+FROM risk_analysis r
+
+LEFT JOIN authentication a
+    ON r.transaction_id = a.transaction_id
+
+LEFT JOIN independent_signals i
+    ON r.transaction_id = i.transaction_id
+
+LEFT JOIN dynamic_questions q
+    ON r.transaction_id = q.transaction_id
+
+LEFT JOIN final_answers f
+    ON r.transaction_id = f.transaction_id;
+
+
+-- ============================================================
+-- 18. TEST QUERIES
+-- ============================================================
+
+
+-- SHOW ALL USERS
+
+SELECT
+    user_id,
+    name,
+    date_of_birth,
+    college_name,
+    living_area,
+    average_transaction,
+    typical_daily_transactions,
+    known_device,
+    common_location,
+    total_transactions
+FROM users;
+
+
+-- SHOW ALL 20 BENEFICIARIES
+
+SELECT
+    user_id,
+    beneficiary_id,
+    beneficiary_name,
+    upi_id,
+    recipient_type,
+    living_area,
+    transaction_count,
+    average_amount,
+    typical_amount,
+    previously_used
+FROM beneficiaries
+ORDER BY user_id, beneficiary_id;
+
+
+-- SHOW COMPLETE TRANSACTION HISTORY
+
+SELECT *
+FROM transaction_history
+ORDER BY transaction_time DESC;
+
+
+-- SHOW ALL RISK ANALYSIS
+
+SELECT
+    transaction_id,
+    user_name,
+    amount,
+    beneficiary_name,
+    transaction_time,
+    sender_device_id,
+    location,
+    risk_score,
+    risk_level,
+    action
+FROM risk_analysis
+ORDER BY risk_score DESC;
+
+
+-- SHOW FRAUD ALERTS
+
+SELECT *
+FROM fraud_alerts;
+
+
+-- SHOW COMPLETE SECURITY FLOW
+
+SELECT *
+FROM security_flow;
+
+
+-- RISK SUMMARY
+
+SELECT
+    risk_level,
+    COUNT(*) AS total_transactions
+FROM risk_analysis
+GROUP BY risk_level
+ORDER BY
+    CASE risk_level
+        WHEN 'HIGH' THEN 1
+        WHEN 'MEDIUM' THEN 2
+        WHEN 'LOW' THEN 3
+    END;</sql><sql name="SQL 2*">-- ============================================================
+-- SECUREFLOW-AI DATABASE
+-- SAFE VERSION FOR AN EXISTING SQLITE DATABASE
+-- ============================================================
+
+PRAGMA foreign_keys = ON;
+
+
+-- ============================================================
+-- 1. USERS / SENDERS TABLE
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS users (
+    user_id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    living_area TEXT,
+    sender_device_name TEXT,
+    common_location TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- ============================================================
+-- 2. RECIPIENTS TABLE
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS recipients (
+    recipient_id TEXT PRIMARY KEY,
+    recipient_name TEXT NOT NULL,
+    upi_id TEXT NOT NULL UNIQUE,
+    recipient_device_name TEXT NOT NULL,
+    recipient_location TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- ============================================================
+-- 3. SENDER-RECIPIENT CONNECTION TABLE
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS sender_recipient_connections (
+    connection_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
+    recipient_id TEXT NOT NULL,
+    previous_connection INTEGER NOT NULL DEFAULT 0,
+    connection_type TEXT,
+    previous_transaction_count INTEGER DEFAULT 0,
+    connection_notes TEXT,
+
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (recipient_id) REFERENCES recipients(recipient_id),
+
+    UNIQUE(user_id, recipient_id),
+
+    CHECK (previous_connection IN (0, 1))
+);
+
+
+-- ============================================================
+-- 4. TRANSACTIONS TABLE
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS transactions (
+    transaction_id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    recipient_id TEXT NOT NULL,
+    amount REAL NOT NULL,
+    transaction_time TEXT NOT NULL,
+    payment_location TEXT NOT NULL,
+    previous_location TEXT,
+    sender_device_name TEXT NOT NULL,
+    recipient_device_name TEXT NOT NULL,
+    previous_connection INTEGER NOT NULL DEFAULT 0,
+    transaction_status TEXT NOT NULL DEFAULT 'SUCCESS',
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (recipient_id) REFERENCES recipients(recipient_id),
+
+    CHECK (amount &gt; 0),
+    CHECK (previous_connection IN (0, 1))
+);
+
+
+-- ============================================================
+-- INSERT OR UPDATE 4 SENDERS
+-- ============================================================
+
+INSERT OR REPLACE INTO users
+(user_id, name, living_area, sender_device_name, common_location)
+VALUES
+('U001', 'Soumadip Das', 'Haldia',
+ 'Samsung Galaxy S23 - SOUMADIP', 'Haldia'),
+
+('U002', 'Shubham Paul', 'Haldia',
+ 'OnePlus 12R - SHUBHAM', 'Kolkata'),
+
+('U003', 'Shubham Mukherjee', 'Haldia',
+ 'Redmi Note 13 Pro - MUKHERJEE', 'Haldia'),
+
+('U004', 'Tridip Debroy', 'Kolkata',
+ 'Google Pixel 8 - TRIDIP', 'Kolkata');
+
+
+-- ============================================================
+-- INSERT OR UPDATE 4 RECIPIENTS
+-- ============================================================
+
+INSERT OR REPLACE INTO recipients
+(recipient_id, recipient_name, upi_id,
+ recipient_device_name, recipient_location)
+VALUES
+
+('R001', 'Rahul Verma', 'rahul.verma@upi',
+ 'iPhone 15 - RAHUL', 'Kolkata'),
+
+('R002', 'Priya Sharma', 'priya.sharma@upi',
+ 'Samsung Galaxy A55 - PRIYA', 'Howrah'),
+
+('R003', 'Amit Kumar', 'amit.kumar@upi',
+ 'OnePlus Nord CE4 - AMIT', 'Durgapur'),
+
+('R004', 'Rohan Chakraborty', 'rohan.chakraborty@upi',
+ 'iPhone 14 - ROHAN', 'Midnapore');
+
+
+-- ============================================================
+-- CONNECTION DATA
+-- ============================================================
+
+INSERT OR REPLACE INTO sender_recipient_connections
+(user_id, recipient_id, previous_connection, connection_type,
+ previous_transaction_count, connection_notes)
+VALUES
+
+('U001','R001',1,'College Friend',8,'Known recipient'),
+('U001','R002',1,'Friend',5,'Previous connection'),
+('U001','R003',0,'New Recipient',0,'No previous connection'),
+('U001','R004',1,'College Friend',3,'Known recipient'),
+
+('U002','R001',1,'Friend',6,'Known recipient'),
+('U002','R002',0,'New Recipient',0,'No previous connection'),
+('U002','R003',1,'Friend',4,'Known recipient'),
+('U002','R004',1,'College Friend',7,'Known recipient'),
+
+('U003','R001',0,'New Recipient',0,'No previous connection'),
+('U003','R002',1,'Friend',9,'Known recipient'),
+('U003','R003',1,'Friend',5,'Known recipient'),
+('U003','R004',1,'College Friend',4,'Known recipient'),
+
+('U004','R001',1,'Friend',7,'Known recipient'),
+('U004','R002',1,'Friend',6,'Known recipient'),
+('U004','R003',0,'New Recipient',0,'No previous connection'),
+('U004','R004',1,'College Friend',5,'Known recipient');
+
+
+-- ============================================================
+-- 40 TRANSACTIONS
+-- U001 = T001 TO T010
+-- U002 = T011 TO T020
+-- U003 = T021 TO T030
+-- U004 = T031 TO T040
+-- ============================================================
+
+INSERT OR REPLACE INTO transactions
+(transaction_id, user_id, recipient_id, amount, transaction_time,
+ payment_location, previous_location, sender_device_name,
+ recipient_device_name, previous_connection, transaction_status)
+VALUES
+
+-- ================= U001 =================
+
+('T001','U001','R001',1200,'2026-08-01 09:15',
+'Haldia','Haldia','Samsung Galaxy S23 - SOUMADIP',
+'iPhone 15 - RAHUL',1,'SUCCESS'),
+
+('T002','U001','R002',850,'2026-08-03 14:30',
+'Haldia','Haldia','Samsung Galaxy S23 - SOUMADIP',
+'Samsung Galaxy A55 - PRIYA',1,'SUCCESS'),
+
+('T003','U001','R001',2500,'2026-08-05 19:45',
+'Kolkata','Haldia','Samsung Galaxy S23 - SOUMADIP',
+'iPhone 15 - RAHUL',1,'SUCCESS'),
+
+('T004','U001','R004',700,'2026-08-07 11:20',
+'Haldia','Kolkata','Samsung Galaxy S23 - SOUMADIP',
+'iPhone 14 - ROHAN',1,'SUCCESS'),
+
+('T005','U001','R003',1800,'2026-08-09 22:10',
+'Kolkata','Haldia','Samsung Galaxy S23 - SOUMADIP',
+'OnePlus Nord CE4 - AMIT',0,'PENDING'),
+
+('T006','U001','R002',950,'2026-08-11 16:40',
+'Haldia','Kolkata','Samsung Galaxy S23 - SOUMADIP',
+'Samsung Galaxy A55 - PRIYA',1,'SUCCESS'),
+
+('T007','U001','R001',3000,'2026-08-14 10:05',
+'Haldia','Haldia','Samsung Galaxy S23 - SOUMADIP',
+'iPhone 15 - RAHUL',1,'SUCCESS'),
+
+('T008','U001','R004',1100,'2026-08-16 18:25',
+'Haldia','Haldia','Samsung Galaxy S23 - SOUMADIP',
+'iPhone 14 - ROHAN',1,'SUCCESS'),
+
+('T009','U001','R003',5000,'2026-08-18 23:35',
+'Kolkata','Haldia','Samsung Galaxy S23 - SOUMADIP',
+'OnePlus Nord CE4 - AMIT',0,'HELD'),
+
+('T010','U001','R002',1500,'2026-08-20 13:50',
+'Haldia','Haldia','Samsung Galaxy S23 - SOUMADIP',
+'Samsung Galaxy A55 - PRIYA',1,'SUCCESS'),
+
+
+-- ================= U002 =================
+
+('T011','U002','R001',2000,'2026-08-01 10:20',
+'Kolkata','Kolkata','OnePlus 12R - SHUBHAM',
+'iPhone 15 - RAHUL',1,'SUCCESS'),
+
+('T012','U002','R003',1300,'2026-08-03 15:40',
+'Kolkata','Kolkata','OnePlus 12R - SHUBHAM',
+'OnePlus Nord CE4 - AMIT',1,'SUCCESS'),
+
+('T013','U002','R004',900,'2026-08-05 18:15',
+'Haldia','Kolkata','OnePlus 12R - SHUBHAM',
+'iPhone 14 - ROHAN',1,'SUCCESS'),
+
+('T014','U002','R002',3500,'2026-08-07 21:50',
+'Kolkata','Haldia','OnePlus 12R - SHUBHAM',
+'Samsung Galaxy A55 - PRIYA',0,'PENDING'),
+
+('T015','U002','R001',1700,'2026-08-09 12:30',
+'Kolkata','Kolkata','OnePlus 12R - SHUBHAM',
+'iPhone 15 - RAHUL',1,'SUCCESS'),
+
+('T016','U002','R004',2200,'2026-08-11 17:10',
+'Kolkata','Kolkata','OnePlus 12R - SHUBHAM',
+'iPhone 14 - ROHAN',1,'SUCCESS'),
+
+('T017','U002','R003',2800,'2026-08-13 20:30',
+'Durgapur','Kolkata','OnePlus 12R - SHUBHAM',
+'OnePlus Nord CE4 - AMIT',1,'SUCCESS'),
+
+('T018','U002','R002',4200,'2026-08-15 23:20',
+'Kolkata','Durgapur','OnePlus 12R - SHUBHAM',
+'Samsung Galaxy A55 - PRIYA',0,'HELD'),
+
+('T019','U002','R001',1000,'2026-08-18 11:45',
+'Kolkata','Kolkata','OnePlus 12R - SHUBHAM',
+'iPhone 15 - RAHUL',1,'SUCCESS'),
+
+('T020','U002','R004',1600,'2026-08-20 16:20',
+'Haldia','Kolkata','OnePlus 12R - SHUBHAM',
+'iPhone 14 - ROHAN',1,'SUCCESS'),
+
+
+-- ================= U003 =================
+
+('T021','U003','R002',2500,'2026-08-01 09:40',
+'Haldia','Haldia','Redmi Note 13 Pro - MUKHERJEE',
+'Samsung Galaxy A55 - PRIYA',1,'SUCCESS'),
+
+('T022','U003','R003',1200,'2026-08-03 14:15',
+'Haldia','Haldia','Redmi Note 13 Pro - MUKHERJEE',
+'OnePlus Nord CE4 - AMIT',1,'SUCCESS'),
+
+('T023','U003','R004',800,'2026-08-05 18:35',
+'Haldia','Kolkata','Redmi Note 13 Pro - MUKHERJEE',
+'iPhone 14 - ROHAN',1,'SUCCESS'),
+
+('T024','U003','R001',4500,'2026-08-07 22:40',
+'Kolkata','Haldia','Redmi Note 13 Pro - MUKHERJEE',
+'iPhone 15 - RAHUL',0,'PENDING'),
+
+('T025','U003','R002',1800,'2026-08-09 11:25',
+'Haldia','Kolkata','Redmi Note 13 Pro - MUKHERJEE',
+'Samsung Galaxy A55 - PRIYA',1,'SUCCESS'),
+
+('T026','U003','R003',3200,'2026-08-11 16:55',
+'Haldia','Haldia','Redmi Note 13 Pro - MUKHERJEE',
+'OnePlus Nord CE4 - AMIT',1,'SUCCESS'),
+
+('T027','U003','R004',1400,'2026-08-14 19:10',
+'Haldia','Haldia','Redmi Note 13 Pro - MUKHERJEE',
+'iPhone 14 - ROHAN',1,'SUCCESS'),
+
+('T028','U003','R001',6000,'2026-08-16 23:10',
+'Kolkata','Haldia','Redmi Note 13 Pro - MUKHERJEE',
+'iPhone 15 - RAHUL',0,'HELD'),
+
+('T029','U003','R002',2100,'2026-08-18 13:20',
+'Haldia','Kolkata','Redmi Note 13 Pro - MUKHERJEE',
+'Samsung Galaxy A55 - PRIYA',1,'SUCCESS'),
+
+('T030','U003','R003',1700,'2026-08-20 15:40',
+'Haldia','Haldia','Redmi Note 13 Pro - MUKHERJEE',
+'OnePlus Nord CE4 - AMIT',1,'SUCCESS'),
+
+
+-- ================= U004 =================
+
+('T031','U004','R001',1500,'2026-08-01 10:10',
+'Kolkata','Kolkata','Google Pixel 8 - TRIDIP',
+'iPhone 15 - RAHUL',1,'SUCCESS'),
+
+('T032','U004','R002',900,'2026-08-03 13:35',
+'Kolkata','Kolkata','Google Pixel 8 - TRIDIP',
+'Samsung Galaxy A55 - PRIYA',1,'SUCCESS'),
+
+('T033','U004','R004',2200,'2026-08-05 17:50',
+'Haldia','Kolkata','Google Pixel 8 - TRIDIP',
+'iPhone 14 - ROHAN',1,'SUCCESS'),
+
+('T034','U004','R003',4000,'2026-08-07 21:30',
+'Kolkata','Haldia','Google Pixel 8 - TRIDIP',
+'OnePlus Nord CE4 - AMIT',0,'PENDING'),
+
+('T035','U004','R001',1800,'2026-08-09 12:15',
+'Kolkata','Kolkata','Google Pixel 8 - TRIDIP',
+'iPhone 15 - RAHUL',1,'SUCCESS'),
+
+('T036','U004','R002',1300,'2026-08-11 16:30',
+'Kolkata','Kolkata','Google Pixel 8 - TRIDIP',
+'Samsung Galaxy A55 - PRIYA',1,'SUCCESS'),
+
+('T037','U004','R004',2600,'2026-08-14 19:45',
+'Kolkata','Haldia','Google Pixel 8 - TRIDIP',
+'iPhone 14 - ROHAN',1,'SUCCESS'),
+
+('T038','U004','R003',5500,'2026-08-16 23:05',
+'Durgapur','Kolkata','Google Pixel 8 - TRIDIP',
+'OnePlus Nord CE4 - AMIT',0,'HELD'),
+
+('T039','U004','R001',1200,'2026-08-18 11:50',
+'Kolkata','Durgapur','Google Pixel 8 - TRIDIP',
+'iPhone 15 - RAHUL',1,'SUCCESS'),
+
+('T040','U004','R002',1700,'2026-08-20 15:15',
+'Kolkata','Kolkata','Google Pixel 8 - TRIDIP',
+'Samsung Galaxy A55 - PRIYA',1,'SUCCESS');
+
+
+-- ============================================================
+-- CREATE THE COMPLETE TRANSACTION HISTORY VIEW
+-- ============================================================
+
+CREATE VIEW IF NOT EXISTS sender_transaction_history AS
+
+SELECT
+    t.transaction_id,
+    u.user_id AS sender_id,
+    u.name AS sender_name,
+    t.amount,
+    t.transaction_time,
+    t.payment_location,
+    t.previous_location,
+    t.sender_device_name,
+
+    r.recipient_id,
+    r.recipient_name,
+    r.upi_id AS recipient_upi_id,
+    t.recipient_device_name,
+    r.recipient_location,
+
+    CASE
+        WHEN t.previous_connection = 1 THEN 'YES'
+        ELSE 'NO'
+    END AS previous_connection,
+
+    c.connection_type,
+    c.previous_transaction_count,
+    t.transaction_status
+
+FROM transactions AS t
+
+JOIN users AS u
+ON t.user_id = u.user_id
+
+JOIN recipients AS r
+ON t.recipient_id = r.recipient_id
+
+LEFT JOIN sender_recipient_connections AS c
+ON t.user_id = c.user_id
+AND t.recipient_id = c.recipient_id;
+
+
+-- ============================================================
+-- CHECK THE DATA
+-- ============================================================
+
+SELECT *
+FROM sender_transaction_history
+ORDER BY sender_id, transaction_time;</sql><current_tab id="1"/></tab_sql></sqlb_project>
