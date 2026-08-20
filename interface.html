@@ -1,71 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
-<title>FraudBot AI</title>
+
+<title>SecureFlow Admin</title>
 
 <style>
 
 body{
     margin:0;
-    background:#020617;
-    color:#e2e8f0;
     font-family:Arial;
+    background:#f8fafc;
 }
 
-header{
-    text-align:center;
-    padding:30px;
-}
-
-.robot{
-    width:120px;
-    height:120px;
-    margin:auto;
-    border-radius:50%;
-    background:#2563eb;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:60px;
-    box-shadow:0 0 40px #2563eb;
-}
-
-.chat{
-    width:650px;
-    max-width:90%;
-    margin:auto;
-    background:#0f172a;
+.sidebar{
+    position:fixed;
+    width:220px;
+    height:100vh;
+    background:#172554;
+    color:white;
     padding:25px;
-    border-radius:20px;
 }
 
-.message{
-    background:#1e293b;
-    padding:15px;
+.main{
+    margin-left:270px;
+    padding:35px;
+}
+
+.card{
+    background:white;
+    padding:25px;
     border-radius:12px;
-    margin:10px 0;
+    box-shadow:0 3px 12px #ddd;
 }
 
-input{
+.stats{
+    display:flex;
+    gap:20px;
+}
+
+.stat{
+    flex:1;
+    padding:25px;
+    background:white;
+    border-radius:12px;
+}
+
+input[type=number]{
     width:100%;
     padding:15px;
-    box-sizing:border-box;
-    background:#1e293b;
-    border:1px solid #475569;
-    color:white;
-    border-radius:8px;
+    margin:15px 0;
+}
+
+label{
+    display:block;
+    padding:10px;
 }
 
 button{
-    width:100%;
     padding:15px;
-    margin-top:15px;
-    background:#2563eb;
+    width:100%;
+    background:#1d4ed8;
     color:white;
     border:0;
-    border-radius:8px;
 }
 
 </style>
@@ -73,44 +72,65 @@ button{
 
 <body>
 
-<header>
+<div class="sidebar">
 
-<div class="robot">🤖</div>
+<h2>SecureFlow</h2>
 
-<h1>FraudBot AI</h1>
+<p>Dashboard</p>
+<p>Transactions</p>
+<p>Fraud Monitor</p>
+<p>AI Analysis</p>
+<p>Security Logs</p>
 
-<p>Your intelligent UPI transaction security assistant</p>
-
-</header>
-
-<div class="chat">
-
-<div class="message">
-🤖 Enter the transaction amount to begin security analysis.
 </div>
 
-<input id="amount" type="number" placeholder="Transaction amount ₹">
+<div class="main">
 
-<h3>Security Signals</h3>
+<h1>Fraud Monitoring Dashboard</h1>
 
-<label><input id="unusual_time" type="checkbox"> Unusual Time</label><br>
-<label><input id="unusual_frequency" type="checkbox"> Unusual Frequency</label><br>
-<label><input id="new_device" type="checkbox"> New Device</label><br>
-<label><input id="unusual_location" type="checkbox"> Unusual Location</label><br>
-<label><input id="sudden_location_change" type="checkbox"> Sudden Location Change</label><br>
-<label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label><br>
-<label><input id="no_previous_transactions" type="checkbox"> No Previous Transactions</label><br>
-<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Beneficiary Amount</label>
+<div class="stats">
 
-<button onclick="askAI()">ASK FRAUDBOT AI</button>
+<div class="stat">
+<h3>Risk Score</h3>
+<h1 id="score">--</h1>
+</div>
 
-<div id="result"></div>
+<div class="stat">
+<h3>Decision</h3>
+<h1 id="decision">--</h1>
+</div>
+
+</div>
+
+<br>
+
+<div class="card">
+
+<h2>Analyze Transaction</h2>
+
+<input id="amount" type="number" placeholder="Amount ₹">
+
+<label><input id="unusual_time" type="checkbox"> Unusual Time</label>
+<label><input id="unusual_frequency" type="checkbox"> Unusual Frequency</label>
+<label><input id="new_device" type="checkbox"> New Device</label>
+<label><input id="unusual_location" type="checkbox"> Unusual Location</label>
+<label><input id="sudden_location_change" type="checkbox"> Location Change</label>
+<label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label>
+<label><input id="no_previous_transactions" type="checkbox"> No Previous Transaction</label>
+<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
+
+<button onclick="analyze()">RUN ANALYSIS</button>
+
+<h3>Reasons</h3>
+<ul id="reasons"></ul>
+
+</div>
 
 </div>
 
 <script>
 
-async function askAI(){
+async function analyze(){
 
 const ids=[
 "unusual_time",
@@ -141,31 +161,11 @@ body:JSON.stringify(data)
 
 const r=await response.json();
 
-document.getElementById("result").innerHTML=`
+document.getElementById("score").innerText=r.risk_score;
+document.getElementById("decision").innerText=r.decision;
 
-<div class="message">
-🤖 Risk Score: <b>${r.risk_score}</b>
-</div>
-
-<div class="message">
-🤖 Decision: <b>${r.decision}</b>
-</div>
-
-<div class="message">
-🤖 Detected Factors:
-<ul>
-${r.reasons.map(x=>`<li>${x}</li>`).join("")}
-</ul>
-</div>
-
-<div class="message">
-🤖 Verification Questions:
-<ul>
-${r.ai_questions.map(x=>`<li>${x}</li>`).join("")}
-</ul>
-</div>
-
-`;
+document.getElementById("reasons").innerHTML=
+r.reasons.map(x=>`<li>${x}</li>`).join("");
 
 }
 
