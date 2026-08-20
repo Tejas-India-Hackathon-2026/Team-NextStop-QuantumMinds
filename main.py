@@ -1,69 +1,58 @@
-# services/travel_detection.py
+# services/duplicate_detector.py
 
-from math import radians, sin, cos, sqrt, atan2
+import hashlib
+import time
 
 
-class TravelDetector:
+class DuplicateDetector:
 
-    EARTH_RADIUS_KM = 6371
+    def __init__(self, expiry_seconds=120):
 
-    @classmethod
-    def distance(
-        cls,
-        lat1,
-        lon1,
-        lat2,
-        lon2
+        self.expiry_seconds = expiry_seconds
+        self.transactions = {}
+
+    def create_fingerprint(
+        self,
+        user_id,
+        receiver_id,
+        amount
     ):
 
-        lat1 = radians(lat1)
-        lat2 = radians(lat2)
-
-        delta_lat = radians(lat2 - lat1)
-        delta_lon = radians(lon2 - lon1)
-
-        a = (
-            sin(delta_lat / 2) ** 2
-            +
-            cos(lat1)
-            * cos(lat2)
-            * sin(delta_lon / 2) ** 2
+        raw = (
+            f"{user_id}|"
+            f"{receiver_id}|"
+            f"{amount}"
         )
 
-        c = 2 * atan2(
-            sqrt(a),
-            sqrt(1 - a)
-        )
+        return hashlib.sha256(
+            raw.encode()
+        ).hexdigest()
 
-        return cls.EARTH_RADIUS_KM * c
-
-    @classmethod
-    def detect(
-        cls,
-        previous,
-        current,
-        hours
+    def is_duplicate(
+        self,
+        user_id,
+        receiver_id,
+        amount
     ):
 
-        distance = cls.distance(
-            previous["lat"],
-            previous["lon"],
-            current["lat"],
-            current["lon"]
+        fingerprint = self.create_fingerprint(
+            user_id,
+            receiver_id,
+            amount
         )
 
-        if hours <= 0:
-            return {
-                "suspicious": True,
-                "distance_km": distance
-            }
+        now = time.time()
 
-        speed = distance / hours
+        old_time = self.transactions.get(
+            fingerprint
+        )
 
-        suspicious = speed > 900
+        self.transactions[fingerprint] = now
 
-        return {
-            "distance_km": round(distance, 2),
-            "required_speed_kmh": round(speed, 2),
-            "suspicious": suspicious
-        }
+        if old_time is None:
+            return False
+
+        return (
+            now - old_time
+            <= self.expiry_seconds
+        )
