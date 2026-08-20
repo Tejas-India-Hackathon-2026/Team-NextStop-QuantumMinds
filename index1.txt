@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Location Security</title>
+    <title>ML Model Performance</title>
 
     <style>
         body {
@@ -11,77 +11,112 @@
             padding: 30px;
         }
 
-        .location-box {
-            max-width: 700px;
-            margin: auto;
+        .grid {
+            display: grid;
+            grid-template-columns:
+                repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .value {
+            font-size: 35px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .chart {
+            margin-top: 30px;
             background: white;
             padding: 30px;
-            border-radius: 15px;
+            border-radius: 12px;
         }
 
-        .location {
-            padding: 18px;
-            margin-top: 12px;
-            background: #f9fafb;
-            border-radius: 10px;
+        .bar {
+            margin: 20px 0;
         }
 
-        .safe {
-            color: green;
+        .bar-background {
+            background: #e5e7eb;
+            height: 20px;
+            border-radius: 20px;
         }
 
-        .warning {
-            color: #d97706;
+        .bar-value {
+            height: 20px;
+            background: #111827;
+            border-radius: 20px;
         }
     </style>
 </head>
 
 <body>
 
-<div class="location-box">
+<h1>AI Model Performance</h1>
 
-    <h1>Location Security</h1>
+<br>
 
-    <div class="location">
+<div class="grid">
 
-        <h3>Current Location</h3>
-
-        <p>
-            Patna, Bihar
-        </p>
-
-        <strong class="safe">
-            ✓ Recognized Location
-        </strong>
-
+    <div class="card">
+        <h3>Accuracy</h3>
+        <div class="value">96.4%</div>
     </div>
 
-    <div class="location">
-
-        <h3>Previous Location</h3>
-
-        <p>
-            Delhi, India
-        </p>
-
-        <strong class="safe">
-            ✓ Previously Used
-        </strong>
-
+    <div class="card">
+        <h3>Precision</h3>
+        <div class="value">94.8%</div>
     </div>
 
-    <div class="location">
+    <div class="card">
+        <h3>Recall</h3>
+        <div class="value">93.7%</div>
+    </div>
 
-        <h3>Recent Suspicious Location</h3>
+    <div class="card">
+        <h3>F1 Score</h3>
+        <div class="value">94.2%</div>
+    </div>
 
-        <p>
-            Unknown Location
-        </p>
+</div>
 
-        <strong class="warning">
-            ⚠ New Location Detected
-        </strong>
+<div class="chart">
 
+    <h2>Model Metrics</h2>
+
+    <div class="bar">
+        <p>Accuracy</p>
+        <div class="bar-background">
+            <div
+                class="bar-value"
+                style="width:96%;">
+            </div>
+        </div>
+    </div>
+
+    <div class="bar">
+        <p>Precision</p>
+        <div class="bar-background">
+            <div
+                class="bar-value"
+                style="width:95%;">
+            </div>
+        </div>
+    </div>
+
+    <div class="bar">
+        <p>Recall</p>
+        <div class="bar-background">
+            <div
+                class="bar-value"
+                style="width:94%;">
+            </div>
+        </div>
     </div>
 
 </div>
