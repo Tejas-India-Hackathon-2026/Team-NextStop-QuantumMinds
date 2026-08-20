@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Trusted Users</title>
+<title>SecureFlow-AI | High Risk Users</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -18,19 +18,43 @@
 <header class="header">
 
 <div>
-<h1>Trusted Users</h1>
-<p>Users with stable transaction behaviour</p>
+<h1>High Risk Users</h1>
+<p>Users requiring enhanced monitoring</p>
 </div>
 
-<div class="avatar">TU</div>
+<div class="avatar">HR</div>
 
 </header>
+
+<section class="stats">
+
+<div class="stat">
+<div class="stat-title">HIGH RISK</div>
+<div class="stat-number red">07</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">RESTRICTED</div>
+<div class="stat-number orange">03</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">BLOCKED</div>
+<div class="stat-number red">02</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">MONITORED</div>
+<div class="stat-number blue">05</div>
+</div>
+
+</section>
 
 <section class="panel factors">
 
 <div class="panel-title">
-<h2>Trusted User Database</h2>
-<p>Low-risk user profiles</p>
+<h2>High Risk User Profiles</h2>
+<p>AI identified high-risk accounts</p>
 </div>
 
 <table>
@@ -38,11 +62,11 @@
 <thead>
 
 <tr>
-<th>User ID</th>
-<th>Name</th>
-<th>Transactions</th>
+<th>User</th>
 <th>Risk Score</th>
-<th>Average Amount</th>
+<th>Transactions</th>
+<th>Reason</th>
+<th>Action</th>
 <th>Status</th>
 </tr>
 
@@ -51,21 +75,21 @@
 <tbody>
 
 <tr>
-<td>USR001</td>
-<td>Rahul Sharma</td>
-<td>12</td>
-<td>15</td>
-<td>₹2,800</td>
-<td><span class="badge safe">TRUSTED</span></td>
+<td>Amit Kumar</td>
+<td>91</td>
+<td>06</td>
+<td>Unknown Recipient</td>
+<td>Restrict</td>
+<td><span class="badge high">HIGH</span></td>
 </tr>
 
 <tr>
-<td>USR003</td>
-<td>Sneha Das</td>
-<td>09</td>
-<td>08</td>
-<td>₹1,900</td>
-<td><span class="badge safe">TRUSTED</span></td>
+<td>Vikash Das</td>
+<td>96</td>
+<td>04</td>
+<td>Unusual Amount</td>
+<td>Block</td>
+<td><span class="badge high">HIGH</span></td>
 </tr>
 
 </tbody>
