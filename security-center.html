@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>SecureFlow-AI | User Risk</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="style10.css">
+<title>SecureFlow-AI | Recipient Risk</title>
+
+<link rel="stylesheet" href="style10.css">
+
 </head>
 
 <body>
@@ -15,79 +17,128 @@
 
 <header class="header">
 
-    <div>
-        <h1>User Risk Profiles</h1>
-        <p>Behavioural risk assessment of users</p>
-    </div>
+<div>
 
-    <div class="avatar">U</div>
+<h1>Recipient Risk Analysis</h1>
+
+<p>Detection of suspicious UPI recipients</p>
+
+</div>
+
+<div class="avatar">R</div>
 
 </header>
 
+
+<section class="stats">
+
+<div class="stat">
+<div class="stat-title">RECIPIENTS</div>
+<div class="stat-number blue">24</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">TRUSTED</div>
+<div class="stat-number green">16</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">UNKNOWN</div>
+<div class="stat-number orange">05</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">HIGH RISK</div>
+<div class="stat-number red">03</div>
+</div>
+
+</section>
+
+
 <section class="panel factors">
 
-    <div class="panel-title">
-        <h2>User Risk Analysis</h2>
-        <p>AI-generated user risk profiles</p>
-    </div>
+<div class="panel-title">
 
-    <table>
+<h2>Recipient Database</h2>
 
-        <thead>
+<p>Recipient-level fraud risk assessment</p>
 
-            <tr>
-                <th>User</th>
-                <th>Transactions</th>
-                <th>Average Amount</th>
-                <th>Risk Score</th>
-                <th>Risk Level</th>
-                <th>Monitoring</th>
-            </tr>
+</div>
 
-        </thead>
 
-        <tbody>
+<table>
 
-            <tr>
-                <td>Rahul Sharma</td>
-                <td>12</td>
-                <td>₹2,400</td>
-                <td>15</td>
-                <td>
-                    <span class="badge safe">LOW</span>
-                </td>
-                <td>Normal</td>
-            </tr>
+<thead>
 
-            <tr>
-                <td>Rohan Gupta</td>
-                <td>08</td>
-                <td>₹9,800</td>
-                <td>67</td>
-                <td>
-                    <span class="badge review">MEDIUM</span>
-                </td>
-                <td>Monitor</td>
-            </tr>
+<tr>
+<th>Recipient</th>
+<th>Transactions</th>
+<th>Total Received</th>
+<th>Risk Score</th>
+<th>Category</th>
+<th>Status</th>
+</tr>
 
-            <tr>
-                <td>Amit Kumar</td>
-                <td>06</td>
-                <td>₹31,500</td>
-                <td>91</td>
-                <td>
-                    <span class="badge high">HIGH</span>
-                </td>
-                <td>Restricted</td>
-            </tr>
+</thead>
 
-        </tbody>
 
-    </table>
+<tbody>
+
+<tr>
+
+<td>Priya Singh</td>
+<td>08</td>
+<td>₹18,500</td>
+<td>10</td>
+
+<td>Trusted</td>
+
+<td>
+<span class="badge safe">SAFE</span>
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>Merchant XYZ</td>
+<td>05</td>
+<td>₹42,000</td>
+<td>63</td>
+
+<td>Business</td>
+
+<td>
+<span class="badge review">MONITOR</span>
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>Unknown Account</td>
+<td>02</td>
+<td>₹75,000</td>
+<td>94</td>
+
+<td>Unknown</td>
+
+<td>
+<span class="badge high">HIGH RISK</span>
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 </section>
 
 </main>
 
 </body>
+
 </html>
