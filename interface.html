@@ -3,70 +3,69 @@
 <head>
 
 <meta charset="UTF-8">
-<title>Fraud Alert Center</title>
+<title>FraudBot AI</title>
 
 <style>
 
 body{
     margin:0;
-    background:#111827;
-    color:white;
+    background:#020617;
+    color:#e2e8f0;
     font-family:Arial;
 }
 
-.header{
-    background:#991b1b;
-    padding:25px;
+header{
     text-align:center;
-}
-
-.container{
-    max-width:850px;
-    margin:40px auto;
-    background:#1f2937;
     padding:30px;
-    border-radius:15px;
 }
 
-input[type=number]{
+.robot{
+    width:120px;
+    height:120px;
+    margin:auto;
+    border-radius:50%;
+    background:#2563eb;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:60px;
+    box-shadow:0 0 40px #2563eb;
+}
+
+.chat{
+    width:650px;
+    max-width:90%;
+    margin:auto;
+    background:#0f172a;
+    padding:25px;
+    border-radius:20px;
+}
+
+.message{
+    background:#1e293b;
+    padding:15px;
+    border-radius:12px;
+    margin:10px 0;
+}
+
+input{
     width:100%;
     padding:15px;
-    background:#374151;
+    box-sizing:border-box;
+    background:#1e293b;
+    border:1px solid #475569;
     color:white;
-    border:0;
     border-radius:8px;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-}
-
-label{
-    padding:15px;
 }
 
 button{
     width:100%;
-    padding:16px;
-    background:#dc2626;
+    padding:15px;
+    margin-top:15px;
+    background:#2563eb;
     color:white;
     border:0;
     border-radius:8px;
-    font-size:17px;
-}
-
-.alert{
-    margin-top:25px;
-    padding:25px;
-    background:#450a0a;
-    border:1px solid #ef4444;
-    border-radius:12px;
-}
-
-.score{
-    font-size:60px;
-    text-align:center;
 }
 
 </style>
@@ -74,52 +73,44 @@ button{
 
 <body>
 
-<div class="header">
+<header>
 
-<h1>🚨 FRAUD ALERT CENTER</h1>
+<div class="robot">🤖</div>
 
-<p>SecureFlow AI Transaction Monitoring</p>
+<h1>FraudBot AI</h1>
 
+<p>Your intelligent UPI transaction security assistant</p>
+
+</header>
+
+<div class="chat">
+
+<div class="message">
+🤖 Enter the transaction amount to begin security analysis.
 </div>
 
-<div class="container">
+<input id="amount" type="number" placeholder="Transaction amount ₹">
 
-<h2>Transaction Information</h2>
+<h3>Security Signals</h3>
 
-<input id="amount" type="number" placeholder="Enter transaction amount">
+<label><input id="unusual_time" type="checkbox"> Unusual Time</label><br>
+<label><input id="unusual_frequency" type="checkbox"> Unusual Frequency</label><br>
+<label><input id="new_device" type="checkbox"> New Device</label><br>
+<label><input id="unusual_location" type="checkbox"> Unusual Location</label><br>
+<label><input id="sudden_location_change" type="checkbox"> Sudden Location Change</label><br>
+<label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label><br>
+<label><input id="no_previous_transactions" type="checkbox"> No Previous Transactions</label><br>
+<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Beneficiary Amount</label>
 
-<div class="grid">
+<button onclick="askAI()">ASK FRAUDBOT AI</button>
 
-<label><input id="unusual_time" type="checkbox"> Unusual Time</label>
-<label><input id="unusual_frequency" type="checkbox"> Unusual Frequency</label>
-<label><input id="new_device" type="checkbox"> New Device</label>
-<label><input id="unusual_location" type="checkbox"> Unusual Location</label>
-<label><input id="sudden_location_change" type="checkbox"> Sudden Location Change</label>
-<label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label>
-<label><input id="no_previous_transactions" type="checkbox"> No Previous Transaction</label>
-<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
-
-</div>
-
-<button onclick="detect()">DETECT FRAUD</button>
-
-<div class="alert">
-
-<div class="score" id="score">--</div>
-
-<h2 id="decision">System Ready</h2>
-
-<h3>Detected Problems</h3>
-
-<ul id="reasons"></ul>
-
-</div>
+<div id="result"></div>
 
 </div>
 
 <script>
 
-async function detect(){
+async function askAI(){
 
 const ids=[
 "unusual_time",
@@ -148,15 +139,33 @@ headers:{"Content-Type":"application/json"},
 body:JSON.stringify(data)
 });
 
-const result=await response.json();
+const r=await response.json();
 
-document.getElementById("score").innerText=result.risk_score;
+document.getElementById("result").innerHTML=`
 
-document.getElementById("decision").innerText=
-result.decision;
+<div class="message">
+🤖 Risk Score: <b>${r.risk_score}</b>
+</div>
 
-document.getElementById("reasons").innerHTML=
-result.reasons.map(x=>`<li>${x}</li>`).join("");
+<div class="message">
+🤖 Decision: <b>${r.decision}</b>
+</div>
+
+<div class="message">
+🤖 Detected Factors:
+<ul>
+${r.reasons.map(x=>`<li>${x}</li>`).join("")}
+</ul>
+</div>
+
+<div class="message">
+🤖 Verification Questions:
+<ul>
+${r.ai_questions.map(x=>`<li>${x}</li>`).join("")}
+</ul>
+</div>
+
+`;
 
 }
 
