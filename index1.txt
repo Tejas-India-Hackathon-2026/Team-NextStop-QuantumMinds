@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Risk Score | UPI FraudShield</title>
+<title>Security Alert | UPI FraudShield</title>
 
 <style>
 
@@ -79,12 +79,15 @@ body{
     text-decoration:none;
 }
 
+
 /* MAIN */
 
 .main{
     margin-left:240px;
     padding:35px;
+    max-width:1100px;
 }
+
 
 /* HEADER */
 
@@ -102,284 +105,208 @@ body{
     color:#64748b;
 }
 
-/* TRANSACTION */
 
-.transaction{
-    background:white;
-    padding:20px 25px;
-    border-radius:12px;
-    box-shadow:0 5px 20px rgba(0,0,0,.05);
-    margin-bottom:25px;
-}
+/* ALERT BANNER */
 
-.transaction-title{
-    color:#64748b;
-    font-size:13px;
-    margin-bottom:8px;
-}
-
-.transaction-details{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.recipient{
-    font-size:19px;
-    font-weight:bold;
-}
-
-.amount{
-    font-size:24px;
-    font-weight:bold;
-}
-
-/* RESULT GRID */
-
-.result-grid{
-    display:grid;
-    grid-template-columns:1fr 1.2fr;
-    gap:25px;
-}
-
-/* SCORE CARD */
-
-.score-card{
-    background:white;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 5px 20px rgba(0,0,0,.05);
-    text-align:center;
-}
-
-.score-card h2{
-    margin-bottom:25px;
-}
-
-/* SCORE CIRCLE */
-
-.score-circle{
-    width:210px;
-    height:210px;
-    margin:auto;
-    border-radius:50%;
-    background:
-        conic-gradient(
-        #eab308 0deg 245deg,
-        #e5e7eb 245deg 360deg
-        );
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.score-inner{
-    width:165px;
-    height:165px;
-    border-radius:50%;
-    background:white;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-}
-
-.score{
-    font-size:52px;
-    font-weight:bold;
-    color:#ca8a04;
-}
-
-.score-label{
-    color:#64748b;
-    font-size:13px;
-}
-
-.risk-level{
-    display:inline-block;
-    margin-top:22px;
-    padding:9px 25px;
-    background:#fef3c7;
-    color:#92400e;
-    border-radius:25px;
-    font-weight:bold;
-}
-
-/* ACTION */
-
-.action-box{
-    margin-top:25px;
-    padding:18px;
-    border-radius:10px;
+.alert-banner{
     background:#fff7ed;
-    border-left:5px solid #f97316;
+    border:1px solid #fed7aa;
+    border-left:6px solid #f97316;
+    border-radius:12px;
+    padding:25px;
+    display:flex;
+    align-items:center;
+    gap:20px;
+    margin-bottom:25px;
 }
 
-.action-box h3{
+.alert-icon{
+    width:65px;
+    height:65px;
+    background:#ffedd5;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:32px;
+}
+
+.alert-banner h2{
     color:#9a3412;
     margin-bottom:7px;
 }
 
-.action-box p{
+.alert-banner p{
     color:#7c2d12;
-    font-size:14px;
-}
-
-/* EXPLANATION */
-
-.explanation{
-    background:white;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 5px 20px rgba(0,0,0,.05);
-}
-
-.explanation h2{
-    margin-bottom:8px;
-}
-
-.subtitle{
-    color:#64748b;
-    font-size:14px;
-    margin-bottom:25px;
-}
-
-/* FACTORS */
-
-.factor{
-    margin-bottom:22px;
-}
-
-.factor-top{
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:8px;
-}
-
-.factor-name{
-    font-weight:bold;
-}
-
-.factor-value{
-    font-weight:bold;
-}
-
-.progress{
-    height:9px;
-    background:#e5e7eb;
-    border-radius:10px;
-    overflow:hidden;
-}
-
-.bar{
-    height:100%;
-    border-radius:10px;
-}
-
-.high{
-    background:#ef4444;
-}
-
-.medium{
-    background:#eab308;
-}
-
-.low{
-    background:#22c55e;
-}
-
-/* REASONS */
-
-.reasons{
-    margin-top:30px;
-}
-
-.reason{
-    display:flex;
-    gap:12px;
-    padding:13px 0;
-    border-bottom:1px solid #edf0f4;
-}
-
-.reason-icon{
-    font-size:20px;
-}
-
-.reason p{
-    font-size:14px;
-    color:#475569;
     line-height:1.5;
 }
 
-/* DECISION */
 
-.decision{
-    margin-top:25px;
+/* GRID */
+
+.content-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+}
+
+
+/* CARD */
+
+.card{
     background:white;
     padding:25px;
     border-radius:15px;
     box-shadow:0 5px 20px rgba(0,0,0,.05);
 }
 
-.decision h2{
+.card h2{
+    color:#081b33;
     margin-bottom:20px;
 }
 
+
+/* TRANSACTION DETAILS */
+
+.detail{
+    display:flex;
+    justify-content:space-between;
+    padding:14px 0;
+    border-bottom:1px solid #edf0f4;
+}
+
+.detail:last-child{
+    border-bottom:none;
+}
+
+.detail span{
+    color:#64748b;
+}
+
+.detail strong{
+    color:#172033;
+}
+
+.amount{
+    font-size:24px;
+}
+
+
+/* RISK */
+
+.risk-box{
+    text-align:center;
+    padding:20px;
+    background:#fff7ed;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+.risk-score{
+    font-size:48px;
+    font-weight:bold;
+    color:#ea580c;
+}
+
+.risk-box p{
+    color:#9a3412;
+}
+
+.risk-label{
+    display:inline-block;
+    margin-top:10px;
+    padding:7px 20px;
+    background:#fed7aa;
+    color:#9a3412;
+    border-radius:20px;
+    font-weight:bold;
+}
+
+
+/* REASONS */
+
+.reason{
+    display:flex;
+    gap:12px;
+    padding:15px 0;
+    border-bottom:1px solid #edf0f4;
+}
+
+.reason:last-child{
+    border-bottom:none;
+}
+
+.reason-icon{
+    font-size:21px;
+}
+
+.reason p{
+    color:#475569;
+    font-size:14px;
+    line-height:1.5;
+}
+
+
+/* ACTIONS */
+
 .actions{
+    margin-top:25px;
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:15px;
 }
 
-.action-button{
-    padding:17px;
+.action{
+    border:none;
+    padding:16px;
     border-radius:9px;
-    border:2px solid transparent;
-    text-align:center;
     cursor:pointer;
     font-weight:bold;
+    font-size:14px;
 }
 
-.allow{
-    background:#dcfce7;
-    color:#166534;
-    border-color:#bbf7d0;
-}
-
-.alert-action{
+.verify{
     background:#fef3c7;
     color:#92400e;
-    border-color:#fde68a;
 }
 
 .block{
     background:#fee2e2;
     color:#991b1b;
-    border-color:#fecaca;
 }
 
-.action-button:hover{
+.report{
+    background:#e0e7ff;
+    color:#3730a3;
+}
+
+.action:hover{
     transform:translateY(-2px);
 }
 
-/* FOOTER NOTE */
 
-.note{
-    margin-top:20px;
-    padding:15px;
+/* SECURITY MESSAGE */
+
+.security-message{
+    margin-top:25px;
+    padding:18px;
     background:#eff6ff;
-    border-radius:8px;
+    border-radius:10px;
     color:#1e40af;
-    font-size:13px;
     line-height:1.5;
+    font-size:14px;
 }
+
 
 /* RESPONSIVE */
 
-@media(max-width:950px){
+@media(max-width:850px){
 
-    .result-grid{
+    .content-grid{
+        grid-template-columns:1fr;
+    }
+
+    .actions{
         grid-template-columns:1fr;
     }
 
@@ -405,14 +332,9 @@ body{
         text-align:center;
     }
 
-    .transaction-details{
+    .alert-banner{
         flex-direction:column;
-        align-items:flex-start;
-        gap:10px;
-    }
-
-    .actions{
-        grid-template-columns:1fr;
+        text-align:center;
     }
 
 }
@@ -420,6 +342,7 @@ body{
 </style>
 
 </head>
+
 
 <body>
 
@@ -453,7 +376,7 @@ body{
 </li>
 
 <li>
-<a href="alert.html">
+<a href="alert.html" class="active">
 🚨 Fraud Alerts
 </a>
 </li>
@@ -484,231 +407,126 @@ body{
 
 <div class="header">
 
-<h1>Transaction Risk Analysis</h1>
+<h1>Security Alert</h1>
 
 <p>
-FraudShield has completed the AI-powered transaction analysis.
+FraudShield detected unusual activity associated with this transaction.
 </p>
 
 </div>
 
 
-<!-- TRANSACTION -->
+<!-- WARNING -->
 
-<section class="transaction">
+<section class="alert-banner">
 
-<div class="transaction-title">
-TRANSACTION UNDER REVIEW
+<div class="alert-icon">
+⚠️
 </div>
-
-<div class="transaction-details">
 
 <div>
 
-<div class="recipient" id="recipient">
-Rahul Kumar
-</div>
+<h2>Suspicious Transaction Detected</h2>
 
-<small id="upi">
-rahul@upi
-</small>
-
-</div>
-
-<div class="amount" id="amount">
-₹8,500
-</div>
+<p>
+This payment does not completely match your normal transaction
+behaviour. Please review the information carefully before proceeding.
+</p>
 
 </div>
 
 </section>
 
 
-<!-- RESULT -->
+<!-- CONTENT -->
 
-<section class="result-grid">
-
-
-<!-- SCORE -->
-
-<div class="score-card">
-
-<h2>Dynamic Risk Score</h2>
+<div class="content-grid">
 
 
-<div class="score-circle">
+<!-- TRANSACTION CARD -->
 
-<div class="score-inner">
+<section class="card">
 
-<div class="score" id="score">
+<h2>Transaction Details</h2>
+
+
+<div class="detail">
+
+<span>Recipient</span>
+
+<strong id="recipient">
+Rahul Kumar
+</strong>
+
+</div>
+
+
+<div class="detail">
+
+<span>UPI ID</span>
+
+<strong id="upi">
+rahul@upi
+</strong>
+
+</div>
+
+
+<div class="detail">
+
+<span>Amount</span>
+
+<strong class="amount" id="amount">
+₹8,500
+</strong>
+
+</div>
+
+
+<div class="detail">
+
+<span>Transaction Time</span>
+
+<strong id="time">
+Just Now
+</strong>
+
+</div>
+
+
+<div class="detail">
+
+<span>Transaction Status</span>
+
+<strong style="color:#ea580c;">
+Under Review
+</strong>
+
+</div>
+
+</section>
+
+
+<!-- RISK CARD -->
+
+<section class="card">
+
+<h2>Fraud Detection Result</h2>
+
+
+<div class="risk-box">
+
+<div class="risk-score">
 68
 </div>
 
-<div class="score-label">
-out of 100
-</div>
+<p>
+Dynamic Risk Score
+</p>
 
-</div>
-
-</div>
-
-
-<div class="risk-level">
+<div class="risk-label">
 MEDIUM RISK
 </div>
-
-
-<div class="action-box">
-
-<h3>⚠ Verification Required</h3>
-
-<p>
-This transaction shows unusual behaviour.
-Please verify the payment before proceeding.
-</p>
-
-</div>
-
-</div>
-
-
-<!-- EXPLANATION -->
-
-<div class="explanation">
-
-<h2>Why This Score?</h2>
-
-<p class="subtitle">
-The AI system identified the following risk factors.
-</p>
-
-
-<!-- BEHAVIOUR -->
-
-<div class="factor">
-
-<div class="factor-top">
-
-<span class="factor-name">
-Behaviour Deviation
-</span>
-
-<span class="factor-value">
-72%
-</span>
-
-</div>
-
-<div class="progress">
-
-<div
-class="bar medium"
-style="width:72%">
-</div>
-
-</div>
-
-</div>
-
-
-<!-- AMOUNT -->
-
-<div class="factor">
-
-<div class="factor-top">
-
-<span class="factor-name">
-Unusual Amount
-</span>
-
-<span class="factor-value">
-65%
-</span>
-
-</div>
-
-<div class="progress">
-
-<div
-class="bar medium"
-style="width:65%">
-</div>
-
-</div>
-
-</div>
-
-
-<!-- DEVICE -->
-
-<div class="factor">
-
-<div class="factor-top">
-
-<span class="factor-name">
-Device Risk
-</span>
-
-<span class="factor-value">
-45%
-</span>
-
-</div>
-
-<div class="progress">
-
-<div
-class="bar low"
-style="width:45%">
-</div>
-
-</div>
-
-</div>
-
-
-<!-- LOCATION -->
-
-<div class="factor">
-
-<div class="factor-top">
-
-<span class="factor-name">
-Location Risk
-</span>
-
-<span class="factor-value">
-38%
-</span>
-
-</div>
-
-<div class="progress">
-
-<div
-class="bar low"
-style="width:38%">
-</div>
-
-</div>
-
-</div>
-
-
-<!-- REASONS -->
-
-<div class="reasons">
-
-<div class="reason">
-
-<div class="reason-icon">
-⚠️
-</div>
-
-<p>
-Transaction amount is higher than your usual
-payment pattern.
-</p>
 
 </div>
 
@@ -720,8 +538,22 @@ payment pattern.
 </div>
 
 <p>
-The recipient does not strongly match your
-normal transaction behaviour.
+The transaction amount is higher than your
+usual payment pattern.
+</p>
+
+</div>
+
+
+<div class="reason">
+
+<div class="reason-icon">
+👤
+</div>
+
+<p>
+The recipient behaviour does not strongly
+match your previous transactions.
 </p>
 
 </div>
@@ -734,82 +566,63 @@ normal transaction behaviour.
 </div>
 
 <p>
-The current device has a lower trust score
-than your usual device.
+The current device has a lower trust level
+than your normal device.
 </p>
-
-</div>
-
-</div>
 
 </div>
 
 </section>
 
+</div>
 
-<!-- DECISION -->
 
-<section class="decision">
+<!-- ACTIONS -->
 
-<h2>Recommended Security Action</h2>
+<section class="card" style="margin-top:25px;">
+
+<h2>What Would You Like To Do?</h2>
 
 <div class="actions">
 
 
-<div
-class="action-button allow"
-onclick="allowPayment()">
+<button
+class="action verify"
+onclick="verifyTransaction()">
 
-✓ ALLOW
+🔐 Verify Transaction
 
-<br>
+</button>
 
-<small>
-Continue Payment
-</small>
+
+<button
+class="action block"
+onclick="blockTransaction()">
+
+🛑 Block Transaction
+
+</button>
+
+
+<button
+class="action report"
+onclick="reportTransaction()">
+
+🚨 Report Fraud
+
+</button>
+
 
 </div>
 
 
-<div
-class="action-button alert-action"
-onclick="verifyPayment()">
+<div class="security-message">
 
-⚠ VERIFY
+<strong>🛡️ FraudShield Recommendation:</strong>
 
-<br>
-
-<small>
-Verify User
-</small>
-
-</div>
-
-
-<div
-class="action-button block"
-onclick="blockPayment()">
-
-✕ BLOCK
-
-<br>
-
-<small>
-Stop Transaction
-</small>
-
-</div>
-
-</div>
-
-
-<div class="note">
-
-<strong>AI Recommendation:</strong>
-
-Because the transaction has a medium risk score,
-FraudShield recommends additional user verification
-before allowing the payment.
+We recommend verifying this transaction before allowing
+the payment. Never share your UPI PIN, OTP or banking
+credentials with anyone.
 
 </div>
 
@@ -821,7 +634,8 @@ before allowing the payment.
 
 <script>
 
-/* LOAD TRANSACTION DATA */
+
+/* LOAD TRANSACTION */
 
 const recipient =
 localStorage.getItem("recipient");
@@ -855,21 +669,18 @@ document.getElementById("amount")
 }
 
 
-/* SECURITY ACTIONS */
+/* CURRENT TIME */
 
-function allowPayment(){
+const now = new Date();
 
-alert(
-"Payment allowed.\n\nTransaction approved by FraudShield."
-);
-
-window.location.href =
-"dashboard.html";
-
-}
+document.getElementById("time")
+.innerText =
+now.toLocaleTimeString();
 
 
-function verifyPayment(){
+/* VERIFY */
+
+function verifyTransaction(){
 
 window.location.href =
 "verification.html";
@@ -877,14 +688,39 @@ window.location.href =
 }
 
 
-function blockPayment(){
+/* BLOCK */
+
+function blockTransaction(){
+
+const confirmBlock =
+confirm(
+"Are you sure you want to block this transaction?"
+);
+
+if(confirmBlock){
 
 alert(
-"Transaction blocked.\n\nFraudShield has stopped this payment for your security."
+"Transaction blocked successfully.\n\nFraudShield has stopped the suspicious payment."
 );
 
 window.location.href =
-"alert.html";
+"dashboard.html";
+
+}
+
+}
+
+
+/* REPORT */
+
+function reportTransaction(){
+
+alert(
+"Fraud report submitted successfully.\n\nOur security system will record this activity."
+);
+
+window.location.href =
+"dashboard.html";
 
 }
 
