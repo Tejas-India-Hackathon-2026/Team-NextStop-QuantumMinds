@@ -15,137 +15,149 @@ app.add_middleware(
 
 class Transaction(BaseModel):
 
-    # A. Transaction behaviour
     amount: float
-    unusual_frequency: bool
+
     unusual_time: bool
-    high_velocity: bool
+    unusual_frequency: bool
 
-    # B. Device behaviour
-    known_device: bool
-    device_changed: bool
+    new_device: bool
 
-    # C. Location behaviour
-    usual_location: bool
+    unusual_location: bool
     sudden_location_change: bool
 
-    # D. Relationship/history
-    known_beneficiary: bool
-    previous_transactions: bool
-    typical_amount_with_beneficiary: bool
-    beneficiary_matches_history: bool
+    unknown_beneficiary: bool
+    no_previous_transactions: bool
+    unusual_beneficiary_amount: bool
 
 
 @app.get("/")
 def home():
 
     return {
-        "message": "SecureFlow-AI Behavioural Engine is running"
+        "message": "SecureFlow-AI UPI Fraud Detection Engine"
     }
 
 
 @app.post("/transaction")
-def transaction(tx: Transaction):
+def analyze_transaction(tx: Transaction):
 
     risk = 0
+
     reasons = []
+
     questions = []
 
-    # Transaction behaviour
-
     if tx.amount > 10000:
-        risk += 15
-        reasons.append("Amount deviation")
+
+        risk += 10
+
+        reasons.append("Amount anomaly")
+
         questions.append(
             f"Can you confirm a payment of ₹{tx.amount}?"
         )
 
-    if tx.unusual_frequency:
-        risk += 5
-
     if tx.unusual_time:
-        risk += 10
+
+        risk += 7
+
         reasons.append("Time anomaly")
+
         questions.append(
-            "Do you usually make transactions at this time?"
+            "Are you intentionally making this payment at this time?"
         )
 
-    if tx.high_velocity:
-        risk += 10
-        reasons.append("Transaction velocity")
+    if tx.unusual_frequency:
+
+        risk += 12
+
+        reasons.append("Frequency anomaly")
+
         questions.append(
-            "Have you made multiple transactions recently?"
+            "Have you made multiple payments recently?"
         )
 
-    # Device behaviour
+    if tx.new_device:
 
-    device_flag = (
-        (not tx.known_device)
-        or tx.device_changed
-    )
-
-    if device_flag:
-        risk += 20
-        reasons.append("New device/session")
-        questions.append(
-            "Can you confirm that this device belongs to you?"
-        )
-
-    # Location behaviour
-
-    location_flag = (
-        (not tx.usual_location)
-        or tx.sudden_location_change
-    )
-
-    if location_flag:
         risk += 15
-        reasons.append("Location anomaly")
+
+        reasons.append("New device detected")
+
+        questions.append(
+            "Does this device belong to you?"
+        )
+
+    if tx.unusual_location:
+
+        risk += 15
+
+        reasons.append("Unusual location")
+
         questions.append(
             "Can you confirm your current location?"
         )
 
-    # Relationship/history
+    if tx.sudden_location_change:
 
-    beneficiary_flag = not tx.known_beneficiary
+        risk += 6
 
-    behaviour_flag = (
-        (not tx.previous_transactions)
-        or (not tx.typical_amount_with_beneficiary)
-        or (not tx.beneficiary_matches_history)
-    )
+        reasons.append("Sudden location change")
 
-    if beneficiary_flag:
-        risk += 15
-        reasons.append("New beneficiary")
         questions.append(
-            "Do you recognize this beneficiary?"
+            "Did you recently travel?"
         )
 
-    if behaviour_flag:
-        risk += 15
-        reasons.append("Behaviour deviation")
+    if tx.unknown_beneficiary:
+
+        risk += 12
+
+        reasons.append("Unknown beneficiary")
+
         questions.append(
-            "Does this transaction match your historical behaviour?"
+            "Do you personally know this recipient?"
         )
 
-    # Maximum score = 100
+    if tx.no_previous_transactions:
 
-    risk = min(risk, 100)
+        risk += 13
+
+        reasons.append("No previous transactions")
+
+        questions.append(
+            "Have you ever paid this recipient before?"
+        )
+
+    if tx.unusual_beneficiary_amount:
+
+        risk += 10
+
+        reasons.append(
+            "Unusual amount for this beneficiary"
+        )
+
+        questions.append(
+            "Is this amount typical for this recipient?"
+        )
 
     if risk <= 30:
+
         decision = "ALLOW"
 
     elif risk <= 70:
-        decision = "ALERT"
+
+        decision = "VERIFY"
 
     else:
+
         decision = "BLOCK"
 
     return {
+
         "risk_score": risk,
+
         "decision": decision,
-        "transaction_delayed": risk >= 50,
+
         "reasons": reasons,
+
         "ai_questions": questions
     }
