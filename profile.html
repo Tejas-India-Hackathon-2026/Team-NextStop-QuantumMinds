@@ -2,32 +2,35 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Verification</title>
+<title>Fraud Decision Center</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:#eef2ff;
+background:#0f172a;
+color:white;
 }
 
 .container{
-width:700px;
-max-width:90%;
+max-width:900px;
 margin:40px auto;
+padding:20px;
 }
 
 .card{
-background:white;
+background:#1e293b;
 padding:30px;
 border-radius:20px;
-box-shadow:0 8px 25px #c7d2fe;
 }
 
 input[type=number]{
 width:100%;
 padding:15px;
 box-sizing:border-box;
+background:#0f172a;
+border:1px solid #475569;
+color:white;
 }
 
 label{
@@ -38,17 +41,16 @@ padding:8px;
 button{
 width:100%;
 padding:15px;
-background:#4f46e5;
-color:white;
+background:#06b6d4;
 border:0;
+color:white;
 border-radius:8px;
 }
 
-.question{
-background:#eef2ff;
-padding:18px;
-margin:12px 0;
-border-radius:12px;
+.decision{
+text-align:center;
+font-size:45px;
+margin:25px;
 }
 
 </style>
@@ -60,34 +62,40 @@ border-radius:12px;
 
 <div class="card">
 
-<h1>🤖 SecureFlow AI</h1>
+<h1>⚖ UPI Fraud Decision Center</h1>
 
-<h2>Transaction Verification Interview</h2>
+<p>SecureFlow-AI automated payment decision system</p>
 
 <input id="amount" type="number"
-placeholder="Payment Amount ₹">
+placeholder="Transaction Amount ₹">
 
-<label><input id="unusual_time" type="checkbox"> Unusual Time</label>
-<label><input id="unusual_frequency" type="checkbox"> Unusual Frequency</label>
-<label><input id="new_device" type="checkbox"> New Device</label>
-<label><input id="unusual_location" type="checkbox"> Unusual Location</label>
-<label><input id="sudden_location_change" type="checkbox"> Location Change</label>
-<label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label>
-<label><input id="no_previous_transactions" type="checkbox"> No Previous Transaction</label>
-<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
+<label><input id="unusual_time" type="checkbox"> Time anomaly</label>
+<label><input id="unusual_frequency" type="checkbox"> Frequency anomaly</label>
+<label><input id="new_device" type="checkbox"> Device anomaly</label>
+<label><input id="unusual_location" type="checkbox"> Location anomaly</label>
+<label><input id="sudden_location_change" type="checkbox"> Location movement</label>
+<label><input id="unknown_beneficiary" type="checkbox"> Beneficiary anomaly</label>
+<label><input id="no_previous_transactions" type="checkbox"> Transaction history anomaly</label>
+<label><input id="unusual_beneficiary_amount" type="checkbox"> Amount anomaly</label>
 
-<button onclick="askAI()">GENERATE AI QUESTIONS</button>
+<button onclick="decide()">MAKE AI DECISION</button>
 
-<div id="result"></div>
+<div class="decision" id="decision">
+WAITING
+</div>
+
+<h2 style="text-align:center" id="score"></h2>
+
+<div id="reasons"></div>
 
 </div>
 </div>
 
 <script>
 
-async function askAI(){
+async function decide(){
 
-let ids=[
+const ids=[
 "unusual_time",
 "unusual_frequency",
 "new_device",
@@ -106,30 +114,26 @@ ids.forEach(id=>{
 data[id]=document.getElementById(id).checked;
 });
 
-let response=await fetch(
+const response=await fetch(
 "http://127.0.0.1:8000/transaction",
 {
 method:"POST",
-headers:{"Content-Type":"application/json"},
+headers:{
+"Content-Type":"application/json"
+},
 body:JSON.stringify(data)
 }
 );
 
-let r=await response.json();
+const r=await response.json();
 
-document.getElementById("result").innerHTML=`
+document.getElementById("decision").innerText=r.decision;
 
-<h2>Risk Score: ${r.risk_score}</h2>
+document.getElementById("score").innerText=
+"Risk Score: "+r.risk_score;
 
-<h2>Decision: ${r.decision}</h2>
-
-<h3>AI Verification Questions</h3>
-
-${r.ai_questions.map(q=>
-`<div class="question">🤖 ${q}</div>`
-).join("")}
-
-`;
+document.getElementById("reasons").innerHTML=
+r.reasons.map(x=>`<p>⚠ ${x}</p>`).join("");
 }
 
 </script>
