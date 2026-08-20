@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | User Transactions</title>
+<title>SecureFlow-AI | Devices</title>
 
 <link rel="stylesheet"
 href="style10.css">
@@ -25,10 +25,10 @@ href="style10.css">
 
 <div>
 
-<h1>User Transaction Records</h1>
+<h1>User Device Database</h1>
 
 <p>
-Transaction history associated with users
+Devices used for UPI transactions
 </p>
 
 </div>
@@ -41,10 +41,10 @@ Transaction history associated with users
 
 <div class="panel-title">
 
-<h2>USR003 — Amit Kumar</h2>
+<h2>Registered Devices</h2>
 
 <p>
-Recent transactions
+Device behaviour used for fraud detection
 </p>
 
 </div>
@@ -56,11 +56,11 @@ Recent transactions
 
 <tr>
 
-<th>Transaction</th>
-<th>Recipient</th>
-<th>Amount</th>
-<th>Date</th>
-<th>Risk</th>
+<th>User ID</th>
+<th>User</th>
+<th>Device</th>
+<th>Operating System</th>
+<th>Last Login</th>
 <th>Status</th>
 
 </tr>
@@ -72,49 +72,49 @@ Recent transactions
 
 <tr>
 
-<td>TXN1002</td>
-<td>Unknown User</td>
-<td>₹45,000</td>
-<td>20 Aug 2026</td>
-<td>91</td>
-
-<td>
-<span class="badge high">
-BLOCKED
-</span>
-</td>
-
-</tr>
-
-
-<tr>
-
-<td>TXN0994</td>
-<td>Merchant ABC</td>
-<td>₹12,500</td>
-<td>19 Aug 2026</td>
-<td>72</td>
-
-<td>
-<span class="badge review">
-REVIEW
-</span>
-</td>
-
-</tr>
-
-
-<tr>
-
-<td>TXN0987</td>
+<td>USR001</td>
 <td>Rahul Sharma</td>
-<td>₹2,000</td>
-<td>18 Aug 2026</td>
-<td>22</td>
+<td>Samsung Galaxy</td>
+<td>Android</td>
+<td>20 Aug 2026</td>
 
 <td>
 <span class="badge safe">
-COMPLETED
+TRUSTED
+</span>
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>USR002</td>
+<td>Priya Singh</td>
+<td>iPhone 14</td>
+<td>iOS</td>
+<td>20 Aug 2026</td>
+
+<td>
+<span class="badge safe">
+TRUSTED
+</span>
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>USR003</td>
+<td>Amit Kumar</td>
+<td>Unknown Device</td>
+<td>Android</td>
+<td>20 Aug 2026</td>
+
+<td>
+<span class="badge high">
+SUSPICIOUS
 </span>
 </td>
 
