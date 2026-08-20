@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Activity Monitor</title>
+<title>SecureFlow-AI | System Monitor</title>
 
 <link rel="stylesheet"
 href="style10.css">
@@ -25,17 +25,73 @@ href="style10.css">
 
 <div>
 
-<h1>Live Transaction Activity</h1>
+<h1>System Health Monitor</h1>
 
 <p>
-Continuous monitoring of UPI payment activity
+SecureFlow-AI infrastructure and AI engine status
 </p>
 
 </div>
 
-<div class="avatar">●</div>
-
 </header>
+
+
+<section class="stats">
+
+
+<div class="stat">
+
+<div class="stat-title">
+AI ENGINE
+</div>
+
+<div class="stat-number green">
+ONLINE
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+DATABASE
+</div>
+
+<div class="stat-number green">
+ONLINE
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+API
+</div>
+
+<div class="stat-number green">
+ONLINE
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+UPTIME
+</div>
+
+<div class="stat-number blue">
+99.9%
+</div>
+
+</div>
+
+
+</section>
 
 
 <section class="panel factors">
@@ -44,102 +100,99 @@ Continuous monitoring of UPI payment activity
 <div class="panel-title">
 
 <h2>
-Transaction Activity
+System Components
 </h2>
 
 <p>
-Most recent transactions received by the system
+Current operational status
 </p>
 
 </div>
 
 
-<table>
-
-<thead>
-
-<tr>
-
-<th>Time</th>
-<th>Sender</th>
-<th>Recipient</th>
-<th>Amount</th>
-<th>Risk</th>
-<th>Status</th>
-
-</tr>
-
-</thead>
+<div class="factor-grid">
 
 
-<tbody>
+<div class="factor">
+
+<h3>
+FastAPI Backend
+</h3>
+
+<p>
+Operational
+</p>
+
+<div class="progress">
+
+<div style="width:100%"></div>
+
+</div>
+
+</div>
 
 
-<tr>
+<div class="factor">
 
-<td>12:45:21</td>
-<td>Rahul Sharma</td>
-<td>Priya Singh</td>
-<td>₹1,500</td>
-<td>12</td>
+<h3>
+SQLite Database
+</h3>
 
-<td>
-<span class="badge safe">SAFE</span>
-</td>
+<p>
+Connected
+</p>
 
-</tr>
+<div class="progress">
 
+<div style="width:100%"></div>
 
-<tr>
+</div>
 
-<td>12:45:18</td>
-<td>Amit Kumar</td>
-<td>Unknown User</td>
-<td>₹45,000</td>
-<td>91</td>
-
-<td>
-<span class="badge high">BLOCKED</span>
-</td>
-
-</tr>
+</div>
 
 
-<tr>
+<div class="factor">
 
-<td>12:45:10</td>
-<td>Sneha Das</td>
-<td>Arjun Roy</td>
-<td>₹2,800</td>
-<td>09</td>
+<h3>
+Fraud Engine
+</h3>
 
-<td>
-<span class="badge safe">SAFE</span>
-</td>
+<p>
+Monitoring
+</p>
 
-</tr>
+<div class="progress">
 
+<div style="width:98%"></div>
 
-<tr>
+</div>
 
-<td>12:44:58</td>
-<td>Rohan Gupta</td>
-<td>Merchant XYZ</td>
-<td>₹18,500</td>
-<td>67</td>
-
-<td>
-<span class="badge review">REVIEW</span>
-</td>
-
-</tr>
+</div>
 
 
-</tbody>
+<div class="factor">
 
-</table>
+<h3>
+Alert System
+</h3>
+
+<p>
+Operational
+</p>
+
+<div class="progress">
+
+<div style="width:99%"></div>
+
+</div>
+
+</div>
+
+
+</div>
 
 </section>
+
 
 </main>
 
