@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Settings</title>
+<title>SecureFlow-AI | Security Audit</title>
 
 <link rel="stylesheet"
 href="style10.css">
@@ -25,10 +25,10 @@ href="style10.css">
 
 <div>
 
-<h1>System Settings</h1>
+<h1>Security Audit</h1>
 
 <p>
-Configure SecureFlow-AI behaviour
+SecureFlow-AI compliance and audit monitoring
 </p>
 
 </div>
@@ -36,15 +36,73 @@ Configure SecureFlow-AI behaviour
 </header>
 
 
+<section class="stats">
+
+
+<div class="stat">
+
+<div class="stat-title">
+AUDIT SCORE
+</div>
+
+<div class="stat-number green">
+96%
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+SECURITY EVENTS
+</div>
+
+<div class="stat-number">
+24
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+CRITICAL EVENTS
+</div>
+
+<div class="stat-number red">
+02
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+RESOLVED
+</div>
+
+<div class="stat-number green">
+22
+</div>
+
+</div>
+
+
+</section>
+
+
 <section class="panel factors">
 
 
 <div class="panel-title">
 
-<h2>Detection Settings</h2>
+<h2>Audit Events</h2>
 
 <p>
-Fraud detection configuration
+Security events detected by the system
 </p>
 
 </div>
@@ -52,47 +110,41 @@ Fraud detection configuration
 
 <table>
 
+<thead>
 
 <tr>
 
-<th>Low Risk Range</th>
-
-<td>
-0 – 30
-</td>
+<th>Event ID</th>
+<th>Event</th>
+<th>Severity</th>
+<th>Date</th>
+<th>Status</th>
 
 </tr>
 
+</thead>
+
+
+<tbody>
+
 
 <tr>
 
-<th>Medium Risk Range</th>
+<td>AUD001</td>
+
+<td>Multiple failed login attempts</td>
 
 <td>
-31 – 70
+<span class="badge high">
+HIGH
+</span>
 </td>
 
-</tr>
-
-
-<tr>
-
-<th>High Risk Range</th>
-
-<td>
-71 – 100
-</td>
-
-</tr>
-
-
-<tr>
-
-<th>Automatic Blocking</th>
+<td>20 Aug 2026</td>
 
 <td>
 <span class="badge safe">
-ENABLED
+RESOLVED
 </span>
 </td>
 
@@ -101,11 +153,21 @@ ENABLED
 
 <tr>
 
-<th>Real-Time Monitoring</th>
+<td>AUD002</td>
+
+<td>Unusual administrator login</td>
+
+<td>
+<span class="badge review">
+MEDIUM
+</span>
+</td>
+
+<td>20 Aug 2026</td>
 
 <td>
 <span class="badge safe">
-ENABLED
+RESOLVED
 </span>
 </td>
 
@@ -114,11 +176,21 @@ ENABLED
 
 <tr>
 
-<th>AI Behaviour Analysis</th>
+<td>AUD003</td>
+
+<td>Database access detected</td>
 
 <td>
 <span class="badge safe">
-ENABLED
+LOW
+</span>
+</td>
+
+<td>19 Aug 2026</td>
+
+<td>
+<span class="badge safe">
+VERIFIED
 </span>
 </td>
 
@@ -127,33 +199,49 @@ ENABLED
 
 <tr>
 
-<th>Email Alerts</th>
+<td>AUD004</td>
+
+<td>AI configuration changed</td>
 
 <td>
-<span class="badge safe">
-ENABLED
+<span class="badge high">
+HIGH
+</span>
+</td>
+
+<td>19 Aug 2026</td>
+
+<td>
+<span class="badge review">
+REVIEW
 </span>
 </td>
 
 </tr>
 
 
-<tr>
-
-<th>Admin Notifications</th>
-
-<td>
-<span class="badge safe">
-ENABLED
-</span>
-</td>
-
-</tr>
-
+</tbody>
 
 </table>
 
 </section>
+
+
+<footer>
+
+<span>
+© 2026 SecureFlow-AI
+</span>
+
+<span>
+Security Audit Center
+</span>
+
+<span>
+System Status: Operational
+</span>
+
+</footer>
 
 
 </main>
