@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Alert History</title>
+<title>SecureFlow-AI | User Alerts</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -20,47 +20,22 @@
 
 <div>
 
-<h1>Alert History</h1>
+<h1>User Fraud Alerts</h1>
 
-<p>Historical record of fraud alerts</p>
+<p>Users with suspicious transaction behaviour</p>
 
 </div>
 
 </header>
 
 
-<section class="stats">
-
-<div class="stat">
-<div class="stat-title">TOTAL</div>
-<div class="stat-number blue">42</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">RESOLVED</div>
-<div class="stat-number green">35</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">BLOCKED</div>
-<div class="stat-number red">29</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">PENDING</div>
-<div class="stat-number orange">07</div>
-</div>
-
-</section>
-
-
 <section class="panel factors">
 
 <div class="panel-title">
 
-<h2>Previous Alerts</h2>
+<h2>Risky Users</h2>
 
-<p>Historical fraud detection records</p>
+<p>Users requiring additional monitoring</p>
 
 </div>
 
@@ -71,11 +46,11 @@
 
 <tr>
 
-<th>Alert ID</th>
-<th>Date</th>
-<th>User</th>
-<th>Risk</th>
-<th>Reason</th>
+<th>User ID</th>
+<th>User Name</th>
+<th>Alerts</th>
+<th>Highest Risk</th>
+<th>Main Reason</th>
 <th>Status</th>
 
 </tr>
@@ -87,14 +62,14 @@
 
 <tr>
 
-<td>ALT001</td>
-<td>21 Aug 2026</td>
+<td>USR003</td>
 <td>Amit Kumar</td>
+<td>05</td>
 <td>91</td>
-<td>Unknown Recipient</td>
+<td>Unknown Recipients</td>
 
 <td>
-<span class="badge high">BLOCKED</span>
+<span class="badge high">HIGH RISK</span>
 </td>
 
 </tr>
@@ -102,14 +77,14 @@
 
 <tr>
 
-<td>ALT002</td>
-<td>20 Aug 2026</td>
+<td>USR006</td>
 <td>Vikash Das</td>
+<td>04</td>
 <td>96</td>
 <td>Unusual Amount</td>
 
 <td>
-<span class="badge high">BLOCKED</span>
+<span class="badge high">HIGH RISK</span>
 </td>
 
 </tr>
@@ -117,14 +92,14 @@
 
 <tr>
 
-<td>ALT003</td>
-<td>19 Aug 2026</td>
+<td>USR005</td>
 <td>Rohan Gupta</td>
+<td>02</td>
 <td>67</td>
-<td>Rapid Payments</td>
+<td>Rapid Transactions</td>
 
 <td>
-<span class="badge safe">RESOLVED</span>
+<span class="badge review">MONITOR</span>
 </td>
 
 </tr>
