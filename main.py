@@ -1,112 +1,171 @@
 # =========================================================
 # SECUREFLOW-AI
-# CODE 8 — DYNAMIC VERIFICATION
+# CODE 9 — TRANSACTION HISTORY & ALERTS
 # =========================================================
 
 
-def generate_verification_question(
-    transaction,
-    user
+# =========================================================
+# GET TRANSACTION HISTORY
+# =========================================================
+
+@app.get("/api/transactions/{user_id}")
+def get_transaction_history(
+    user_id: str
 ):
-    """
-    Generates a verification question based on
-    the suspicious behaviour detected.
-    """
 
-    # -----------------------------------------------------
-    # NEW DEVICE
-    # -----------------------------------------------------
+    connection = get_database()
 
-    if transaction.device != user["known_device"]:
+    cursor = connection.cursor()
 
-        return {
-            "type": "DEVICE_VERIFICATION",
+    cursor.execute(
+        """
+        SELECT *
+        FROM transactions
+        WHERE user_id = ?
+        ORDER BY id DESC
+        LIMIT 50
+        """,
+        (user_id,)
+    )
 
-            "question":
-                "Are you currently using a new device for this transaction?"
-        }
+    transactions = cursor.fetchall()
 
+    connection.close()
 
-    # -----------------------------------------------------
-    # NEW LOCATION
-    # -----------------------------------------------------
-
-    if transaction.location != user["known_location"]:
-
-        return {
-            "type": "LOCATION_VERIFICATION",
-
-            "question":
-                "Are you currently making this transaction from a new location?"
-        }
-
-
-    # -----------------------------------------------------
-    # NEW BENEFICIARY
-    # -----------------------------------------------------
-
-    if transaction.beneficiary != user["known_beneficiary"]:
-
-        return {
-            "type": "BENEFICIARY_VERIFICATION",
-
-            "question":
-                "Did you intentionally make this payment to this new beneficiary?"
-        }
-
-
-    # -----------------------------------------------------
-    # HIGH AMOUNT
-    # -----------------------------------------------------
-
-    if (
-        user["average_amount"] > 0
-        and
-        transaction.amount >
-        user["average_amount"] * 3
-    ):
-
-        return {
-            "type": "AMOUNT_VERIFICATION",
-
-            "question":
-                "Did you personally initiate this high-value transaction?"
-        }
-
-
-    # -----------------------------------------------------
-    # GENERAL VERIFICATION
-    # -----------------------------------------------------
 
     return {
-        "type": "GENERAL_VERIFICATION",
 
-        "question":
-            "Did you personally initiate this transaction?"
+        "success": True,
+
+        "user_id":
+            user_id,
+
+        "count":
+            len(transactions),
+
+        "transactions": [
+
+            dict(transaction)
+
+            for transaction in transactions
+
+        ]
+
     }
 
 
 # =========================================================
-# VERIFICATION RESPONSE MODEL
+# GET HIGH-RISK ALERTS
 # =========================================================
 
-from pydantic import BaseModel
+@app.get("/api/alerts/{user_id}")
+def get_alerts(
+    user_id: str
+):
+
+    connection = get_database()
+
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        SELECT *
+        FROM transactions
+
+        WHERE user_id = ?
+
+        AND (
+            risk_level = 'HIGH'
+            OR decision = 'BLOCK'
+            OR decision = 'ALERT'
+        )
+
+        ORDER BY id DESC
+
+        LIMIT 20
+        """,
+
+        (user_id,)
+    )
+
+    alerts = cursor.fetchall()
+
+    connection.close()
 
 
-class VerificationRequest(BaseModel):
+    return {
 
+        "success": True,
+
+        "user_id":
+            user_id,
+
+        "alert_count":
+            len(alerts),
+
+        "alerts": [
+
+            dict(alert)
+
+            for alert in alerts
+
+        ]
+
+    }
+
+
+# =========================================================
+# GET SINGLE TRANSACTION
+# =========================================================
+
+@app.get("/api/transaction/{transaction_id}")
+def get_transaction(
     transaction_id: int
+):
 
-    confirmed: bool
+    connection = get_database()
+
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        SELECT *
+        FROM transactions
+        WHERE id = ?
+        """,
+        (transaction_id,)
+    )
+
+    transaction = cursor.fetchone()
+
+    connection.close()
+
+
+    if transaction is None:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Transaction not found"
+        )
+
+
+    return {
+
+        "success": True,
+
+        "transaction":
+            dict(transaction)
+
+    }
 
 
 # =========================================================
-# CREATE VERIFICATION
+# DASHBOARD STATISTICS
 # =========================================================
 
-@app.post("/api/verification")
-def verify_transaction(
-    verification: VerificationRequest
+@app.get("/api/dashboard/{user_id}")
+def get_dashboard(
+    user_id: str
 ):
 
     connection = get_database()
@@ -115,96 +174,124 @@ def verify_transaction(
 
 
     # -----------------------------------------------------
-    # FIND TRANSACTION
+    # TOTAL TRANSACTIONS
     # -----------------------------------------------------
 
     cursor.execute(
         """
-        SELECT *
+        SELECT COUNT(*) AS total
         FROM transactions
-        WHERE id = ?
+        WHERE user_id = ?
         """,
-        (verification.transaction_id,)
+        (user_id,)
     )
 
-    transaction = cursor.fetchone()
-
-
-    if transaction is None:
-
-        connection.close()
-
-        raise HTTPException(
-            status_code=404,
-            detail="Transaction not found"
-        )
+    total = cursor.fetchone()["total"]
 
 
     # -----------------------------------------------------
-    # USER CONFIRMED
-    # -----------------------------------------------------
-
-    if verification.confirmed:
-
-        decision = "ALLOW"
-
-        message = (
-            "Transaction verified by user and allowed."
-        )
-
-
-    # -----------------------------------------------------
-    # USER REJECTED
-    # -----------------------------------------------------
-
-    else:
-
-        decision = "BLOCK"
-
-        message = (
-            "Transaction rejected by user and blocked."
-        )
-
-
-    # -----------------------------------------------------
-    # UPDATE DATABASE
+    # ALLOWED TRANSACTIONS
     # -----------------------------------------------------
 
     cursor.execute(
         """
-        UPDATE transactions
+        SELECT COUNT(*) AS total
+        FROM transactions
 
-        SET decision = ?
+        WHERE user_id = ?
 
-        WHERE id = ?
+        AND decision = 'ALLOW'
         """,
-
-        (
-            decision,
-            verification.transaction_id
-        )
+        (user_id,)
     )
 
-    connection.commit()
+    allowed = cursor.fetchone()["total"]
+
+
+    # -----------------------------------------------------
+    # ALERT TRANSACTIONS
+    # -----------------------------------------------------
+
+    cursor.execute(
+        """
+        SELECT COUNT(*) AS total
+        FROM transactions
+
+        WHERE user_id = ?
+
+        AND decision = 'ALERT'
+        """,
+        (user_id,)
+    )
+
+    alerts = cursor.fetchone()["total"]
+
+
+    # -----------------------------------------------------
+    # BLOCKED TRANSACTIONS
+    # -----------------------------------------------------
+
+    cursor.execute(
+        """
+        SELECT COUNT(*) AS total
+        FROM transactions
+
+        WHERE user_id = ?
+
+        AND decision = 'BLOCK'
+        """,
+        (user_id,)
+    )
+
+    blocked = cursor.fetchone()["total"]
+
+
+    # -----------------------------------------------------
+    # HIGH RISK TRANSACTIONS
+    # -----------------------------------------------------
+
+    cursor.execute(
+        """
+        SELECT COUNT(*) AS total
+        FROM transactions
+
+        WHERE user_id = ?
+
+        AND risk_level = 'HIGH'
+        """,
+        (user_id,)
+    )
+
+    high_risk = cursor.fetchone()["total"]
+
 
     connection.close()
 
-
-    # -----------------------------------------------------
-    # RESPONSE
-    # -----------------------------------------------------
 
     return {
 
         "success": True,
 
-        "transaction_id":
-            verification.transaction_id,
+        "user_id":
+            user_id,
 
-        "decision":
-            decision,
+        "statistics": {
 
-        "message":
-            message
+            "total_transactions":
+                total,
+
+            "allowed":
+                allowed,
+
+            "alerts":
+                alerts,
+
+            "blocked":
+                blocked,
+
+            "high_risk":
+                high_risk
+
+        }
 
     }
