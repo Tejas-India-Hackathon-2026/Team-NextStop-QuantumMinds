@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Risk Monitor</title>
+<title>SecureFlow-AI | Activity Monitor</title>
 
 <link rel="stylesheet"
 href="style10.css">
@@ -25,73 +25,17 @@ href="style10.css">
 
 <div>
 
-<h1>Live Risk Monitor</h1>
+<h1>Live Transaction Activity</h1>
 
 <p>
-Real-time transaction risk scoring
+Continuous monitoring of UPI payment activity
 </p>
 
 </div>
 
+<div class="avatar">●</div>
+
 </header>
-
-
-<section class="stats">
-
-
-<div class="stat">
-
-<div class="stat-title">
-LOW RISK
-</div>
-
-<div class="stat-number green">
-05
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-MEDIUM RISK
-</div>
-
-<div class="stat-number orange">
-02
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-HIGH RISK
-</div>
-
-<div class="stat-number red">
-01
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-AVG RISK
-</div>
-
-<div class="stat-number blue">
-31
-</div>
-
-</div>
-
-
-</section>
 
 
 <section class="panel factors">
@@ -100,11 +44,11 @@ AVG RISK
 <div class="panel-title">
 
 <h2>
-Current Risk Scores
+Transaction Activity
 </h2>
 
 <p>
-Latest transaction risk evaluation
+Most recent transactions received by the system
 </p>
 
 </div>
@@ -112,17 +56,16 @@ Latest transaction risk evaluation
 
 <table>
 
-
 <thead>
 
 <tr>
 
-<th>Transaction</th>
-<th>User</th>
+<th>Time</th>
+<th>Sender</th>
+<th>Recipient</th>
 <th>Amount</th>
-<th>Risk Score</th>
-<th>Classification</th>
-<th>Action</th>
+<th>Risk</th>
+<th>Status</th>
 
 </tr>
 
@@ -134,48 +77,60 @@ Latest transaction risk evaluation
 
 <tr>
 
-<td>TXN2011</td>
+<td>12:45:21</td>
 <td>Rahul Sharma</td>
+<td>Priya Singh</td>
 <td>₹1,500</td>
 <td>12</td>
 
 <td>
-<span class="badge safe">LOW</span>
+<span class="badge safe">SAFE</span>
 </td>
-
-<td>ALLOW</td>
 
 </tr>
 
 
 <tr>
 
-<td>TXN2010</td>
+<td>12:45:18</td>
 <td>Amit Kumar</td>
+<td>Unknown User</td>
 <td>₹45,000</td>
 <td>91</td>
 
 <td>
-<span class="badge high">HIGH</span>
+<span class="badge high">BLOCKED</span>
 </td>
-
-<td>BLOCK</td>
 
 </tr>
 
 
 <tr>
 
-<td>TXN2008</td>
+<td>12:45:10</td>
+<td>Sneha Das</td>
+<td>Arjun Roy</td>
+<td>₹2,800</td>
+<td>09</td>
+
+<td>
+<span class="badge safe">SAFE</span>
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>12:44:58</td>
 <td>Rohan Gupta</td>
+<td>Merchant XYZ</td>
 <td>₹18,500</td>
 <td>67</td>
 
 <td>
-<span class="badge review">MEDIUM</span>
+<span class="badge review">REVIEW</span>
 </td>
-
-<td>REVIEW</td>
 
 </tr>
 
@@ -185,7 +140,6 @@ Latest transaction risk evaluation
 </table>
 
 </section>
-
 
 </main>
 
