@@ -1,45 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SecureFlow-AI</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SecureFlow-AI Security Center</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial;background:#f4f7fb;color:#172033}
-.sidebar{position:fixed;width:240px;height:100vh;background:#fff;border-right:1px solid #ddd;padding:25px}
-.logo{font-size:22px;font-weight:bold;color:#2563eb;margin-bottom:40px}
-nav a{display:block;padding:14px;margin:5px 0;text-decoration:none;color:#64748b;border-radius:8px}
-nav a:hover,nav a.active{background:#eff6ff;color:#2563eb}
+*{box-sizing:border-box}
+body{margin:0;background:#050b14;color:#e5e7eb;font-family:Arial}
+.sidebar{position:fixed;width:240px;height:100vh;background:#08111f;border-right:1px solid #1e293b;padding:25px}
+.logo{color:#00e5ff;font-size:21px;font-weight:bold;margin-bottom:40px}
+nav a{display:block;padding:14px;color:#64748b;text-decoration:none;border-radius:8px;margin:6px 0}
+nav a:hover,nav a.active{background:#102a36;color:#00e5ff}
 .main{margin-left:240px;padding:30px}
-header{display:flex;justify-content:space-between;margin-bottom:25px}
-header p{color:#64748b;margin-top:6px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.card{background:white;padding:22px;border-radius:12px;border:1px solid #e5e7eb}
-.card p{color:#64748b;font-size:12px}
-.card h2{margin-top:8px;font-size:27px}
+header{display:flex;justify-content:space-between}
+header h1{color:#fff}
+header p{color:#64748b}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-top:25px}
+.card{background:#0c1726;border:1px solid #1e293b;padding:22px;border-radius:10px}
+.card p{color:#64748b}
+.card h2{color:#00e5ff}
 .grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-top:20px}
-.panel{background:white;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden}
-.panel h2{padding:20px;font-size:17px}
+.panel{background:#0c1726;border:1px solid #1e293b;border-radius:10px;overflow:hidden}
+.panel h2{padding:20px;color:#fff}
 table{width:100%;border-collapse:collapse}
-th{background:#f8fafc;color:#64748b;padding:13px;text-align:left;font-size:11px}
-td{padding:14px;border-top:1px solid #eee;font-size:12px}
-.safe{color:#16a34a}.risk{color:#dc2626}.review{color:#ea580c}
+th{padding:13px;color:#00e5ff;text-align:left;background:#09121f}
+td{padding:14px;border-top:1px solid #1e293b;font-size:12px}
+.high{color:#ff5252}.safe{color:#22c55e}.medium{color:#f59e0b}
+.alert{margin-top:20px;background:#180d12;border:1px solid #7f1d1d;padding:20px;border-radius:10px;color:#ff5252}
 </style>
 </head>
 
 <body>
 
 <aside class="sidebar">
-<div class="logo">🛡 SecureFlow-AI</div>
-
+<div class="logo">⚡ SECUREFLOW-AI</div>
 <nav>
-<a class="active" href="#">Dashboard</a>
-<a href="#transactions">Transactions</a>
-<a href="#risk">Risk Analysis</a>
-<a href="#users">Users</a>
-<a href="#reports">Reports</a>
+<a class="active" href="#">◉ Dashboard</a>
+<a href="#">⇄ Transactions</a>
+<a href="#">⚠ Threat Detection</a>
+<a href="#">♙ Users</a>
+<a href="#">▣ Reports</a>
 </nav>
 </aside>
 
@@ -47,117 +48,80 @@ td{padding:14px;border-top:1px solid #eee;font-size:12px}
 
 <header>
 <div>
-<h1>Fraud Detection Dashboard</h1>
-<p>Behavioural UPI fraud monitoring system</p>
+<h1>Security Operations Center</h1>
+<p>Real-time UPI fraud monitoring</p>
 </div>
-<div>👤 Security Admin</div>
+<div>🟢 SYSTEM ONLINE</div>
 </header>
 
 <section class="stats">
-
-<div class="card">
-<p>Total Transactions</p>
-<h2>40</h2>
-</div>
-
-<div class="card">
-<p>High Risk</p>
-<h2 class="risk">8</h2>
-</div>
-
-<div class="card">
-<p>Safe Transactions</p>
-<h2 class="safe">27</h2>
-</div>
-
-<div class="card">
-<p>Under Review</p>
-<h2 class="review">5</h2>
-</div>
-
+<div class="card"><p>Transactions</p><h2>40</h2></div>
+<div class="card"><p>Threats Detected</p><h2 class="high">8</h2></div>
+<div class="card"><p>Safe</p><h2 class="safe">27</h2></div>
+<div class="card"><p>Under Review</p><h2 class="medium">5</h2></div>
 </section>
 
 <section class="grid">
 
-<div class="panel" id="transactions">
-
-<h2>Recent Transactions</h2>
+<div class="panel">
+<h2>Live Transaction Feed</h2>
 
 <table>
 <tr>
-<th>ID</th>
-<th>Sender</th>
-<th>Receiver</th>
-<th>Amount</th>
-<th>Risk</th>
-<th>Status</th>
+<th>TXN</th>
+<th>USER</th>
+<th>AMOUNT</th>
+<th>RISK</th>
+<th>STATUS</th>
 </tr>
 
 <tr>
 <td>TXN10001</td>
 <td>Soumadip Das</td>
-<td>Shubham Paul</td>
 <td>₹12,500</td>
-<td class="risk">86</td>
-<td class="risk">High Risk</td>
+<td class="high">86</td>
+<td class="high">HIGH</td>
 </tr>
 
 <tr>
 <td>TXN10002</td>
 <td>Shubham Paul</td>
-<td>Tridip Debroy</td>
 <td>₹2,000</td>
 <td class="safe">18</td>
-<td class="safe">Safe</td>
+<td class="safe">SAFE</td>
 </tr>
 
 <tr>
 <td>TXN10003</td>
 <td>Tridip Debroy</td>
-<td>Soumadip Das</td>
 <td>₹35,000</td>
-<td class="risk">91</td>
-<td class="risk">High Risk</td>
-</tr>
-
-<tr>
-<td>TXN10004</td>
-<td>Shubham Mukherjee</td>
-<td>Shubham Paul</td>
-<td>₹4,500</td>
-<td class="review">52</td>
-<td class="review">Review</td>
+<td class="high">91</td>
+<td class="high">HIGH</td>
 </tr>
 
 </table>
-
 </div>
 
-<div class="panel" id="risk">
+<div class="panel">
+<h2>Threat Level</h2>
 
-<h2>Risk Overview</h2>
-
-<div style="padding:30px;text-align:center">
-
-<div style="font-size:60px;color:#dc2626;font-weight:bold">
-62%
-</div>
-
-<p>Overall Risk Level</p>
-
-<hr style="margin:25px">
-
-<p class="safe">● Safe — 27</p>
-<p class="review">● Review — 5</p>
-<p class="risk">● High Risk — 8</p>
-
+<div style="text-align:center;padding:35px">
+<div style="font-size:70px;color:#ff5252">62%</div>
+<p>Elevated Risk</p>
+<p class="high">● 8 High Risk</p>
+<p class="medium">● 5 Review</p>
+<p class="safe">● 27 Safe</p>
 </div>
 
 </div>
 
 </section>
 
-</main>
+<div class="alert">
+<strong>⚠ SECURITY ALERT</strong>
+<p>TXN10003 has a risk score of 91. Immediate review recommended.</p>
+</div>
 
+</main>
 </body>
 </html>
