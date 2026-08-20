@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Device Security Monitor</title>
+<title>Transaction History Analyzer</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:#111827;
-color:white;
+background:#f8fafc;
 }
 
 header{
+background:#1e293b;
+color:white;
 padding:25px;
-background:#030712;
-text-align:center;
 }
 
 .container{
@@ -23,50 +22,46 @@ max-width:900px;
 margin:30px auto;
 }
 
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
-}
-
 .card{
-background:#1f2937;
+background:white;
 padding:25px;
 border-radius:15px;
+box-shadow:0 5px 20px #cbd5e1;
 }
 
-.icon{
-font-size:50px;
-text-align:center;
+.transaction{
+display:flex;
+justify-content:space-between;
+padding:18px;
+border-bottom:1px solid #e2e8f0;
+}
+
+.safe{
+color:#16a34a;
+}
+
+.warning{
+color:#ca8a04;
+}
+
+.danger{
+color:#dc2626;
+}
+
+button{
+padding:14px;
+background:#2563eb;
+color:white;
+border:0;
+border-radius:8px;
+width:100%;
+margin-top:20px;
 }
 
 input[type=number]{
 width:100%;
 padding:15px;
 box-sizing:border-box;
-background:#111827;
-color:white;
-border:1px solid #4b5563;
-}
-
-label{
-display:block;
-padding:8px;
-}
-
-button{
-width:100%;
-padding:15px;
-background:#7c3aed;
-color:white;
-border:0;
-border-radius:8px;
-margin-top:15px;
-}
-
-.result{
-grid-column:1/3;
-text-align:center;
 }
 </style>
 </head>
@@ -74,76 +69,104 @@ text-align:center;
 <body>
 
 <header>
-<h1>📱 Device & Location Security</h1>
-<p>SecureFlow-AI UPI Fraud Detection</p>
+
+<h1>💳 UPI Transaction History</h1>
+<p>SecureFlow-AI Historical Risk Analyzer</p>
+
 </header>
 
 <div class="container">
 
-<div class="grid">
-
 <div class="card">
 
-<div class="icon">📱</div>
+<h2>Current Transaction</h2>
 
-<h2>Device Analysis</h2>
+<input id="amount" type="number"
+placeholder="Transaction Amount ₹">
+
+<br><br>
+
+<label>
+<input id="unusual_time" type="checkbox">
+ Unusual Time
+</label>
+
+<br>
+
+<label>
+<input id="unusual_frequency" type="checkbox">
+ Unusual Frequency
+</label>
+
+<br>
 
 <label>
 <input id="new_device" type="checkbox">
  New Device
 </label>
 
-<label>
-<input id="unusual_frequency" type="checkbox">
- Unusual Transaction Frequency
-</label>
-
-</div>
-
-<div class="card">
-
-<div class="icon">📍</div>
-
-<h2>Location Analysis</h2>
+<br>
 
 <label>
 <input id="unusual_location" type="checkbox">
  Unusual Location
 </label>
 
+<br>
+
 <label>
 <input id="sudden_location_change" type="checkbox">
  Sudden Location Change
 </label>
 
+<br>
+
+<label>
+<input id="unknown_beneficiary" type="checkbox">
+ Unknown Beneficiary
+</label>
+
+<br>
+
+<label>
+<input id="no_previous_transactions" type="checkbox">
+ No Previous Transaction
+</label>
+
+<br>
+
+<label>
+<input id="unusual_beneficiary_amount" type="checkbox">
+ Unusual Beneficiary Amount
+</label>
+
+<button onclick="analyze()">ANALYZE HISTORY</button>
+
 </div>
 
-<div class="card">
+<div class="card" style="margin-top:20px">
 
-<h2>Transaction Analysis</h2>
+<h2>Transaction Risk History</h2>
 
-<input id="amount" type="number"
-placeholder="Transaction Amount ₹">
-
-<label><input id="unusual_time" type="checkbox"> Unusual Time</label>
-<label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label>
-<label><input id="no_previous_transactions" type="checkbox"> No Previous Transaction</label>
-<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
-
-<button onclick="analyze()">ANALYZE DEVICE & LOCATION</button>
-
+<div class="transaction">
+<span>Current Transaction</span>
+<strong id="decision">Waiting</strong>
 </div>
 
-<div class="card result">
+<div class="transaction">
+<span>Risk Score</span>
+<strong id="score">--</strong>
+</div>
 
-<h1 id="score">--</h1>
-<h2 id="decision">SYSTEM READY</h2>
+<div class="transaction">
+<span>Risk Indicators</span>
+<strong id="count">0</strong>
+</div>
 
 <div id="reasons"></div>
 
 </div>
 
-</div>
 </div>
 
 <script>
@@ -180,14 +203,19 @@ body:JSON.stringify(data)
 
 let r=await response.json();
 
-document.getElementById("score").innerText=
-"Risk "+r.risk_score;
+document.getElementById("decision").innerText=r.decision;
 
-document.getElementById("decision").innerText=
-r.decision;
+document.getElementById("score").innerText=r.risk_score;
+
+document.getElementById("count").innerText=
+r.reasons.length;
 
 document.getElementById("reasons").innerHTML=
-r.reasons.map(x=>`<p>⚠ ${x}</p>`).join("");
+r.reasons.map(x=>
+`<div class="transaction">
+<span>⚠ ${x}</span>
+</div>`
+).join("");
 }
 
 </script>
