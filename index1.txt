@@ -2,96 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Transaction History</title>
+    <title>Behavior Profile</title>
 
     <style>
         body {
             font-family: Arial;
             background: #f4f7fb;
-            padding: 30px;
+            padding: 40px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .profile {
+            max-width: 700px;
+            margin: auto;
             background: white;
+            padding: 30px;
+            border-radius: 15px;
         }
 
-        th, td {
-            padding: 15px;
-            border-bottom: 1px solid #e5e7eb;
-            text-align: left;
+        .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 18px;
+            border-bottom: 1px solid #eee;
         }
 
-        th {
-            background: #111827;
-            color: white;
-        }
-
-        .allow {
+        .good {
             color: green;
-            font-weight: bold;
-        }
-
-        .alert {
-            color: orange;
-            font-weight: bold;
-        }
-
-        .block {
-            color: red;
-            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
 
-<h1>Transaction History</h1>
+<div class="profile">
 
-<br>
+    <h1>User Behavior Profile</h1>
 
-<table>
+    <br>
 
-    <thead>
-        <tr>
-            <th>Transaction ID</th>
-            <th>Amount</th>
-            <th>Risk Score</th>
-            <th>Decision</th>
-            <th>Date</th>
-        </tr>
-    </thead>
+    <div class="item">
+        <span>Total Transactions</span>
+        <strong>245</strong>
+    </div>
 
-    <tbody>
+    <div class="item">
+        <span>Average Transaction</span>
+        <strong>₹850</strong>
+    </div>
 
-        <tr>
-            <td>TXN10001</td>
-            <td>₹500</td>
-            <td>12</td>
-            <td class="allow">ALLOW</td>
-            <td>21 Aug 2026</td>
-        </tr>
+    <div class="item">
+        <span>Known Devices</span>
+        <strong>2</strong>
+    </div>
 
-        <tr>
-            <td>TXN10002</td>
-            <td>₹7,500</td>
-            <td>64</td>
-            <td class="alert">ALERT</td>
-            <td>21 Aug 2026</td>
-        </tr>
+    <div class="item">
+        <span>Known Locations</span>
+        <strong>3</strong>
+    </div>
 
-        <tr>
-            <td>TXN10003</td>
-            <td>₹25,000</td>
-            <td>91</td>
-            <td class="block">BLOCK</td>
-            <td>21 Aug 2026</td>
-        </tr>
+    <div class="item">
+        <span>Behavior Status</span>
+        <strong class="good">NORMAL</strong>
+    </div>
 
-    </tbody>
-
-</table>
+</div>
 
 </body>
 </html>
