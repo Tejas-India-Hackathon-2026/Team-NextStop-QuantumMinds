@@ -1,63 +1,68 @@
-# security/session_manager.py
+# security/pin_monitor.py
 
-import secrets
 from datetime import datetime, timedelta
 
 
-class SessionManager:
+class PINAttemptMonitor:
 
-    def __init__(self):
-
-        self.sessions = {}
-
-    def create_session(
+    def __init__(
         self,
-        user_id,
-        device_id
+        max_attempts=3,
+        lock_minutes=10
     ):
 
-        session_id = secrets.token_urlsafe(32)
+        self.max_attempts = max_attempts
+        self.lock_minutes = lock_minutes
+        self.users = {}
 
-        self.sessions[session_id] = {
-            "user_id": user_id,
-            "device_id": device_id,
-            "created_at": datetime.utcnow(),
-            "last_activity": datetime.utcnow()
-        }
+    def failed_attempt(self, user_id):
 
-        return session_id
+        now = datetime.utcnow()
 
-    def validate_session(
-        self,
-        session_id,
-        timeout_minutes=30
-    ):
-
-        session = self.sessions.get(session_id)
-
-        if not session:
-            return False
-
-        elapsed = (
-            datetime.utcnow()
-            - session["last_activity"]
+        record = self.users.setdefault(
+            user_id,
+            {
+                "attempts": 0,
+                "locked_until": None
+            }
         )
 
-        if elapsed > timedelta(
-            minutes=timeout_minutes
-        ):
+        record["attempts"] += 1
 
-            del self.sessions[session_id]
+        if record["attempts"] >= self.max_attempts:
 
+            record["locked_until"] = (
+                now
+                + timedelta(
+                    minutes=self.lock_minutes
+                )
+            )
+
+        return record
+
+    def is_locked(self, user_id):
+
+        record = self.users.get(user_id)
+
+        if not record:
             return False
 
-        session["last_activity"] = datetime.utcnow()
+        locked_until = record["locked_until"]
 
-        return True
+        if not locked_until:
+            return False
 
-    def revoke(self, session_id):
+        if datetime.utcnow() < locked_until:
+            return True
 
-        self.sessions.pop(
-            session_id,
+        record["attempts"] = 0
+        record["locked_until"] = None
+
+        return False
+
+    def successful_login(self, user_id):
+
+        self.users.pop(
+            user_id,
             None
         )
