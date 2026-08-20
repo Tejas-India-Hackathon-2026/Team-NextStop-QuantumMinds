@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Suspicious Activity</title>
+<title>SecureFlow-AI | Behaviour Monitor</title>
 
 <link rel="stylesheet"
 href="style10.css">
@@ -25,75 +25,103 @@ href="style10.css">
 
 <div>
 
-<h1>Suspicious Activity Monitor</h1>
+<h1>AI Behaviour Monitor</h1>
 
 <p>
-Real-time abnormal behaviour detection
+Continuous behavioural profiling of UPI users
 </p>
 
 </div>
 
-<div class="avatar">
-AI
-</div>
+<div class="avatar">AI</div>
 
 </header>
 
 
-<section class="stats">
+<section class="panel factors">
 
 
-<div class="stat">
+<div class="panel-title">
 
-<div class="stat-title">
-SUSPICIOUS EVENTS
-</div>
+<h2>
+Behavioural Analysis
+</h2>
 
-<div class="stat-number red">
-08
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-UNKNOWN DEVICES
-</div>
-
-<div class="stat-number orange">
-03
-</div>
+<p>
+Live AI evaluation of user behaviour
+</p>
 
 </div>
 
 
-<div class="stat">
+<div class="factor-grid">
 
-<div class="stat-title">
-NEW RECIPIENTS
-</div>
 
-<div class="stat-number orange">
-05
+<div class="factor">
+
+<h3>
+Transaction Velocity
+</h3>
+
+<p>
+Multiple payments detected within short intervals.</p>
+
+<div class="progress">
+<div style="width:78%"></div>
 </div>
 
 </div>
 
 
-<div class="stat">
+<div class="factor">
 
-<div class="stat-title">
-BLOCKED
+<h3>
+Amount Deviation
+</h3>
+
+<p>
+Payment amount differs from historical behaviour.</p>
+
+<div class="progress">
+<div style="width:82%"></div>
 </div>
 
-<div class="stat-number green">
-04
+</div>
+
+
+<div class="factor">
+
+<h3>
+Location Change
+</h3>
+
+<p>
+Transaction location differs from usual pattern.</p>
+
+<div class="progress">
+<div style="width:56%"></div>
 </div>
 
 </div>
 
+
+<div class="factor">
+
+<h3>
+Device Change
+</h3>
+
+<p>
+New device detected during payment.</p>
+
+<div class="progress">
+<div style="width:67%"></div>
+</div>
+
+</div>
+
+
+</div>
 
 </section>
 
@@ -104,11 +132,11 @@ BLOCKED
 <div class="panel-title">
 
 <h2>
-Suspicious Events
+Current AI Decision
 </h2>
 
 <p>
-Live behavioural anomalies
+Latest behavioural evaluation
 </p>
 
 </div>
@@ -116,17 +144,14 @@ Live behavioural anomalies
 
 <table>
 
-
 <thead>
 
 <tr>
 
-<th>Time</th>
 <th>User</th>
-<th>Event</th>
-<th>Risk</th>
-<th>AI Reason</th>
-<th>Status</th>
+<th>Behaviour Score</th>
+<th>Risk Level</th>
+<th>AI Decision</th>
 
 </tr>
 
@@ -135,57 +160,53 @@ Live behavioural anomalies
 
 <tbody>
 
-
 <tr>
 
-<td>12:45</td>
 <td>Amit Kumar</td>
-<td>Payment</td>
-<td>91</td>
-<td>Unknown Recipient</td>
+<td>92</td>
 
 <td>
-<span class="badge high">BLOCKED</span>
+<span class="badge high">HIGH</span>
 </td>
+
+<td>BLOCK</td>
 
 </tr>
 
 
 <tr>
 
-<td>12:42</td>
 <td>Rohan Gupta</td>
-<td>Payment</td>
-<td>67</td>
-<td>Rapid Transactions</td>
+<td>64</td>
 
 <td>
-<span class="badge review">REVIEW</span>
+<span class="badge review">MEDIUM</span>
 </td>
+
+<td>REVIEW</td>
 
 </tr>
 
 
 <tr>
 
-<td>12:39</td>
-<td>Priya Das</td>
-<td>Login</td>
-<td>72</td>
-<td>New Device</td>
+<td>Rahul Sharma</td>
+<td>15</td>
 
 <td>
-<span class="badge review">REVIEW</span>
+<span class="badge safe">LOW</span>
 </td>
 
-</tr>
+<td>ALLOW</td>
 
+</tr>
 
 </tbody>
 
 </table>
 
 </section>
+
 
 </main>
 
