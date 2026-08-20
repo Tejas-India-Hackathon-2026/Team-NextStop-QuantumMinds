@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | User Alerts</title>
+<title>SecureFlow-AI | Alert Severity</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -20,93 +20,146 @@
 
 <div>
 
-<h1>User Fraud Alerts</h1>
+<h1>Alert Severity Dashboard</h1>
 
-<p>Users with suspicious transaction behaviour</p>
+<p>Fraud alerts classified according to severity</p>
 
 </div>
 
 </header>
 
 
-<section class="panel factors">
+<section class="stats">
 
-<div class="panel-title">
+<div class="stat">
 
-<h2>Risky Users</h2>
+<div class="stat-title">
+CRITICAL
+</div>
 
-<p>Users requiring additional monitoring</p>
+<div class="stat-number red">
+07
+</div>
 
 </div>
 
 
-<table>
+<div class="stat">
 
-<thead>
+<div class="stat-title">
+HIGH
+</div>
 
-<tr>
+<div class="stat-number orange">
+05
+</div>
 
-<th>User ID</th>
-<th>User Name</th>
-<th>Alerts</th>
-<th>Highest Risk</th>
-<th>Main Reason</th>
-<th>Status</th>
-
-</tr>
-
-</thead>
+</div>
 
 
-<tbody>
+<div class="stat">
 
-<tr>
+<div class="stat-title">
+MEDIUM
+</div>
 
-<td>USR003</td>
-<td>Amit Kumar</td>
-<td>05</td>
-<td>91</td>
-<td>Unknown Recipients</td>
+<div class="stat-number blue">
+08
+</div>
 
-<td>
-<span class="badge high">HIGH RISK</span>
-</td>
-
-</tr>
+</div>
 
 
-<tr>
+<div class="stat">
 
-<td>USR006</td>
-<td>Vikash Das</td>
-<td>04</td>
-<td>96</td>
-<td>Unusual Amount</td>
+<div class="stat-title">
+LOW
+</div>
 
-<td>
-<span class="badge high">HIGH RISK</span>
-</td>
+<div class="stat-number green">
+22
+</div>
 
-</tr>
+</div>
+
+</section>
 
 
-<tr>
+<section class="panel factors">
 
-<td>USR005</td>
-<td>Rohan Gupta</td>
-<td>02</td>
-<td>67</td>
-<td>Rapid Transactions</td>
+<div class="panel-title">
 
-<td>
-<span class="badge review">MONITOR</span>
-</td>
+<h2>Severity Distribution</h2>
 
-</tr>
+<p>Classification of security alerts</p>
 
-</tbody>
+</div>
 
-</table>
+
+<div class="factor-grid">
+
+
+<div class="factor">
+
+<h3>Critical</h3>
+
+<p>07 alerts</p>
+
+<div class="progress">
+
+<div style="width:85%"></div>
+
+</div>
+
+</div>
+
+
+<div class="factor">
+
+<h3>High</h3>
+
+<p>05 alerts</p>
+
+<div class="progress">
+
+<div style="width:65%"></div>
+
+</div>
+
+</div>
+
+
+<div class="factor">
+
+<h3>Medium</h3>
+
+<p>08 alerts</p>
+
+<div class="progress">
+
+<div style="width:45%"></div>
+
+</div>
+
+</div>
+
+
+<div class="factor">
+
+<h3>Low</h3>
+
+<p>22 alerts</p>
+
+<div class="progress">
+
+<div style="width:25%"></div>
+
+</div>
+
+</div>
+
+
+</div>
 
 </section>
 
