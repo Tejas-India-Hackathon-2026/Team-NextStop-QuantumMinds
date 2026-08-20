@@ -2,67 +2,74 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Behavior Profile</title>
+    <title>Fraud Analytics</title>
 
     <style>
         body {
             font-family: Arial;
             background: #f4f7fb;
-            padding: 40px;
-        }
-
-        .profile {
-            max-width: 700px;
-            margin: auto;
-            background: white;
             padding: 30px;
-            border-radius: 15px;
         }
 
-        .item {
-            display: flex;
-            justify-content: space-between;
-            padding: 18px;
-            border-bottom: 1px solid #eee;
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
         }
 
-        .good {
-            color: green;
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .bar {
+            margin-top: 15px;
+            background: #e5e7eb;
+            height: 12px;
+            border-radius: 10px;
+        }
+
+        .fill {
+            height: 100%;
+            width: 75%;
+            background: #111827;
+            border-radius: 10px;
         }
     </style>
 </head>
 
 <body>
 
-<div class="profile">
+<h1>Fraud Analytics</h1>
 
-    <h1>User Behavior Profile</h1>
+<br>
 
-    <br>
+<div class="grid">
 
-    <div class="item">
-        <span>Total Transactions</span>
-        <strong>245</strong>
+    <div class="box">
+        <h3>Fraud Detected</h3>
+        <div class="number">476</div>
     </div>
 
-    <div class="item">
-        <span>Average Transaction</span>
-        <strong>₹850</strong>
+    <div class="box">
+        <h3>Detection Rate</h3>
+        <div class="number">94.7%</div>
+
+        <div class="bar">
+            <div class="fill"></div>
+        </div>
     </div>
 
-    <div class="item">
-        <span>Known Devices</span>
-        <strong>2</strong>
-    </div>
-
-    <div class="item">
-        <span>Known Locations</span>
-        <strong>3</strong>
-    </div>
-
-    <div class="item">
-        <span>Behavior Status</span>
-        <strong class="good">NORMAL</strong>
+    <div class="box">
+        <h3>Blocked Amount</h3>
+        <div class="number">₹8.4L</div>
     </div>
 
 </div>
