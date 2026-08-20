@@ -1,58 +1,70 @@
-# services/duplicate_detector.py
-
-import hashlib
-import time
+# services/rule_engine.py
 
 
-class DuplicateDetector:
+class FraudRule:
 
-    def __init__(self, expiry_seconds=120):
-
-        self.expiry_seconds = expiry_seconds
-        self.transactions = {}
-
-    def create_fingerprint(
+    def __init__(
         self,
-        user_id,
-        receiver_id,
-        amount
+        name,
+        condition,
+        weight
     ):
 
-        raw = (
-            f"{user_id}|"
-            f"{receiver_id}|"
-            f"{amount}"
-        )
+        self.name = name
+        self.condition = condition
+        self.weight = weight
 
-        return hashlib.sha256(
-            raw.encode()
-        ).hexdigest()
 
-    def is_duplicate(
-        self,
-        user_id,
-        receiver_id,
-        amount
-    ):
+class RuleEngine:
 
-        fingerprint = self.create_fingerprint(
-            user_id,
-            receiver_id,
-            amount
-        )
+    def __init__(self):
 
-        now = time.time()
+        self.rules = [
 
-        old_time = self.transactions.get(
-            fingerprint
-        )
+            FraudRule(
+                "high_amount",
+                lambda x: x["amount"] > 50000,
+                20
+            ),
 
-        self.transactions[fingerprint] = now
+            FraudRule(
+                "new_device",
+                lambda x: x["new_device"],
+                15
+            ),
 
-        if old_time is None:
-            return False
+            FraudRule(
+                "new_location",
+                lambda x: x["new_location"],
+                10
+            ),
 
-        return (
-            now - old_time
-            <= self.expiry_seconds
-        )
+            FraudRule(
+                "many_failures",
+                lambda x: x["failed_attempts"] >= 3,
+                15
+            ),
+
+            FraudRule(
+                "merchant_high_risk",
+                lambda x: x["merchant_risk"] >= 70,
+                25
+            )
+        ]
+
+    def evaluate(self, transaction):
+
+        triggered = []
+        score = 0
+
+        for rule in self.rules:
+
+            if rule.condition(transaction):
+
+                triggered.append(rule.name)
+                score += rule.weight
+
+        return {
+            "rule_score": min(score, 100),
+            "triggered_rules": triggered
+        }
