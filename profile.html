@@ -2,72 +2,54 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Fraud Control Room</title>
+<title>Fraud Report</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:#020617;
-color:#e2e8f0;
+background:#e2e8f0;
 }
 
-header{
-background:#111827;
-padding:20px;
-border-bottom:1px solid #334155;
+.report{
+width:750px;
+max-width:90%;
+margin:40px auto;
+background:white;
+padding:35px;
+border-radius:10px;
 }
 
-.dashboard{
-max-width:1100px;
-margin:30px auto;
-display:grid;
-grid-template-columns:2fr 1fr;
-gap:20px;
-}
-
-.panel{
-background:#111827;
-border:1px solid #334155;
-padding:25px;
-border-radius:15px;
+.header{
+border-bottom:3px solid #1e3a8a;
+padding-bottom:20px;
 }
 
 input[type=number]{
 width:100%;
 padding:15px;
 box-sizing:border-box;
-background:#020617;
-color:white;
-border:1px solid #475569;
+margin:15px 0;
 }
 
 label{
 display:block;
-padding:8px;
+padding:7px;
 }
 
 button{
 width:100%;
 padding:15px;
-background:#7c3aed;
+background:#1e3a8a;
 color:white;
 border:0;
 border-radius:8px;
-margin-top:15px;
 }
 
-.score{
-font-size:70px;
-text-align:center;
-}
-
-.log{
-background:#020617;
+.reportBox{
+margin-top:25px;
+border:1px solid #cbd5e1;
 padding:20px;
-margin-top:20px;
-font-family:monospace;
-min-height:150px;
 }
 
 </style>
@@ -75,18 +57,18 @@ min-height:150px;
 
 <body>
 
-<header>
-<h1>🖥 SecureFlow-AI Fraud Control Room</h1>
-</header>
+<div class="report">
 
-<div class="dashboard">
+<div class="header">
 
-<div class="panel">
+<h1>SECUREFLOW-AI</h1>
 
-<h2>Transaction Input</h2>
+<h2>UPI FRAUD ANALYSIS REPORT</h2>
+
+</div>
 
 <input id="amount" type="number"
-placeholder="UPI Transaction Amount ₹">
+placeholder="Transaction Amount ₹">
 
 <label><input id="unusual_time" type="checkbox"> Unusual Time</label>
 <label><input id="unusual_frequency" type="checkbox"> Unusual Frequency</label>
@@ -94,26 +76,16 @@ placeholder="UPI Transaction Amount ₹">
 <label><input id="unusual_location" type="checkbox"> Unusual Location</label>
 <label><input id="sudden_location_change" type="checkbox"> Location Change</label>
 <label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label>
-<label><input id="no_previous_transactions" type="checkbox"> No Previous Transactions</label>
+<label><input id="no_previous_transactions" type="checkbox"> No Previous Transaction</label>
 <label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
 
-<button onclick="run()">RUN DETECTION ENGINE</button>
+<button onclick="generateReport()">
+GENERATE FRAUD REPORT
+</button>
 
-</div>
+<div class="reportBox" id="report">
 
-<div class="panel">
-
-<h2>Risk Monitor</h2>
-
-<div class="score" id="score">0</div>
-
-<h2 id="decision" style="text-align:center">
-SYSTEM READY
-</h2>
-
-<div class="log" id="log">
-Waiting for transaction...
-</div>
+<h2>Report Pending</h2>
 
 </div>
 
@@ -121,7 +93,7 @@ Waiting for transaction...
 
 <script>
 
-async function run(){
+async function generateReport(){
 
 let ids=[
 "unusual_time",
@@ -153,12 +125,30 @@ body:JSON.stringify(data)
 
 let r=await response.json();
 
-document.getElementById("score").innerText=r.risk_score;
+document.getElementById("report").innerHTML=`
 
-document.getElementById("decision").innerText=r.decision;
+<h2>Transaction Analysis</h2>
 
-document.getElementById("log").innerHTML=
-r.reasons.map(x=>"⚠ "+x+"<br>").join("");
+<p><b>Amount:</b> ₹${data.amount}</p>
+
+<p><b>Risk Score:</b> ${r.risk_score}</p>
+
+<p><b>AI Decision:</b> ${r.decision}</p>
+
+<hr>
+
+<h3>Detected Fraud Indicators</h3>
+
+${r.reasons.map(x=>`<p>• ${x}</p>`).join("")}
+
+<hr>
+
+<h3>AI Verification Questions</h3>
+
+${r.ai_questions.map(x=>`<p>🤖 ${x}</p>`).join("")}
+
+`;
+
 }
 
 </script>
