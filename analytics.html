@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Fraud Patterns</title>
+<title>SecureFlow-AI | User Analytics</title>
 
 <link rel="stylesheet"
 href="style10.css">
@@ -25,10 +25,10 @@ href="style10.css">
 
 <div>
 
-<h1>Fraud Pattern Analytics</h1>
+<h1>User Risk Analytics</h1>
 
 <p>
-AI-detected suspicious behavioural patterns
+Behaviour-based risk analysis of users
 </p>
 
 </div>
@@ -42,137 +42,126 @@ AI-detected suspicious behavioural patterns
 <div class="panel-title">
 
 <h2>
-Detected Fraud Patterns
+Highest Risk Users
 </h2>
 
 <p>
-Most common suspicious behaviours
+Users requiring additional monitoring
 </p>
 
 </div>
 
 
-<div class="factor-grid">
+<table>
+
+<thead>
+
+<tr>
+
+<th>User ID</th>
+<th>Name</th>
+<th>Transactions</th>
+<th>Average Amount</th>
+<th>Risk Score</th>
+<th>Classification</th>
+
+</tr>
+
+</thead>
 
 
-<div class="factor">
-
-<h3>
-Unusual Transaction Amount
-</h3>
-
-<p>
-Detected: 18 times
-</p>
-
-<div class="progress">
-
-<div style="width:82%"></div>
-
-</div>
-
-</div>
+<tbody>
 
 
-<div class="factor">
+<tr>
 
-<h3>
-Unknown Recipient
-</h3>
+<td>USR003</td>
 
-<p>
-Detected: 14 times
-</p>
+<td>Amit Kumar</td>
 
-<div class="progress">
+<td>14</td>
 
-<div style="width:68%"></div>
+<td>₹8,200</td>
 
-</div>
+<td>91</td>
 
-</div>
+<td>
+<span class="badge high">
+HIGH
+</span>
+</td>
 
-
-<div class="factor">
-
-<h3>
-Rapid Transactions
-</h3>
-
-<p>
-Detected: 11 times
-</p>
-
-<div class="progress">
-
-<div style="width:55%"></div>
-
-</div>
-
-</div>
+</tr>
 
 
-<div class="factor">
+<tr>
 
-<h3>
-Location Anomaly
-</h3>
+<td>USR005</td>
 
-<p>
-Detected: 07 times
-</p>
+<td>Rohan Gupta</td>
 
-<div class="progress">
+<td>18</td>
 
-<div style="width:40%"></div>
+<td>₹7,400</td>
 
-</div>
+<td>67</td>
 
-</div>
+<td>
+<span class="badge review">
+MEDIUM
+</span>
+</td>
 
-
-<div class="factor">
-
-<h3>
-New Device
-</h3>
-
-<p>
-Detected: 06 times
-</p>
-
-<div class="progress">
-
-<div style="width:32%"></div>
-
-</div>
-
-</div>
+</tr>
 
 
-<div class="factor">
+<tr>
 
-<h3>
-Multiple Failed Login Attempts
-</h3>
+<td>USR002</td>
 
-<p>
-Detected: 04 times
-</p>
+<td>Priya Singh</td>
 
-<div class="progress">
+<td>12</td>
 
-<div style="width:24%"></div>
+<td>₹3,100</td>
 
-</div>
+<td>19</td>
 
-</div>
+<td>
+<span class="badge safe">
+LOW
+</span>
+</td>
+
+</tr>
 
 
-</div>
+<tr>
+
+<td>USR001</td>
+
+<td>Rahul Sharma</td>
+
+<td>14</td>
+
+<td>₹2,450</td>
+
+<td>14</td>
+
+<td>
+<span class="badge safe">
+LOW
+</span>
+</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
 
 </section>
-
 
 </main>
 
