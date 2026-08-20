@@ -2,144 +2,162 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>UPI Verify</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureFlow-AI</title>
 
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:#f8fafc;
-}
-
-.nav{
-background:#2563eb;
-color:white;
-padding:20px;
-}
-
-.container{
-width:500px;
-max-width:90%;
-margin:40px auto;
-}
-
-.card{
-background:white;
-padding:30px;
-border-radius:20px;
-box-shadow:0 5px 25px #cbd5e1;
-}
-
-.amount{
-font-size:40px;
-text-align:center;
-font-weight:bold;
-}
-
-input[type=number]{
-width:100%;
-padding:15px;
-box-sizing:border-box;
-}
-
-label{
-display:block;
-padding:8px;
-}
-
-button{
-width:100%;
-padding:15px;
-background:#2563eb;
-color:white;
-border:0;
-border-radius:10px;
-margin-top:15px;
-}
-
-.result{
-text-align:center;
-margin-top:25px;
-}
-
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial;background:#f4f7fb;color:#172033}
+.sidebar{position:fixed;width:240px;height:100vh;background:#fff;border-right:1px solid #ddd;padding:25px}
+.logo{font-size:22px;font-weight:bold;color:#2563eb;margin-bottom:40px}
+nav a{display:block;padding:14px;margin:5px 0;text-decoration:none;color:#64748b;border-radius:8px}
+nav a:hover,nav a.active{background:#eff6ff;color:#2563eb}
+.main{margin-left:240px;padding:30px}
+header{display:flex;justify-content:space-between;margin-bottom:25px}
+header p{color:#64748b;margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:white;padding:22px;border-radius:12px;border:1px solid #e5e7eb}
+.card p{color:#64748b;font-size:12px}
+.card h2{margin-top:8px;font-size:27px}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-top:20px}
+.panel{background:white;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden}
+.panel h2{padding:20px;font-size:17px}
+table{width:100%;border-collapse:collapse}
+th{background:#f8fafc;color:#64748b;padding:13px;text-align:left;font-size:11px}
+td{padding:14px;border-top:1px solid #eee;font-size:12px}
+.safe{color:#16a34a}.risk{color:#dc2626}.review{color:#ea580c}
 </style>
 </head>
 
 <body>
 
-<div class="nav">
-<h2>SecureFlow-AI</h2>
-</div>
+<aside class="sidebar">
+<div class="logo">🛡 SecureFlow-AI</div>
 
-<div class="container">
+<nav>
+<a class="active" href="#">Dashboard</a>
+<a href="#transactions">Transactions</a>
+<a href="#risk">Risk Analysis</a>
+<a href="#users">Users</a>
+<a href="#reports">Reports</a>
+</nav>
+</aside>
+
+<main class="main">
+
+<header>
+<div>
+<h1>Fraud Detection Dashboard</h1>
+<p>Behavioural UPI fraud monitoring system</p>
+</div>
+<div>👤 Security Admin</div>
+</header>
+
+<section class="stats">
 
 <div class="card">
-
-<h2>Verify UPI Payment</h2>
-
-<div class="amount">
-₹ <span id="amountDisplay">0</span>
+<p>Total Transactions</p>
+<h2>40</h2>
 </div>
 
-<input id="amount" type="number"
-placeholder="Enter amount"
-oninput="amountDisplay.innerText=this.value">
+<div class="card">
+<p>High Risk</p>
+<h2 class="risk">8</h2>
+</div>
 
-<label><input id="unusual_time" type="checkbox"> Unusual Time</label>
-<label><input id="unusual_frequency" type="checkbox"> Unusual Frequency</label>
-<label><input id="new_device" type="checkbox"> New Device</label>
-<label><input id="unusual_location" type="checkbox"> Unusual Location</label>
-<label><input id="sudden_location_change" type="checkbox"> Location Change</label>
-<label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label>
-<label><input id="no_previous_transactions" type="checkbox"> No Previous Transaction</label>
-<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
+<div class="card">
+<p>Safe Transactions</p>
+<h2 class="safe">27</h2>
+</div>
 
-<button onclick="verify()">VERIFY PAYMENT</button>
+<div class="card">
+<p>Under Review</p>
+<h2 class="review">5</h2>
+</div>
 
-<div class="result">
+</section>
 
-<h2 id="decision">Waiting for verification</h2>
-<h3 id="score"></h3>
+<section class="grid">
+
+<div class="panel" id="transactions">
+
+<h2>Recent Transactions</h2>
+
+<table>
+<tr>
+<th>ID</th>
+<th>Sender</th>
+<th>Receiver</th>
+<th>Amount</th>
+<th>Risk</th>
+<th>Status</th>
+</tr>
+
+<tr>
+<td>TXN10001</td>
+<td>Soumadip Das</td>
+<td>Shubham Paul</td>
+<td>₹12,500</td>
+<td class="risk">86</td>
+<td class="risk">High Risk</td>
+</tr>
+
+<tr>
+<td>TXN10002</td>
+<td>Shubham Paul</td>
+<td>Tridip Debroy</td>
+<td>₹2,000</td>
+<td class="safe">18</td>
+<td class="safe">Safe</td>
+</tr>
+
+<tr>
+<td>TXN10003</td>
+<td>Tridip Debroy</td>
+<td>Soumadip Das</td>
+<td>₹35,000</td>
+<td class="risk">91</td>
+<td class="risk">High Risk</td>
+</tr>
+
+<tr>
+<td>TXN10004</td>
+<td>Shubham Mukherjee</td>
+<td>Shubham Paul</td>
+<td>₹4,500</td>
+<td class="review">52</td>
+<td class="review">Review</td>
+</tr>
+
+</table>
+
+</div>
+
+<div class="panel" id="risk">
+
+<h2>Risk Overview</h2>
+
+<div style="padding:30px;text-align:center">
+
+<div style="font-size:60px;color:#dc2626;font-weight:bold">
+62%
+</div>
+
+<p>Overall Risk Level</p>
+
+<hr style="margin:25px">
+
+<p class="safe">● Safe — 27</p>
+<p class="review">● Review — 5</p>
+<p class="risk">● High Risk — 8</p>
 
 </div>
 
 </div>
-</div>
 
-<script>
-async function verify(){
+</section>
 
-let ids=[
-"unusual_time","unusual_frequency","new_device",
-"unusual_location","sudden_location_change",
-"unknown_beneficiary","no_previous_transactions",
-"unusual_beneficiary_amount"
-];
-
-let data={
-amount:Number(document.getElementById("amount").value)
-};
-
-ids.forEach(id=>{
-data[id]=document.getElementById(id).checked;
-});
-
-let response=await fetch(
-"http://127.0.0.1:8000/transaction",
-{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify(data)
-});
-
-let r=await response.json();
-
-document.getElementById("decision").innerText=r.decision;
-
-document.getElementById("score").innerText=
-"Risk Score: "+r.risk_score;
-}
-</script>
+</main>
 
 </body>
 </html>
