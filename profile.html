@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>UPI Risk Profile</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f1f5f9;
+    color:#0f172a;
+}
+
+header{
+    background:#0f172a;
+    color:white;
+    padding:25px;
+    text-align:center;
+}
+
+.container{
+    max-width:800px;
+    margin:30px auto;
+    padding:20px;
+}
+
+.profile{
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 5px 20px #cbd5e1;
+}
+
+.avatar{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    background:#2563eb;
+    color:white;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:40px;
+}
+
+input[type=number]{
+    width:100%;
+    padding:15px;
+    box-sizing:border-box;
+    margin:20px 0;
+}
+
+.feature{
+    padding:12px;
+    background:#f8fafc;
+    margin:8px 0;
+    border-radius:8px;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    background:#2563eb;
+    color:white;
+    border:0;
+    border-radius:8px;
+    margin-top:15px;
+}
+
+.result{
+    margin-top:25px;
+    text-align:center;
+}
+
+.score{
+    font-size:55px;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🛡 SecureFlow-AI</h1>
+<p>UPI User Risk Profile</p>
+</header>
+
+<div class="container">
+
+<div class="profile">
+
+<div class="avatar">👤</div>
+
+<h2 style="text-align:center">Transaction Security Profile</h2>
+
+<input id="amount" type="number" placeholder="Transaction Amount ₹">
+
+<div class="feature">
+<input id="unusual_time" type="checkbox">
+ Unusual transaction time
+</div>
+
+<div class="feature">
+<input id="unusual_frequency" type="checkbox">
+ Unusual transaction frequency
+</div>
+
+<div class="feature">
+<input id="new_device" type="checkbox">
+ New device detected
+</div>
+
+<div class="feature">
+<input id="unusual_location" type="checkbox">
+ Unusual location
+</div>
+
+<div class="feature">
+<input id="sudden_location_change" type="checkbox">
+ Sudden location change
+</div>
+
+<div class="feature">
+<input id="unknown_beneficiary" type="checkbox">
+ Unknown beneficiary
+</div>
+
+<div class="feature">
+<input id="no_previous_transactions" type="checkbox">
+ No transaction history
+</div>
+
+<div class="feature">
+<input id="unusual_beneficiary_amount" type="checkbox">
+ Unusual beneficiary amount
+</div>
+
+<button onclick="analyze()">GENERATE RISK PROFILE</button>
+
+<div class="result">
+
+<div class="score" id="score">--</div>
+
+<h2 id="decision">PROFILE NOT ANALYZED</h2>
+
+<div id="reasons"></div>
+
+</div>
+
+</div>
+</div>
+
+<script>
+
+async function analyze(){
+
+const ids=[
+"unusual_time",
+"unusual_frequency",
+"new_device",
+"unusual_location",
+"sudden_location_change",
+"unknown_beneficiary",
+"no_previous_transactions",
+"unusual_beneficiary_amount"
+];
+
+let data={
+amount:Number(document.getElementById("amount").value)
+};
+
+ids.forEach(id=>{
+data[id]=document.getElementById(id).checked;
+});
+
+const response=await fetch(
+"http://127.0.0.1:8000/transaction",
+{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(data)
+}
+);
+
+const r=await response.json();
+
+document.getElementById("score").innerText=r.risk_score;
+document.getElementById("decision").innerText=r.decision;
+
+document.getElementById("reasons").innerHTML=
+r.reasons.map(x=>`<p>⚠ ${x}</p>`).join("");
+}
+
+</script>
+
+</body>
+</html>
