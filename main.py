@@ -1,14 +1,33 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+# ============================================================
+# SECUREFLOW-AI
+# BACKEND API SERVER
+# FastAPI + Random Forest
+# ============================================================
+
+from datetime import datetime
 from typing import List
 
-app = FastAPI(title="SecureFlow-AI Behaviour Engine")
+import numpy as np
+import pandas as pd
 
-# ---------------------------------------------------------
-# CORS
-# ---------------------------------------------------------
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+from sklearn.ensemble import RandomForestClassifier
 
+
+# ============================================================
+# APP
+# ============================================================
+
+app = FastAPI(
+    title="SecureFlow-AI API",
+    description="Behavioural UPI Fraud Risk Detection API",
+    version="1.0.0"
+)
+
+
+# Allow frontend to communicate with backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,463 +37,581 @@ app.add_middleware(
 )
 
 
-# ---------------------------------------------------------
-# TRANSACTION MODEL
-# ---------------------------------------------------------
+# ============================================================
+# FEATURE DEFINITIONS
+# ============================================================
 
-class Transaction(BaseModel):
-
-    # Transaction behaviour
-    amount: float
-    unusual_time: bool
-    unusual_frequency: bool
-    high_velocity: bool
-
-    # Device behaviour
-    known_device: bool
-    device_changed: bool
-
-    # Location behaviour
-    usual_location: bool
-    sudden_location_change: bool
-
-    # Relationship / history
-    known_beneficiary: bool
-    previous_transactions: bool
-    typical_amount_with_beneficiary: bool
-    beneficiary_matches_history: bool
+FEATURE_COLUMNS = [
+    "amount",
+    "average_amount",
+    "amount_ratio",
+    "new_device",
+    "new_location",
+    "unusual_time",
+    "new_beneficiary",
+    "recent_transactions"
+]
 
 
-# ---------------------------------------------------------
-# ANSWER MODEL
-# ---------------------------------------------------------
+# ============================================================
+# REQUEST MODELS
+# ============================================================
 
-class SecurityAnswers(BaseModel):
+class TransactionRequest(BaseModel):
 
-    answers: List[str]
+    amount: float = Field(gt=0)
+
+    average_amount: float = Field(gt=0)
+
+    device: str
+
+    location: str
+
+    transaction_time: str
+
+    beneficiary: str
+
+    recent_transactions: int = Field(
+        ge=0
+    )
 
 
-# ---------------------------------------------------------
-# HOME
-# ---------------------------------------------------------
+class VerificationRequest(BaseModel):
 
-@app.get("/")
-def home():
+    answer: float
+
+    correct_answer: float
+
+
+# ============================================================
+# SYNTHETIC TRAINING DATA
+# ============================================================
+
+def generate_training_data(n=5000):
+
+    np.random.seed(42)
+
+    rows = []
+
+    for _ in range(n):
+
+        average_amount = np.random.uniform(
+            200,
+            5000
+        )
+
+        amount = np.random.uniform(
+            100,
+            15000
+        )
+
+        new_device = np.random.binomial(
+            1,
+            0.15
+        )
+
+        new_location = np.random.binomial(
+            1,
+            0.18
+        )
+
+        unusual_time = np.random.binomial(
+            1,
+            0.12
+        )
+
+        new_beneficiary = np.random.binomial(
+            1,
+            0.15
+        )
+
+        recent_transactions = min(
+            np.random.poisson(1.8),
+            15
+        )
+
+        amount_ratio = (
+            amount /
+            max(average_amount, 1)
+        )
+
+        risk = 0
+
+        if amount_ratio >= 5:
+            risk += 3
+
+        elif amount_ratio >= 3:
+            risk += 2
+
+        elif amount_ratio >= 2:
+            risk += 1
+
+        risk += new_device * 2
+        risk += new_location * 2
+        risk += unusual_time * 2
+        risk += new_beneficiary * 2
+
+        if recent_transactions >= 6:
+            risk += 3
+
+        elif recent_transactions >= 4:
+            risk += 1
+
+        risk += np.random.binomial(
+            1,
+            0.08
+        )
+
+        fraud = 1 if risk >= 5 else 0
+
+        rows.append([
+            amount,
+            average_amount,
+            amount_ratio,
+            new_device,
+            new_location,
+            unusual_time,
+            new_beneficiary,
+            recent_transactions,
+            fraud
+        ])
+
+    columns = FEATURE_COLUMNS + ["fraud"]
+
+    return pd.DataFrame(
+        rows,
+        columns=columns
+    )
+
+
+# ============================================================
+# TRAIN MODEL
+# ============================================================
+
+def train_model():
+
+    data = generate_training_data()
+
+    X = data[FEATURE_COLUMNS]
+
+    y = data["fraud"]
+
+    model = RandomForestClassifier(
+        n_estimators=150,
+        max_depth=10,
+        min_samples_split=5,
+        random_state=42,
+        class_weight="balanced"
+    )
+
+    model.fit(
+        X,
+        y
+    )
+
+    return model
+
+
+print("Training SecureFlow-AI model...")
+
+MODEL = train_model()
+
+print("Model ready.")
+
+
+# ============================================================
+# FEATURE EXTRACTION
+# ============================================================
+
+def extract_features(transaction):
+
+    average_amount = max(
+        transaction.average_amount,
+        1
+    )
+
+    amount_ratio = (
+        transaction.amount /
+        average_amount
+    )
+
+    new_device = (
+        1
+        if transaction.device.lower() == "new device"
+        else 0
+    )
+
+    new_location = (
+        1
+        if transaction.location.lower() == "new location"
+        else 0
+    )
+
+    new_beneficiary = (
+        1
+        if transaction.beneficiary.lower() == "new beneficiary"
+        else 0
+    )
+
+    try:
+
+        time_obj = datetime.strptime(
+            transaction.transaction_time,
+            "%I:%M %p"
+        )
+
+        hour = time_obj.hour
+
+    except ValueError:
+
+        hour = 12
+
+    unusual_time = (
+        1
+        if hour >= 23 or hour < 5
+        else 0
+    )
 
     return {
-        "message": "SecureFlow-AI Behavioural Fraud Detection Engine",
-        "status": "running"
+        "amount": transaction.amount,
+        "average_amount": average_amount,
+        "amount_ratio": amount_ratio,
+        "new_device": new_device,
+        "new_location": new_location,
+        "unusual_time": unusual_time,
+        "new_beneficiary": new_beneficiary,
+        "recent_transactions":
+            transaction.recent_transactions
     }
 
 
-# ---------------------------------------------------------
-# DYNAMIC QUESTION GENERATOR
-# ---------------------------------------------------------
+# ============================================================
+# BEHAVIOURAL RISK ENGINE
+# ============================================================
 
-def generate_dynamic_questions(tx: Transaction, reasons):
+def calculate_behaviour_risk(transaction):
 
-    questions = []
+    score = 0
 
-    # The questions are generated according to
-    # the suspicious behavioural signals detected.
+    reasons: List[str] = []
 
-    if "Amount pattern anomaly" in reasons:
+    average_amount = max(
+        transaction.average_amount,
+        1
+    )
 
-        questions.append(
-            f"Can you confirm that you intentionally initiated "
-            f"this payment of ₹{tx.amount:,.2f}?"
-        )
+    amount_ratio = (
+        transaction.amount /
+        average_amount
+    )
 
-    if "Unusual transaction time" in reasons:
+    # Amount
+    if amount_ratio >= 10:
 
-        questions.append(
-            "This payment is being made at an unusual time "
-            "compared with your normal activity. Did you initiate it?"
-        )
-
-    if "Unusual transaction frequency" in reasons:
-
-        questions.append(
-            "Your recent transaction activity is higher than "
-            "your normal pattern. Are these transactions authorized by you?"
-        )
-
-    if "High transaction velocity" in reasons:
-
-        questions.append(
-            "Several transactions have occurred within a short period. "
-            "Did you personally initiate this activity?"
-        )
-
-    if "New device/session" in reasons:
-
-        questions.append(
-            "This transaction is coming from a device or session "
-            "that differs from your usual device. Did you recently "
-            "change or log in from another device?"
-        )
-
-    if "Location anomaly" in reasons:
-
-        questions.append(
-            "This payment is being made from a location that differs "
-            "from your usual transaction location. Are you currently there?"
-        )
-
-    if "Sudden location change" in reasons:
-
-        questions.append(
-            "Your recent transaction location changed unusually quickly. "
-            "Have you recently travelled or changed location?"
-        )
-
-    if "Unknown beneficiary" in reasons:
-
-        questions.append(
-            "This recipient does not match your usual payment relationships. "
-            "Do you recognize and trust this beneficiary?"
-        )
-
-    if "No previous transaction history" in reasons:
-
-        questions.append(
-            "You have no previous transaction history with this recipient. "
-            "Have you intentionally chosen this beneficiary?"
-        )
-
-    if "Unusual beneficiary amount" in reasons:
-
-        questions.append(
-            "The amount being sent to this beneficiary differs from "
-            "your normal payment pattern. Is this amount intentional?"
-        )
-
-    if "Behaviour deviation" in reasons:
-
-        questions.append(
-            "Several independent signals differ from your normal "
-            "behavioural footprint. Can you confirm that you initiated "
-            "this transaction yourself?"
-        )
-
-    # Make sure the system always has something to ask
-    # when an ALERT is triggered.
-
-    if not questions:
-
-        questions.append(
-            "Please confirm that you personally initiated this transaction."
-        )
-
-    return questions
-
-
-# ---------------------------------------------------------
-# RISK ENGINE
-# ---------------------------------------------------------
-
-@app.post("/transaction")
-def transaction(tx: Transaction):
-
-    risk = 0
-    reasons = []
-
-    # -----------------------------------------------------
-    # A. TRANSACTION BEHAVIOUR
-    # -----------------------------------------------------
-
-    # Amount = 10
-    if tx.amount > 10000:
-
-        risk += 10
+        score += 30
 
         reasons.append(
-            "Amount pattern anomaly"
+            "Transaction amount is extremely higher than normal."
         )
 
-    # Time = 7
-    if tx.unusual_time:
+    elif amount_ratio >= 5:
 
-        risk += 7
+        score += 22
 
         reasons.append(
-            "Unusual transaction time"
+            "Transaction amount is significantly higher than normal."
         )
 
-    # Frequency = 12
-    if tx.unusual_frequency:
+    elif amount_ratio >= 3:
 
-        risk += 12
+        score += 15
 
         reasons.append(
-            "Unusual transaction frequency"
+            "Transaction amount is higher than usual."
         )
 
-    # Velocity = included within transaction behaviour
-    # and limited so that maximum risk remains 100.
+    elif amount_ratio >= 2:
 
-    if tx.high_velocity:
-
-        risk += 10
+        score += 8
 
         reasons.append(
-            "High transaction velocity"
+            "Transaction amount is moderately higher than usual."
         )
 
-    # -----------------------------------------------------
-    # B. DEVICE BEHAVIOUR
-    # -----------------------------------------------------
+    # Device
+    if transaction.device.lower() == "new device":
 
-    # New device = 15
-
-    if not tx.known_device:
-
-        risk += 15
+        score += 18
 
         reasons.append(
-            "New device/session"
+            "New device detected."
         )
 
-    # Device/session changed
+    # Location
+    if transaction.location.lower() == "new location":
 
-    if tx.device_changed:
-
-        risk += 5
+        score += 15
 
         reasons.append(
-            "Device/session changed"
+            "New location detected."
         )
 
-    # -----------------------------------------------------
-    # C. LOCATION BEHAVIOUR
-    # -----------------------------------------------------
+    # Time
+    try:
 
-    # Unusual location = 15
+        time_obj = datetime.strptime(
+            transaction.transaction_time,
+            "%I:%M %p"
+        )
 
-    if not tx.usual_location:
+        hour = time_obj.hour
 
-        risk += 15
+        if hour >= 23 or hour < 5:
+
+            score += 15
+
+            reasons.append(
+                "Transaction occurred during an unusual late-night period."
+            )
+
+    except ValueError:
+
+        pass
+
+    # Beneficiary
+    if transaction.beneficiary.lower() == "new beneficiary":
+
+        score += 12
 
         reasons.append(
-            "Location anomaly"
+            "New beneficiary detected."
         )
 
-    # Sudden location change = 6
+    # Frequency
+    if transaction.recent_transactions >= 10:
 
-    if tx.sudden_location_change:
-
-        risk += 6
+        score += 20
 
         reasons.append(
-            "Sudden location change"
+            "Very high transaction frequency detected."
         )
 
-    # -----------------------------------------------------
-    # D. RELATIONSHIP / HISTORY
-    # -----------------------------------------------------
+    elif transaction.recent_transactions >= 6:
 
-    # Unknown beneficiary = 12
-
-    if not tx.known_beneficiary:
-
-        risk += 12
+        score += 15
 
         reasons.append(
-            "Unknown beneficiary"
+            "Unusually high transaction frequency detected."
         )
 
-    # No previous transaction = 13
+    elif transaction.recent_transactions >= 4:
 
-    if not tx.previous_transactions:
-
-        risk += 13
+        score += 8
 
         reasons.append(
-            "No previous transaction history"
+            "Transaction frequency is higher than normal."
         )
 
-    # Unusual amount with beneficiary = 10
+    return min(
+        max(score, 0),
+        100
+    ), reasons
 
-    if not tx.typical_amount_with_beneficiary:
 
-        risk += 10
+# ============================================================
+# ML RISK
+# ============================================================
 
-        reasons.append(
-            "Unusual beneficiary amount"
+def calculate_ml_risk(transaction):
+
+    features = extract_features(
+        transaction
+    )
+
+    dataframe = pd.DataFrame(
+        [features],
+        columns=FEATURE_COLUMNS
+    )
+
+    probability = MODEL.predict_proba(
+        dataframe
+    )[0][1]
+
+    return round(
+        probability * 100,
+        2
+    )
+
+
+# ============================================================
+# HEALTH ENDPOINT
+# ============================================================
+
+@app.get("/health")
+def health():
+
+    return {
+        "status": "online",
+        "service": "SecureFlow-AI",
+        "model": "Random Forest"
+    }
+
+
+# ============================================================
+# ANALYZE ENDPOINT
+# ============================================================
+
+@app.post("/analyze")
+def analyze_transaction(
+    transaction: TransactionRequest
+):
+
+    # Behavioural risk
+    behaviour_score, reasons = (
+        calculate_behaviour_risk(
+            transaction
         )
+    )
 
-    # Behaviour mismatch = 15
+    # ML risk
+    ml_score = calculate_ml_risk(
+        transaction
+    )
 
-    if not tx.beneficiary_matches_history:
+    # Hybrid score
+    final_score = (
+        behaviour_score * 0.60
+        +
+        ml_score * 0.40
+    )
 
-        risk += 15
+    final_score = round(
+        min(max(final_score, 0)),
+        2
+    )
 
-        reasons.append(
-            "Behaviour deviation"
-        )
+    # Decision
+    if final_score >= 70:
 
-    # -----------------------------------------------------
-    # CAP SCORE AT 100
-    # -----------------------------------------------------
+        risk_level = "HIGH"
 
-    risk = min(risk, 100)
+        decision = "BLOCK"
 
-    # -----------------------------------------------------
-    # RISK CLASSIFICATION
-    # -----------------------------------------------------
-
-    if risk <= 40:
-
-        risk_level = "LOW"
-        decision = "ALLOW"
-        transaction_delayed = False
-
-    elif risk <= 70:
+    elif final_score >= 40:
 
         risk_level = "MEDIUM"
+
         decision = "ALERT"
-        transaction_delayed = True
 
     else:
 
-        risk_level = "HIGH"
-        decision = "BLOCK"
-        transaction_delayed = True
+        risk_level = "LOW"
 
-    # -----------------------------------------------------
-    # DYNAMIC AI QUESTIONS
-    # -----------------------------------------------------
+        decision = "ALLOW"
 
-    ai_questions = []
+    if not reasons:
 
-    if decision == "ALERT":
-
-        ai_questions = generate_dynamic_questions(
-            tx,
-            reasons
+        reasons.append(
+            "No significant suspicious behavioural signals detected."
         )
-
-    elif decision == "BLOCK":
-
-        ai_questions = [
-            "This transaction has been blocked because multiple "
-            "independent behavioural signals indicate a high-risk pattern."
-        ]
-
-    # -----------------------------------------------------
-    # RESPONSE
-    # -----------------------------------------------------
 
     return {
 
-        "risk_score": risk,
+        "success": True,
 
-        "risk_level": risk_level,
+        "transaction": {
+            "amount": transaction.amount,
+            "average_amount":
+                transaction.average_amount,
+            "device": transaction.device,
+            "location": transaction.location,
+            "transaction_time":
+                transaction.transaction_time,
+            "beneficiary":
+                transaction.beneficiary,
+            "recent_transactions":
+                transaction.recent_transactions
+        },
+
+        "risk": {
+
+            "behaviour_score":
+                behaviour_score,
+
+            "ml_score":
+                ml_score,
+
+            "final_score":
+                final_score,
+
+            "risk_level":
+                risk_level
+        },
 
         "decision": decision,
 
-        "transaction_delayed": transaction_delayed,
-
-        "authentication_required":
-            decision == "ALERT",
-
-        "independent_signals": len(reasons),
-
         "reasons": reasons,
 
-        "ai_questions": ai_questions
+        "verification_required":
+            decision == "ALERT"
     }
 
 
-# ---------------------------------------------------------
-# SECURITY ANSWER EVALUATION
-# ---------------------------------------------------------
+# ============================================================
+# VERIFICATION ENDPOINT
+# ============================================================
 
-@app.post("/transaction/verify")
-def verify_transaction(data: SecurityAnswers):
+@app.post("/verify")
+def verify_transaction(
+    verification: VerificationRequest
+):
 
-    answers = [
-        answer.strip().lower()
-        for answer in data.answers
-    ]
+    is_valid = (
+        abs(
+            verification.answer
+            -
+            verification.correct_answer
+        ) < 0.01
+    )
 
-    positive_words = [
-        "yes",
-        "yeah",
-        "y",
-        "correct",
-        "true",
-        "myself",
-        "mine",
-        "authorized",
-        "intentional",
-        "travelled",
-        "travel",
-        "changed"
-    ]
+    if is_valid:
 
-    negative_words = [
-        "no",
-        "not",
-        "never",
-        "unknown",
-        "fake",
-        "fraud",
-        "stolen",
-        "unauthorized"
-    ]
+        return {
 
-    positive_score = 0
-    negative_score = 0
+            "success": True,
 
-    for answer in answers:
+            "verified": True,
 
-        for word in positive_words:
+            "decision": "ALLOW",
 
-            if word in answer:
-                positive_score += 1
-
-        for word in negative_words:
-
-            if word in answer:
-                negative_score += 1
-
-    # -----------------------------------------------------
-    # FINAL AUTHENTICATION DECISION
-    # -----------------------------------------------------
-
-    if negative_score > positive_score:
-
-        final_decision = "BLOCK"
-
-        message = (
-            "Verification failed. The transaction has been blocked."
-        )
-
-    elif positive_score > 0:
-
-        final_decision = "ALLOW"
-
-        message = (
-            "Verification completed. The transaction can proceed."
-        )
-
-    else:
-
-        final_decision = "REVIEW"
-
-        message = (
-            "The answers were inconclusive. Additional verification "
-            "is required."
-        )
+            "message":
+                "Verification successful. Transaction allowed."
+        }
 
     return {
 
-        "final_decision": final_decision,
+        "success": True,
 
-        "message": message,
+        "verified": False,
 
-        "positive_signals": positive_score,
+        "decision": "BLOCK",
 
-        "negative_signals": negative_score
+        "message":
+            "Verification failed. Transaction blocked."
     }
+
+
+# ============================================================
+# SERVER ENTRY POINT
+# ============================================================
+
+if __name__ == "__main__":
+
+    import uvicorn
+
+    uvicorn.run(
+        "backend_server:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=False
+    )
