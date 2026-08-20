@@ -3,41 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureFlow-AI | Balance Monitor</title>
+    <title>SecureFlow-AI | Account Security</title>
     <link rel="stylesheet" href="style10.css">
 </head>
+
 <body>
 
 <main class="main">
 
 <header class="header">
     <div>
-        <h1>Balance Monitor</h1>
-        <p>Real-time account balance and transaction monitoring</p>
+        <h1>Account Security</h1>
+        <p>Monitor account-level security conditions</p>
     </div>
-    <div class="avatar">₹</div>
+
+    <div class="avatar">AS</div>
 </header>
 
 <section class="stats">
 
 <div class="stat">
-    <div class="stat-title">TOTAL BALANCE</div>
-    <div class="stat-number blue">₹8.4L</div>
+    <div class="stat-title">SECURE ACCOUNTS</div>
+    <div class="stat-number green">06</div>
 </div>
 
 <div class="stat">
-    <div class="stat-title">AVAILABLE</div>
-    <div class="stat-number green">₹6.9L</div>
+    <div class="stat-title">MONITORED</div>
+    <div class="stat-number orange">01</div>
 </div>
 
 <div class="stat">
-    <div class="stat-title">DEBITED</div>
-    <div class="stat-number orange">₹1.2L</div>
+    <div class="stat-title">RESTRICTED</div>
+    <div class="stat-number red">01</div>
 </div>
 
 <div class="stat">
-    <div class="stat-title">BLOCKED</div>
-    <div class="stat-number red">₹28K</div>
+    <div class="stat-title">SECURITY SCORE</div>
+    <div class="stat-number blue">94%</div>
 </div>
 
 </section>
@@ -45,8 +47,8 @@
 <section class="panel factors">
 
 <div class="panel-title">
-    <h2>Account Balances</h2>
-    <p>Current balances after transaction processing</p>
+    <h2>Account Security Status</h2>
+    <p>Security checks performed by SecureFlow-AI</p>
 </div>
 
 <table>
@@ -55,9 +57,9 @@
 <tr>
     <th>Account</th>
     <th>User</th>
-    <th>Previous Balance</th>
-    <th>Transaction</th>
-    <th>Final Balance</th>
+    <th>Device</th>
+    <th>Risk</th>
+    <th>Security</th>
     <th>Status</th>
 </tr>
 </thead>
@@ -67,19 +69,19 @@
 <tr>
     <td>ACC001</td>
     <td>Rahul Sharma</td>
-    <td>₹42,500</td>
-    <td>₹2,500</td>
-    <td>₹40,000</td>
-    <td><span class="badge safe">UPDATED</span></td>
+    <td>Trusted</td>
+    <td>12</td>
+    <td>Strong</td>
+    <td><span class="badge safe">SECURE</span></td>
 </tr>
 
 <tr>
     <td>ACC002</td>
     <td>Amit Kumar</td>
-    <td>₹50,000</td>
-    <td>₹45,000</td>
-    <td>₹50,000</td>
-    <td><span class="badge high">BLOCKED</span></td>
+    <td>Unknown</td>
+    <td>91</td>
+    <td>Weak</td>
+    <td><span class="badge high">RESTRICTED</span></td>
 </tr>
 
 </tbody>
