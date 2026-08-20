@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Transaction Timeline</title>
+<style>
+body{margin:0;font-family:Arial;background:#f8fafc;color:#172033}
+header{background:#172554;color:white;padding:25px;text-align:center}
+.container{max-width:900px;margin:35px auto;padding:20px}
+.card{background:white;padding:25px;border-radius:15px;box-shadow:0 5px 20px #ddd}
+input[type=number]{width:100%;padding:15px;border:1px solid #ddd;border-radius:8px}
+.timeline{margin:25px 0;border-left:4px solid #2563eb;padding-left:25px}
+.event{background:#eff6ff;padding:15px;margin:15px 0;border-radius:10px}
+button{width:100%;padding:15px;background:#2563eb;color:white;border:0;border-radius:8px}
+.result{text-align:center;margin-top:25px}
+.score{font-size:55px;font-weight:bold}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🕐 SecureFlow Timeline</h1>
+<p>Transaction Behavior Analysis</p>
+</header>
+
+<div class="container">
+<div class="card">
+
+<h2>Analyze Payment</h2>
+
+<input id="amount" type="number" placeholder="Transaction Amount ₹">
+
+<div class="timeline">
+
+<div class="event">
+<input id="unusual_time" type="checkbox">
+ Payment made at unusual time
+</div>
+
+<div class="event">
+<input id="unusual_frequency" type="checkbox">
+ Multiple recent payments
+</div>
+
+<div class="event">
+<input id="new_device" type="checkbox">
+ New device detected
+</div>
+
+<div class="event">
+<input id="unusual_location" type="checkbox">
+ Unusual location
+</div>
+
+<div class="event">
+<input id="sudden_location_change" type="checkbox">
+ Sudden location movement
+</div>
+
+<div class="event">
+<input id="unknown_beneficiary" type="checkbox">
+ Unknown recipient
+</div>
+
+<div class="event">
+<input id="no_previous_transactions" type="checkbox">
+ No previous transaction
+</div>
+
+<div class="event">
+<input id="unusual_beneficiary_amount" type="checkbox">
+ Unusual payment amount
+</div>
+
+</div>
+
+<button onclick="analyze()">BUILD RISK TIMELINE</button>
+
+<div class="result">
+<div class="score" id="score">--</div>
+<h2 id="decision">Waiting</h2>
+<ul id="reasons"></ul>
+</div>
+
+</div>
+</div>
+
+<script>
+async function analyze(){
+const ids=["unusual_time","unusual_frequency","new_device","unusual_location","sudden_location_change","unknown_beneficiary","no_previous_transactions","unusual_beneficiary_amount"];
+
+let data={amount:Number(document.getElementById("amount").value)};
+ids.forEach(id=>data[id]=document.getElementById(id).checked);
+
+const r=await fetch("http://127.0.0.1:8000/transaction",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(data)
+});
+
+const x=await r.json();
+
+document.getElementById("score").innerText=x.risk_score;
+document.getElementById("decision").innerText=x.decision;
+document.getElementById("reasons").innerHTML=x.reasons.map(a=>`<li>${a}</li>`).join("");
+}
+</script>
+</body>
+</html>
