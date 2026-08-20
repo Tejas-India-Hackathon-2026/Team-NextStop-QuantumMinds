@@ -1,59 +1,41 @@
-# services/geofence.py
+# services/amount_pattern.py
 
-from math import radians, sin, cos, sqrt, atan2
+from collections import Counter
 
 
-class GeoFence:
+class AmountPatternDetector:
 
-    EARTH_RADIUS = 6371
-
-    def distance(
+    def analyze(
         self,
-        lat1,
-        lon1,
-        lat2,
-        lon2
+        transaction_amounts,
+        current_amount
     ):
 
-        lat1 = radians(lat1)
-        lat2 = radians(lat2)
+        if not transaction_amounts:
 
-        dlat = radians(lat2 - lat1)
-        dlon = radians(lon2 - lon1)
+            return {
+                "suspicious": False,
+                "reason": "No historical data available."
+            }
 
-        a = (
-            sin(dlat / 2) ** 2
-            +
-            cos(lat1)
-            * cos(lat2)
-            * sin(dlon / 2) ** 2
-        )
+        counts = Counter(transaction_amounts)
 
-        c = 2 * atan2(
-            sqrt(a),
-            sqrt(1 - a)
-        )
+        repeated_amounts = [
+            amount
+            for amount, count in counts.items()
+            if count >= 3
+        ]
 
-        return self.EARTH_RADIUS * c
+        if current_amount in repeated_amounts:
 
-    def inside(
-        self,
-        user_lat,
-        user_lon,
-        center_lat,
-        center_lon,
-        radius_km
-    ):
-
-        distance = self.distance(
-            user_lat,
-            user_lon,
-            center_lat,
-            center_lon
-        )
+            return {
+                "suspicious": True,
+                "reason":
+                    "Repeated transaction amount pattern detected.",
+                "amount": current_amount
+            }
 
         return {
-            "inside": distance <= radius_km,
-            "distance_km": round(distance, 2),
-            "radius_km": radius_km
-        }s
+            "suspicious": False,
+            "reason": "No suspicious amount pattern detected."
+        }
