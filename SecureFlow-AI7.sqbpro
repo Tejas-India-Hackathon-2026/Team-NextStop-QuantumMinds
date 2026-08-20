@@ -1,0 +1,1749 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="SecureFlow-AI7.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="6048"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="transactions" custom_title="0" dock_id="1" table="4,12:maintransactions"/><dock_state state="000000ff00000000fd0000000100000002000005bb00000390fc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000000005bb0000012900ffffff0000028b0000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="challenge_sessions" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="79"/><column index="2" value="52"/><column index="3" value="90"/><column index="4" value="76"/><column index="5" value="109"/><column index="6" value="71"/><column index="7" value="69"/><column index="8" value="44"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="dynamic_question_data" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="50"/><column index="2" value="143"/><column index="3" value="74"/><column index="4" value="183"/><column index="5" value="300"/><column index="6" value="231"/><column index="7" value="142"/><column index="8" value="109"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="recipients" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="75"/><column index="2" value="143"/><column index="3" value="175"/><column index="4" value="215"/><column index="5" value="110"/><column index="6" value="91"/><column index="7" value="159"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="security_answers" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="66"/><column index="2" value="52"/><column index="3" value="76"/><column index="4" value="109"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="transactions" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="90"/><column index="2" value="52"/><column index="3" value="77"/><column index="4" value="55"/><column index="5" value="135"/><column index="6" value="239"/><column index="7" value="215"/><column index="8" value="111"/><column index="9" value="109"/><column index="10" value="126"/><column index="11" value="116"/><column index="12" value="67"/><column index="13" value="82"/><column index="14" value="159"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">-- ============================================================
+-- SECUREFLOW-AI
+-- COMPLETE SQLITE DATABASE
+-- VERSION 8.0
+--
+-- FEATURES
+-- ============================================================
+-- 4 USERS
+-- 4 RECIPIENTS
+-- 40 HISTORICAL TRANSACTIONS
+-- ₹100,000 STARTING BALANCE PER USER
+-- LIVE BALANCE SUPPORT
+-- FRAUD / RISK SUPPORT
+-- DYNAMIC SECURITY QUESTIONS
+-- PERSONAL VERIFICATION QUESTIONS
+-- USER-SPECIFIC EXPECTED ANSWERS
+-- CHALLENGE SESSIONS
+-- TRANSACTION HISTORY
+-- ACCOUNT SUMMARY
+-- ADMIN / ANALYTICS SUPPORT
+-- ============================================================
+
+
+PRAGMA foreign_keys = ON;
+
+
+-- ============================================================
+-- SECTION 1
+-- REMOVE OLD DATABASE OBJECTS
+-- ============================================================
+
+DROP VIEW IF EXISTS sender_transaction_history;
+DROP VIEW IF EXISTS recipient_transaction_history;
+DROP VIEW IF EXISTS user_account_summary;
+DROP VIEW IF EXISTS dynamic_question_data;
+DROP VIEW IF EXISTS fraud_alerts;
+DROP VIEW IF EXISTS live_monitor_data;
+
+DROP TRIGGER IF EXISTS trg_update_user_statistics;
+
+DROP TABLE IF EXISTS challenge_sessions;
+DROP TABLE IF EXISTS security_answers;
+DROP TABLE IF EXISTS security_questions;
+DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS sender_recipient_connections;
+DROP TABLE IF EXISTS recipients;
+DROP TABLE IF EXISTS users;
+
+
+-- ============================================================
+-- SECTION 2
+-- USERS TABLE
+-- ============================================================
+
+CREATE TABLE users
+(
+    user_id TEXT PRIMARY KEY,
+
+    name TEXT NOT NULL,
+
+    date_of_birth TEXT NOT NULL,
+
+    college_name TEXT,
+
+    living_area TEXT NOT NULL,
+
+    known_device TEXT NOT NULL,
+
+    common_location TEXT NOT NULL,
+
+    initial_bank_balance REAL NOT NULL DEFAULT 100000,
+
+    current_bank_balance REAL NOT NULL DEFAULT 100000,
+
+    average_transaction REAL NOT NULL DEFAULT 0,
+
+    total_transactions INTEGER NOT NULL DEFAULT 0,
+
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+    CHECK (initial_bank_balance &gt;= 0),
+
+    CHECK (current_bank_balance &gt;= 0),
+
+    CHECK (average_transaction &gt;= 0),
+
+    CHECK (total_transactions &gt;= 0)
+);
+
+
+-- ============================================================
+-- SECTION 3
+-- RECIPIENTS TABLE
+-- ============================================================
+
+CREATE TABLE recipients
+(
+    recipient_id TEXT PRIMARY KEY,
+
+    recipient_name TEXT NOT NULL,
+
+    upi_id TEXT NOT NULL UNIQUE,
+
+    recipient_device_name TEXT NOT NULL,
+
+    recipient_location TEXT NOT NULL,
+
+    recipient_type TEXT NOT NULL,
+
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- ============================================================
+-- SECTION 4
+-- SENDER-RECIPIENT CONNECTIONS
+-- ============================================================
+
+CREATE TABLE sender_recipient_connections
+(
+    connection_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    user_id TEXT NOT NULL,
+
+    recipient_id TEXT NOT NULL,
+
+    previous_connection INTEGER NOT NULL DEFAULT 0,
+
+    connection_type TEXT,
+
+    previous_transaction_count INTEGER NOT NULL DEFAULT 0,
+
+    connection_notes TEXT,
+
+    FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (recipient_id)
+        REFERENCES recipients(recipient_id)
+        ON DELETE CASCADE,
+
+    UNIQUE(user_id, recipient_id),
+
+    CHECK (previous_connection IN (0,1)),
+
+    CHECK (previous_transaction_count &gt;= 0)
+);
+
+
+-- ============================================================
+-- SECTION 5
+-- TRANSACTIONS TABLE
+-- ============================================================
+
+CREATE TABLE transactions
+(
+    transaction_id TEXT PRIMARY KEY,
+
+    user_id TEXT NOT NULL,
+
+    recipient_id TEXT NOT NULL,
+
+    amount REAL NOT NULL,
+
+    transaction_time TEXT NOT NULL,
+
+    sender_device_name TEXT NOT NULL,
+
+    recipient_device_name TEXT NOT NULL,
+
+    payment_location TEXT NOT NULL,
+
+    previous_location TEXT,
+
+    previous_connection INTEGER NOT NULL DEFAULT 0,
+
+    transaction_status TEXT NOT NULL DEFAULT 'SUCCESS',
+
+    risk_score INTEGER NOT NULL DEFAULT 0,
+
+    risk_decision TEXT NOT NULL DEFAULT 'ALLOW',
+
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (recipient_id)
+        REFERENCES recipients(recipient_id)
+        ON DELETE CASCADE,
+
+    CHECK (amount &gt; 0),
+
+    CHECK (previous_connection IN (0,1)),
+
+    CHECK
+    (
+        transaction_status IN
+        (
+            'SUCCESS',
+            'PENDING',
+            'FAILED',
+            'BLOCKED',
+            'HELD'
+        )
+    ),
+
+    CHECK
+    (
+        risk_score &gt;= 0
+        AND
+        risk_score &lt;= 100
+    ),
+
+    CHECK
+    (
+        risk_decision IN
+        (
+            'ALLOW',
+            'ALERT',
+            'BLOCK'
+        )
+    )
+);
+
+
+-- ============================================================
+-- SECTION 6
+-- DYNAMIC SECURITY QUESTIONS
+-- ============================================================
+
+CREATE TABLE security_questions
+(
+    question_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    question_code TEXT NOT NULL UNIQUE,
+
+    question_text TEXT NOT NULL,
+
+    risk_factor TEXT NOT NULL,
+
+    expected_answer_type TEXT NOT NULL DEFAULT 'TEXT',
+
+    active INTEGER NOT NULL DEFAULT 1,
+
+    CHECK (active IN (0,1))
+);
+
+
+-- ============================================================
+-- SECTION 7
+-- USER-SPECIFIC SECURITY ANSWERS
+-- ============================================================
+
+CREATE TABLE security_answers
+(
+    answer_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    user_id TEXT NOT NULL,
+
+    question_id INTEGER NOT NULL,
+
+    expected_answer TEXT NOT NULL,
+
+    FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (question_id)
+        REFERENCES security_questions(question_id)
+        ON DELETE CASCADE,
+
+    UNIQUE(user_id, question_id)
+);
+
+
+-- ============================================================
+-- SECTION 8
+-- CHALLENGE SESSIONS
+-- ============================================================
+
+CREATE TABLE challenge_sessions
+(
+    challenge_id TEXT PRIMARY KEY,
+
+    user_id TEXT NOT NULL,
+
+    transaction_id TEXT NOT NULL,
+
+    question_id INTEGER NOT NULL,
+
+    expected_answer TEXT NOT NULL,
+
+    created_at TEXT NOT NULL,
+
+    expires_at TEXT NOT NULL,
+
+    status TEXT NOT NULL DEFAULT 'PENDING',
+
+    FOREIGN KEY (user_id)
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (question_id)
+        REFERENCES security_questions(question_id)
+        ON DELETE CASCADE,
+
+    CHECK
+    (
+        status IN
+        (
+            'PENDING',
+            'VERIFIED',
+            'FAILED',
+            'EXPIRED'
+        )
+    )
+);
+
+
+-- ============================================================
+-- SECTION 9
+-- INSERT USERS
+-- ============================================================
+
+INSERT INTO users
+(
+    user_id,
+    name,
+    date_of_birth,
+    college_name,
+    living_area,
+    known_device,
+    common_location,
+    initial_bank_balance,
+    current_bank_balance,
+    average_transaction,
+    total_transactions
+)
+VALUES
+
+(
+    'U001',
+    'Soumadip Das',
+    '2005-04-18',
+    'Haldia Institute of Technology',
+    'Haldia',
+    'Samsung Galaxy S23 - SOUMADIP',
+    'Haldia',
+    100000,
+    100000,
+    1475,
+    10
+),
+
+(
+    'U002',
+    'Shubham Paul',
+    '2004-11-07',
+    'Haldia Institute of Technology',
+    'Haldia',
+    'OnePlus 12R - SHUBHAM',
+    'Kolkata',
+    100000,
+    100000,
+    1687.50,
+    10
+),
+
+(
+    'U003',
+    'Shubham Mukherjee',
+    '2005-02-21',
+    'Haldia Institute of Technology',
+    'Haldia',
+    'Redmi Note 13 Pro - MUKHERJEE',
+    'Haldia',
+    100000,
+    100000,
+    1837.50,
+    10
+),
+
+(
+    'U004',
+    'Tridip Debroy',
+    '2004-08-13',
+    'Haldia Institute of Technology',
+    'Haldia',
+    'Google Pixel 8 - TRIDIP',
+    'Haldia',
+    100000,
+    100000,
+    1650,
+    10
+);
+
+
+-- ============================================================
+-- SECTION 10
+-- INSERT RECIPIENTS
+-- ============================================================
+
+INSERT INTO recipients
+(
+    recipient_id,
+    recipient_name,
+    upi_id,
+    recipient_device_name,
+    recipient_location,
+    recipient_type
+)
+VALUES
+
+(
+    'R001',
+    'Rahul Verma',
+    'rahul.verma@upi',
+    'iPhone 15 - RAHUL',
+    'Kolkata',
+    'Friend'
+),
+
+(
+    'R002',
+    'Priya Sharma',
+    'priya.sharma@upi',
+    'Samsung Galaxy A55 - PRIYA',
+    'Howrah',
+    'Friend'
+),
+
+(
+    'R003',
+    'Amit Kumar',
+    'amit.kumar@upi',
+    'OnePlus Nord CE4 - AMIT',
+    'Durgapur',
+    'Friend'
+),
+
+(
+    'R004',
+    'Rohan Chakraborty',
+    'rohan.chakraborty@upi',
+    'iPhone 14 - ROHAN',
+    'Midnapore',
+    'Friend'
+);
+
+
+-- ============================================================
+-- SECTION 11
+-- CONNECTIONS - U001
+-- ============================================================
+
+INSERT INTO sender_recipient_connections
+(
+    user_id,
+    recipient_id,
+    previous_connection,
+    connection_type,
+    previous_transaction_count,
+    connection_notes
+)
+VALUES
+
+('U001','R001',1,'College Friend',8,
+ 'Frequently transacted before'),
+
+('U001','R002',1,'Friend',5,
+ 'Known recipient'),
+
+('U001','R003',0,'No Previous Connection',0,
+ 'New recipient'),
+
+('U001','R004',1,'College Friend',3,
+ 'Previous transactions exist');
+
+
+-- ============================================================
+-- SECTION 12
+-- CONNECTIONS - U002
+-- ============================================================
+
+INSERT INTO sender_recipient_connections
+(
+    user_id,
+    recipient_id,
+    previous_connection,
+    connection_type,
+    previous_transaction_count,
+    connection_notes
+)
+VALUES
+
+('U002','R001',1,'Friend',6,
+ 'Known recipient'),
+
+('U002','R002',0,'No Previous Connection',0,
+ 'New recipient'),
+
+('U002','R003',1,'Friend',4,
+ 'Previous connection exists'),
+
+('U002','R004',1,'College Friend',7,
+ 'Frequently transacted');
+
+
+-- ============================================================
+-- SECTION 13
+-- CONNECTIONS - U003
+-- ============================================================
+
+INSERT INTO sender_recipient_connections
+(
+    user_id,
+    recipient_id,
+    previous_connection,
+    connection_type,
+    previous_transaction_count,
+    connection_notes
+)
+VALUES
+
+('U003','R001',0,'No Previous Connection',0,
+ 'New recipient'),
+
+('U003','R002',1,'Friend',9,
+ 'Known recipient'),
+
+('U003','R003',1,'Friend',5,
+ 'Previous transaction history'),
+
+('U003','R004',1,'College Friend',4,
+ 'Known recipient');
+
+
+-- ============================================================
+-- SECTION 14
+-- CONNECTIONS - U004
+-- ============================================================
+
+INSERT INTO sender_recipient_connections
+(
+    user_id,
+    recipient_id,
+    previous_connection,
+    connection_type,
+    previous_transaction_count,
+    connection_notes
+)
+VALUES
+
+('U004','R001',1,'Friend',7,
+ 'Known recipient'),
+
+('U004','R002',1,'Friend',6,
+ 'Previous transactions'),
+
+('U004','R003',0,'No Previous Connection',0,
+ 'New recipient'),
+
+('U004','R004',1,'College Friend',5,
+ 'Known recipient');
+
+
+-- ============================================================
+-- SECTION 15
+-- U001 HISTORICAL TRANSACTIONS
+-- ============================================================
+
+INSERT INTO transactions
+(
+    transaction_id,
+    user_id,
+    recipient_id,
+    amount,
+    transaction_time,
+    sender_device_name,
+    recipient_device_name,
+    payment_location,
+    previous_location,
+    previous_connection,
+    transaction_status,
+    risk_score,
+    risk_decision
+)
+VALUES
+
+('T001','U001','R001',1200,
+'2026-08-01 09:15',
+'Samsung Galaxy S23 - SOUMADIP',
+'iPhone 15 - RAHUL',
+'Haldia','Haldia',1,'SUCCESS',10,'ALLOW'),
+
+('T002','U001','R002',850,
+'2026-08-03 14:30',
+'Samsung Galaxy S23 - SOUMADIP',
+'Samsung Galaxy A55 - PRIYA',
+'Haldia','Haldia',1,'SUCCESS',5,'ALLOW'),
+
+('T003','U001','R001',2500,
+'2026-08-05 19:45',
+'Samsung Galaxy S23 - SOUMADIP',
+'iPhone 15 - RAHUL',
+'Haldia','Kolkata',1,'SUCCESS',10,'ALLOW'),
+
+('T004','U001','R004',700,
+'2026-08-07 11:20',
+'Samsung Galaxy S23 - SOUMADIP',
+'iPhone 14 - ROHAN',
+'Haldia','Haldia',1,'SUCCESS',5,'ALLOW'),
+
+('T005','U001','R003',1800,
+'2026-08-09 22:10',
+'Samsung Galaxy S23 - SOUMADIP',
+'OnePlus Nord CE4 - AMIT',
+'Kolkata','Haldia',0,'PENDING',55,'ALERT'),
+
+('T006','U001','R002',950,
+'2026-08-11 16:40',
+'Samsung Galaxy S23 - SOUMADIP',
+'Samsung Galaxy A55 - PRIYA',
+'Haldia','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T007','U001','R001',3000,
+'2026-08-14 10:05',
+'Samsung Galaxy S23 - SOUMADIP',
+'iPhone 15 - RAHUL',
+'Haldia','Haldia',1,'SUCCESS',10,'ALLOW'),
+
+('T008','U001','R004',1100,
+'2026-08-16 18:25',
+'Samsung Galaxy S23 - SOUMADIP',
+'iPhone 14 - ROHAN',
+'Haldia','Haldia',1,'SUCCESS',5,'ALLOW'),
+
+('T009','U001','R003',5000,
+'2026-08-18 23:35',
+'Samsung Galaxy S23 - SOUMADIP',
+'OnePlus Nord CE4 - AMIT',
+'Kolkata','Haldia',0,'HELD',65,'ALERT'),
+
+('T010','U001','R002',1500,
+'2026-08-20 13:50',
+'Samsung Galaxy S23 - SOUMADIP',
+'Samsung Galaxy A55 - PRIYA',
+'Haldia','Haldia',1,'SUCCESS',5,'ALLOW');
+
+
+-- ============================================================
+-- SECTION 16
+-- U002 HISTORICAL TRANSACTIONS
+-- ============================================================
+
+INSERT INTO transactions
+(
+    transaction_id,user_id,recipient_id,amount,
+    transaction_time,sender_device_name,
+    recipient_device_name,payment_location,
+    previous_location,previous_connection,
+    transaction_status,risk_score,risk_decision
+)
+VALUES
+
+('T011','U002','R001',2000,'2026-08-01 10:20',
+'OnePlus 12R - SHUBHAM','iPhone 15 - RAHUL',
+'Kolkata','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T012','U002','R003',1300,'2026-08-03 15:40',
+'OnePlus 12R - SHUBHAM','OnePlus Nord CE4 - AMIT',
+'Kolkata','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T013','U002','R004',900,'2026-08-05 18:15',
+'OnePlus 12R - SHUBHAM','iPhone 14 - ROHAN',
+'Haldia','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T014','U002','R002',3500,'2026-08-07 21:50',
+'OnePlus 12R - SHUBHAM','Samsung Galaxy A55 - PRIYA',
+'Kolkata','Haldia',0,'PENDING',55,'ALERT'),
+
+('T015','U002','R001',1700,'2026-08-09 12:30',
+'OnePlus 12R - SHUBHAM','iPhone 15 - RAHUL',
+'Kolkata','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T016','U002','R004',2200,'2026-08-11 17:10',
+'OnePlus 12R - SHUBHAM','iPhone 14 - ROHAN',
+'Kolkata','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T017','U002','R003',2800,'2026-08-13 20:30',
+'OnePlus 12R - SHUBHAM','OnePlus Nord CE4 - AMIT',
+'Durgapur','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T018','U002','R002',4200,'2026-08-15 23:20',
+'OnePlus 12R - SHUBHAM','Samsung Galaxy A55 - PRIYA',
+'Kolkata','Durgapur',0,'HELD',65,'ALERT'),
+
+('T019','U002','R001',1000,'2026-08-18 11:45',
+'OnePlus 12R - SHUBHAM','iPhone 15 - RAHUL',
+'Kolkata','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T020','U002','R004',1600,'2026-08-20 16:20',
+'OnePlus 12R - SHUBHAM','iPhone 14 - ROHAN',
+'Haldia','Kolkata',1,'SUCCESS',5,'ALLOW');
+
+
+-- ============================================================
+-- SECTION 17
+-- U003 HISTORICAL TRANSACTIONS
+-- ============================================================
+
+INSERT INTO transactions
+(
+    transaction_id,user_id,recipient_id,amount,
+    transaction_time,sender_device_name,
+    recipient_device_name,payment_location,
+    previous_location,previous_connection,
+    transaction_status,risk_score,risk_decision
+)
+VALUES
+
+('T021','U003','R002',2500,'2026-08-01 09:40',
+'Redmi Note 13 Pro - MUKHERJEE','Samsung Galaxy A55 - PRIYA',
+'Haldia','Haldia',1,'SUCCESS',5,'ALLOW'),
+
+('T022','U003','R003',1200,'2026-08-03 14:15',
+'Redmi Note 13 Pro - MUKHERJEE','OnePlus Nord CE4 - AMIT',
+'Haldia','Haldia',1,'SUCCESS',5,'ALLOW'),
+
+('T023','U003','R004',800,'2026-08-05 18:35',
+'Redmi Note 13 Pro - MUKHERJEE','iPhone 14 - ROHAN',
+'Haldia','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T024','U003','R001',4500,'2026-08-07 22:40',
+'Redmi Note 13 Pro - MUKHERJEE','iPhone 15 - RAHUL',
+'Kolkata','Haldia',0,'PENDING',55,'ALERT'),
+
+('T025','U003','R002',1800,'2026-08-09 11:25',
+'Redmi Note 13 Pro - MUKHERJEE','Samsung Galaxy A55 - PRIYA',
+'Haldia','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T026','U003','R003',3200,'2026-08-11 16:55',
+'Redmi Note 13 Pro - MUKHERJEE','OnePlus Nord CE4 - AMIT',
+'Haldia','Haldia',1,'SUCCESS',5,'ALLOW'),
+
+('T027','U003','R004',1400,'2026-08-14 19:10',
+'Redmi Note 13 Pro - MUKHERJEE','iPhone 14 - ROHAN',
+'Haldia','Haldia',1,'SUCCESS',5,'ALLOW'),
+
+('T028','U003','R001',6000,'2026-08-16 23:10',
+'Redmi Note 13 Pro - MUKHERJEE','iPhone 15 - RAHUL',
+'Kolkata','Haldia',0,'HELD',65,'ALERT'),
+
+('T029','U003','R002',2100,'2026-08-18 13:20',
+'Redmi Note 13 Pro - MUKHERJEE','Samsung Galaxy A55 - PRIYA',
+'Haldia','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T030','U003','R003',1700,'2026-08-20 15:40',
+'Redmi Note 13 Pro - MUKHERJEE','OnePlus Nord CE4 - AMIT',
+'Haldia','Haldia',1,'SUCCESS',5,'ALLOW');
+
+
+-- ============================================================
+-- SECTION 18
+-- U004 HISTORICAL TRANSACTIONS
+-- ============================================================
+
+INSERT INTO transactions
+(
+    transaction_id,user_id,recipient_id,amount,
+    transaction_time,sender_device_name,
+    recipient_device_name,payment_location,
+    previous_location,previous_connection,
+    transaction_status,risk_score,risk_decision
+)
+VALUES
+
+('T031','U004','R001',1500,'2026-08-01 10:10',
+'Google Pixel 8 - TRIDIP','iPhone 15 - RAHUL',
+'Kolkata','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T032','U004','R002',900,'2026-08-03 13:35',
+'Google Pixel 8 - TRIDIP','Samsung Galaxy A55 - PRIYA',
+'Kolkata','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T033','U004','R004',2200,'2026-08-05 17:50',
+'Google Pixel 8 - TRIDIP','iPhone 14 - ROHAN',
+'Haldia','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T034','U004','R003',4000,'2026-08-07 21:30',
+'Google Pixel 8 - TRIDIP','OnePlus Nord CE4 - AMIT',
+'Kolkata','Haldia',0,'PENDING',55,'ALERT'),
+
+('T035','U004','R001',1800,'2026-08-09 12:15',
+'Google Pixel 8 - TRIDIP','iPhone 15 - RAHUL',
+'Kolkata','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T036','U004','R002',1300,'2026-08-11 16:30',
+'Google Pixel 8 - TRIDIP','Samsung Galaxy A55 - PRIYA',
+'Kolkata','Kolkata',1,'SUCCESS',5,'ALLOW'),
+
+('T037','U004','R004',2600,'2026-08-14 19:45',
+'Google Pixel 8 - TRIDIP','iPhone 14 - ROHAN',
+'Kolkata','Haldia',1,'SUCCESS',5,'ALLOW'),
+
+('T038','U004','R003',5500,'2026-08-16 23:05',
+'Google Pixel 8 - TRIDIP','OnePlus Nord CE4 - AMIT',
+'Durgapur','Kolkata',0,'HELD',65,'ALERT'),
+
+('T039','U004','R001',1200,'2026-08-18 11:50',
+'Google Pixel 8 - TRIDIP','iPhone 15 - RAHUL',
+'Kolkata','Durgapur',1,'SUCCESS',5,'ALLOW'),
+
+('T040','U004','R002',1700,'2026-08-20 15:15',
+'Google Pixel 8 - TRIDIP','Samsung Galaxy A55 - PRIYA',
+'Kolkata','Kolkata',1,'SUCCESS',5,'ALLOW');
+
+
+-- ============================================================
+-- SECTION 19
+-- DYNAMIC SECURITY QUESTIONS
+-- ============================================================
+--
+-- These questions are deliberately mixed:
+--
+-- 1. Personal information
+-- 2. Location
+-- 3. College
+-- 4. Device
+-- 5. Transaction history
+-- 6. Recipient verification
+-- 7. Fraud-specific verification
+--
+-- FastAPI can randomly/selectively choose questions.
+-- ============================================================
+
+INSERT INTO security_questions
+(
+    question_code,
+    question_text,
+    risk_factor,
+    expected_answer_type
+)
+VALUES
+
+(
+    'DOB_VERIFY',
+    'What is your date of birth?',
+    'Personal identity verification',
+    'DATE'
+),
+
+(
+    'COLLEGE_VERIFY',
+    'What is the name of your college?',
+    'Personal identity verification',
+    'TEXT'
+),
+
+(
+    'AREA_VERIFY',
+    'Which area do you usually live in?',
+    'Location verification',
+    'TEXT'
+),
+
+(
+    'LOCATION_VERIFY',
+    'Which city or location do you normally make payments from?',
+    'Usual location verification',
+    'TEXT'
+),
+
+(
+    'DEVICE_VERIFY',
+    'Which device do you normally use for payments?',
+    'Device verification',
+    'TEXT'
+),
+
+(
+    'RECENT_PLACE_VERIFY',
+    'Which location did you most recently use for a payment?',
+    'Recent location verification',
+    'TEXT'
+),
+
+(
+    'RECIPIENT_VERIFY',
+    'Do you recognize the recipient of this payment?',
+    'Recipient verification',
+    'YES_NO'
+),
+
+(
+    'HISTORY_VERIFY',
+    'Have you previously made payments to this recipient?',
+    'Transaction history verification',
+    'YES_NO'
+),
+
+(
+    'AMOUNT_VERIFY',
+    'Did you personally enter and authorize this payment amount?',
+    'Amount verification',
+    'YES_NO'
+),
+
+(
+    'TIME_VERIFY',
+    'Did you personally initiate this payment at this time?',
+    'Time anomaly',
+    'YES_NO'
+),
+
+(
+    'TRAVEL_VERIFY',
+    'Did you recently travel to the location from which this payment is being made?',
+    'Location anomaly',
+    'YES_NO'
+),
+
+(
+    'DEVICE_CONTROL_VERIFY',
+    'Do you recognize and control the device being used for this payment?',
+    'New device',
+    'YES_NO'
+);
+
+
+-- ============================================================
+-- SECTION 20
+-- USER 001 SECURITY ANSWERS
+-- ============================================================
+
+INSERT INTO security_answers
+(
+    user_id,
+    question_id,
+    expected_answer
+)
+SELECT
+    'U001',
+    question_id,
+
+    CASE question_code
+
+        WHEN 'DOB_VERIFY'
+        THEN '2005-04-18'
+
+        WHEN 'COLLEGE_VERIFY'
+        THEN 'Haldia Institute of Technology'
+
+        WHEN 'AREA_VERIFY'
+        THEN 'Haldia'
+
+        WHEN 'LOCATION_VERIFY'
+        THEN 'Haldia'
+
+        WHEN 'DEVICE_VERIFY'
+        THEN 'Samsung Galaxy S23 - SOUMADIP'
+
+        WHEN 'RECENT_PLACE_VERIFY'
+        THEN 'Haldia'
+
+        WHEN 'RECIPIENT_VERIFY'
+        THEN 'YES'
+
+        WHEN 'HISTORY_VERIFY'
+        THEN 'YES'
+
+        WHEN 'AMOUNT_VERIFY'
+        THEN 'YES'
+
+        WHEN 'TIME_VERIFY'
+        THEN 'YES'
+
+        WHEN 'TRAVEL_VERIFY'
+        THEN 'NO'
+
+        WHEN 'DEVICE_CONTROL_VERIFY'
+        THEN 'YES'
+
+        ELSE 'UNKNOWN'
+
+    END
+
+FROM security_questions;
+
+
+-- ============================================================
+-- SECTION 21
+-- USER 002 SECURITY ANSWERS
+-- ============================================================
+
+INSERT INTO security_answers
+(
+    user_id,
+    question_id,
+    expected_answer
+)
+SELECT
+    'U002',
+    question_id,
+
+    CASE question_code
+
+        WHEN 'DOB_VERIFY'
+        THEN '2004-11-07'
+
+        WHEN 'COLLEGE_VERIFY'
+        THEN 'Haldia Institute of Technology'
+
+        WHEN 'AREA_VERIFY'
+        THEN 'Haldia'
+
+        WHEN 'LOCATION_VERIFY'
+        THEN 'Kolkata'
+
+        WHEN 'DEVICE_VERIFY'
+        THEN 'OnePlus 12R - SHUBHAM'
+
+        WHEN 'RECENT_PLACE_VERIFY'
+        THEN 'Haldia'
+
+        WHEN 'RECIPIENT_VERIFY'
+        THEN 'YES'
+
+        WHEN 'HISTORY_VERIFY'
+        THEN 'YES'
+
+        WHEN 'AMOUNT_VERIFY'
+        THEN 'YES'
+
+        WHEN 'TIME_VERIFY'
+        THEN 'YES'
+
+        WHEN 'TRAVEL_VERIFY'
+        THEN 'NO'
+
+        WHEN 'DEVICE_CONTROL_VERIFY'
+        THEN 'YES'
+
+        ELSE 'UNKNOWN'
+
+    END
+
+FROM security_questions;
+
+
+-- ============================================================
+-- SECTION 22
+-- USER 003 SECURITY ANSWERS
+-- ============================================================
+
+INSERT INTO security_answers
+(
+    user_id,
+    question_id,
+    expected_answer
+)
+SELECT
+    'U003',
+    question_id,
+
+    CASE question_code
+
+        WHEN 'DOB_VERIFY'
+        THEN '2005-02-21'
+
+        WHEN 'COLLEGE_VERIFY'
+        THEN 'Haldia Institute of Technology'
+
+        WHEN 'AREA_VERIFY'
+        THEN 'Haldia'
+
+        WHEN 'LOCATION_VERIFY'
+        THEN 'Haldia'
+
+        WHEN 'DEVICE_VERIFY'
+        THEN 'Redmi Note 13 Pro - MUKHERJEE'
+
+        WHEN 'RECENT_PLACE_VERIFY'
+        THEN 'Haldia'
+
+        WHEN 'RECIPIENT_VERIFY'
+        THEN 'YES'
+
+        WHEN 'HISTORY_VERIFY'
+        THEN 'YES'
+
+        WHEN 'AMOUNT_VERIFY'
+        THEN 'YES'
+
+        WHEN 'TIME_VERIFY'
+        THEN 'YES'
+
+        WHEN 'TRAVEL_VERIFY'
+        THEN 'NO'
+
+        WHEN 'DEVICE_CONTROL_VERIFY'
+        THEN 'YES'
+
+        ELSE 'UNKNOWN'
+
+    END
+
+FROM security_questions;
+
+
+-- ============================================================
+-- SECTION 23
+-- USER 004 SECURITY ANSWERS
+-- ============================================================
+
+INSERT INTO security_answers
+(
+    user_id,
+    question_id,
+    expected_answer
+)
+SELECT
+    'U004',
+    question_id,
+
+    CASE question_code
+
+        WHEN 'DOB_VERIFY'
+        THEN '2004-08-13'
+
+        WHEN 'COLLEGE_VERIFY'
+        THEN 'Haldia Institute of Technology'
+
+        WHEN 'AREA_VERIFY'
+        THEN 'Haldia'
+
+        WHEN 'LOCATION_VERIFY'
+        THEN 'Haldia'
+
+        WHEN 'DEVICE_VERIFY'
+        THEN 'Google Pixel 8 - TRIDIP'
+
+        WHEN 'RECENT_PLACE_VERIFY'
+        THEN 'Kolkata'
+
+        WHEN 'RECIPIENT_VERIFY'
+        THEN 'YES'
+
+        WHEN 'HISTORY_VERIFY'
+        THEN 'YES'
+
+        WHEN 'AMOUNT_VERIFY'
+        THEN 'YES'
+
+        WHEN 'TIME_VERIFY'
+        THEN 'YES'
+
+        WHEN 'TRAVEL_VERIFY'
+        THEN 'NO'
+
+        WHEN 'DEVICE_CONTROL_VERIFY'
+        THEN 'YES'
+
+        ELSE 'UNKNOWN'
+
+    END
+
+FROM security_questions;
+
+
+-- ============================================================
+-- SECTION 24
+-- INDEXES
+-- ============================================================
+
+CREATE INDEX idx_transactions_user
+ON transactions(user_id);
+
+CREATE INDEX idx_transactions_recipient
+ON transactions(recipient_id);
+
+CREATE INDEX idx_transactions_time
+ON transactions(transaction_time);
+
+CREATE INDEX idx_transactions_status
+ON transactions(transaction_status);
+
+CREATE INDEX idx_transactions_risk
+ON transactions(risk_score);
+
+CREATE INDEX idx_transactions_decision
+ON transactions(risk_decision);
+
+CREATE INDEX idx_connections_user
+ON sender_recipient_connections(user_id);
+
+CREATE INDEX idx_connections_recipient
+ON sender_recipient_connections(recipient_id);
+
+CREATE INDEX idx_security_answers_user
+ON security_answers(user_id);
+
+CREATE INDEX idx_security_questions_active
+ON security_questions(active);
+
+CREATE INDEX idx_challenge_user
+ON challenge_sessions(user_id);
+
+CREATE INDEX idx_challenge_transaction
+ON challenge_sessions(transaction_id);
+
+
+-- ============================================================
+-- SECTION 25
+-- SENDER TRANSACTION HISTORY VIEW
+-- ============================================================
+
+CREATE VIEW sender_transaction_history AS
+
+SELECT
+
+    t.transaction_id,
+
+    u.user_id,
+
+    u.name AS sender_name,
+
+    u.date_of_birth,
+
+    u.college_name,
+
+    u.living_area,
+
+    u.known_device,
+
+    u.common_location,
+
+    u.initial_bank_balance,
+
+    u.current_bank_balance,
+
+    t.amount,
+
+    t.transaction_time,
+
+    t.payment_location,
+
+    t.previous_location,
+
+    t.sender_device_name,
+
+    r.recipient_id,
+
+    r.recipient_name,
+
+    r.upi_id,
+
+    t.recipient_device_name,
+
+    r.recipient_location,
+
+    r.recipient_type,
+
+    CASE
+
+        WHEN t.previous_connection = 1
+        THEN 'YES - Previous Connection Exists'
+
+        ELSE 'NO - No Previous Connection'
+
+    END AS previous_connection_status,
+
+    c.connection_type,
+
+    c.previous_transaction_count,
+
+    t.transaction_status,
+
+    t.risk_score,
+
+    t.risk_decision,
+
+    t.created_at
+
+FROM transactions t
+
+JOIN users u
+ON t.user_id = u.user_id
+
+JOIN recipients r
+ON t.recipient_id = r.recipient_id
+
+LEFT JOIN sender_recipient_connections c
+
+ON t.user_id = c.user_id
+
+AND t.recipient_id = c.recipient_id;
+
+
+-- ============================================================
+-- SECTION 26
+-- RECIPIENT TRANSACTION HISTORY VIEW
+-- ============================================================
+
+CREATE VIEW recipient_transaction_history AS
+
+SELECT
+
+    r.recipient_id,
+
+    r.recipient_name,
+
+    r.upi_id,
+
+    r.recipient_device_name,
+
+    r.recipient_location,
+
+    r.recipient_type,
+
+    t.transaction_id,
+
+    u.user_id,
+
+    u.name AS sender_name,
+
+    t.amount,
+
+    t.transaction_time,
+
+    t.payment_location,
+
+    t.transaction_status,
+
+    t.risk_score,
+
+    t.risk_decision
+
+FROM transactions t
+
+JOIN users u
+ON t.user_id = u.user_id
+
+JOIN recipients r
+ON t.recipient_id = r.recipient_id;
+
+
+-- ============================================================
+-- SECTION 27
+-- USER ACCOUNT SUMMARY
+-- ============================================================
+
+CREATE VIEW user_account_summary AS
+
+SELECT
+
+    u.user_id,
+
+    u.name,
+
+    u.date_of_birth,
+
+    u.college_name,
+
+    u.living_area,
+
+    u.known_device,
+
+    u.common_location,
+
+    u.initial_bank_balance,
+
+    u.current_bank_balance,
+
+    u.average_transaction,
+
+    u.total_transactions,
+
+    COALESCE
+    (
+        (
+            SELECT SUM(t.amount)
+
+            FROM transactions t
+
+            WHERE t.user_id = u.user_id
+
+            AND t.transaction_status = 'SUCCESS'
+        ),
+        0
+    ) AS historical_successful_amount,
+
+    COALESCE
+    (
+        (
+            SELECT COUNT(*)
+
+            FROM transactions t
+
+            WHERE t.user_id = u.user_id
+
+            AND t.transaction_status = 'SUCCESS'
+        ),
+        0
+    ) AS historical_successful_transactions,
+
+    COALESCE
+    (
+        (
+            SELECT COUNT(*)
+
+            FROM transactions t
+
+            WHERE t.user_id = u.user_id
+
+            AND t.transaction_status = 'HELD'
+        ),
+        0
+    ) AS held_transactions,
+
+    COALESCE
+    (
+        (
+            SELECT COUNT(*)
+
+            FROM transactions t
+
+            WHERE t.user_id = u.user_id
+
+            AND t.transaction_status = 'BLOCKED'
+        ),
+        0
+    ) AS blocked_transactions,
+
+    COALESCE
+    (
+        (
+            SELECT SUM(t.amount)
+
+            FROM transactions t
+
+            WHERE t.user_id = u.user_id
+
+            AND t.transaction_status = 'SUCCESS'
+        ),
+        0
+    ) AS total_money_sent
+
+FROM users u;
+
+
+-- ============================================================
+-- SECTION 28
+-- DYNAMIC QUESTION DATA
+-- ============================================================
+
+CREATE VIEW dynamic_question_data AS
+
+SELECT
+
+    u.user_id,
+
+    u.name,
+
+    q.question_id,
+
+    q.question_code,
+
+    q.question_text,
+
+    q.risk_factor,
+
+    q.expected_answer_type,
+
+    a.expected_answer
+
+FROM users u
+
+CROSS JOIN security_questions q
+
+LEFT JOIN security_answers a
+
+ON u.user_id = a.user_id
+
+AND q.question_id = a.question_id
+
+WHERE q.active = 1;
+
+
+-- ============================================================
+-- SECTION 29
+-- FRAUD ALERTS VIEW
+-- ============================================================
+
+CREATE VIEW fraud_alerts AS
+
+SELECT
+
+    t.transaction_id,
+
+    t.user_id,
+
+    u.name AS user_name,
+
+    t.recipient_id,
+
+    r.recipient_name,
+
+    r.upi_id,
+
+    t.amount,
+
+    t.transaction_time,
+
+    t.payment_location,
+
+    t.previous_location,
+
+    t.sender_device_name,
+
+    t.transaction_status,
+
+    t.risk_score,
+
+    t.risk_decision,
+
+    CASE
+
+        WHEN t.risk_score &gt;= 70
+        THEN 'HIGH'
+
+        WHEN t.risk_score &gt;= 40
+        THEN 'MEDIUM'
+
+        ELSE 'LOW'
+
+    END AS risk_level
+
+FROM transactions t
+
+JOIN users u
+ON t.user_id = u.user_id
+
+JOIN recipients r
+ON t.recipient_id = r.recipient_id
+
+WHERE
+
+    t.risk_score &gt;= 40
+
+    OR
+
+    t.transaction_status IN
+    (
+        'HELD',
+        'BLOCKED',
+        'PENDING'
+    );
+
+
+-- ============================================================
+-- SECTION 30
+-- LIVE MONITOR VIEW
+-- ============================================================
+
+CREATE VIEW live_monitor_data AS
+
+SELECT
+
+    t.transaction_id,
+
+    t.user_id,
+
+    u.name AS sender_name,
+
+    t.recipient_id,
+
+    r.recipient_name,
+
+    r.upi_id,
+
+    t.amount,
+
+    t.transaction_time,
+
+    t.sender_device_name,
+
+    t.recipient_device_name,
+
+    t.payment_location,
+
+    t.previous_location,
+
+    t.previous_connection,
+
+    t.transaction_status,
+
+    t.risk_score,
+
+    t.risk_decision,
+
+    u.current_bank_balance
+
+FROM transactions t
+
+JOIN users u
+ON t.user_id = u.user_id
+
+JOIN recipients r
+ON t.recipient_id = r.recipient_id
+
+ORDER BY
+    t.transaction_time DESC;
+
+
+-- ============================================================
+-- SECTION 31
+-- DATABASE VERIFICATION
+-- ============================================================
+
+
+-- CHECK USERS
+
+SELECT
+
+    user_id,
+
+    name,
+
+    date_of_birth,
+
+    college_name,
+
+    living_area,
+
+    known_device,
+
+    common_location,
+
+    current_bank_balance
+
+FROM users
+
+ORDER BY user_id;
+
+
+-- CHECK RECIPIENTS
+
+SELECT *
+
+FROM recipients
+
+ORDER BY recipient_id;
+
+
+-- CHECK CONNECTIONS
+
+SELECT *
+
+FROM sender_recipient_connections
+
+ORDER BY user_id, recipient_id;
+
+
+-- CHECK TRANSACTION COUNT
+
+SELECT
+
+    COUNT(*) AS total_transactions
+
+FROM transactions;
+
+
+-- CHECK ALL TRANSACTIONS
+
+SELECT *
+
+FROM sender_transaction_history
+
+ORDER BY
+    user_id,
+    transaction_time;
+
+
+-- CHECK DYNAMIC QUESTIONS
+
+SELECT *
+
+FROM dynamic_question_data
+
+WHERE user_id = 'U001'
+
+ORDER BY question_id;
+
+
+-- CHECK ALL USER QUESTIONS
+
+SELECT
+
+    user_id,
+
+    name,
+
+    question_code,
+
+    question_text,
+
+    expected_answer_type,
+
+    expected_answer
+
+FROM dynamic_question_data
+
+ORDER BY
+    user_id,
+    question_id;
+
+
+-- CHECK ACCOUNT SUMMARY
+
+SELECT *
+
+FROM user_account_summary
+
+ORDER BY user_id;
+
+
+-- CHECK FRAUD ALERTS
+
+SELECT *
+
+FROM fraud_alerts
+
+ORDER BY risk_score DESC;
+
+
+-- CHECK LIVE MONITOR
+
+SELECT *
+
+FROM live_monitor_data;
+
+
+-- ============================================================
+-- END OF SECUREFLOW-AI DATABASE V8.0
+-- ============================================================</sql><current_tab id="0"/></tab_sql></sqlb_project>
