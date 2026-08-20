@@ -1,33 +1,48 @@
-# routes/feedback.py
+# services/explanation.py
 
-from fastapi import APIRouter
-from pydantic import BaseModel
+def explain_transaction(
+    risk_score,
+    z_score,
+    new_device,
+    new_location,
+    failed_attempts,
+    velocity_suspicious
+):
 
-router = APIRouter()
+    reasons = []
 
+    if abs(z_score) >= 3:
+        reasons.append(
+            "Transaction amount is significantly "
+            "different from normal behavior."
+        )
 
-class FraudFeedback(BaseModel):
+    if new_device:
+        reasons.append(
+            "Transaction originated from a new device."
+        )
 
-    transaction_id: str
-    user_id: str
+    if new_location:
+        reasons.append(
+            "Transaction originated from a new location."
+        )
 
-    user_decision: str
-    # "FRAUD" or "LEGITIMATE"
+    if failed_attempts > 0:
+        reasons.append(
+            "Multiple failed attempts were detected."
+        )
 
-    system_decision: str
-    risk_score: int
+    if velocity_suspicious:
+        reasons.append(
+            "Unusually high transaction frequency detected."
+        )
 
-
-@router.post("/submit")
-def submit_feedback(feedback: FraudFeedback):
-
-    correct = (
-        feedback.user_decision
-        == feedback.system_decision
-    )
+    if not reasons:
+        reasons.append(
+            "No major behavioral anomaly detected."
+        )
 
     return {
-        "transaction_id": feedback.transaction_id,
-        "feedback_received": True,
-        "model_decision_correct": correct
+        "risk_score": risk_score,
+        "reasons": reasons
     }
