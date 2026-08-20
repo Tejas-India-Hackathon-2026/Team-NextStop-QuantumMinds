@@ -5,75 +5,113 @@
 
 <meta charset="UTF-8">
 
-<title>AI Fraud Detection</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>SecureFlow AI Security Center</title>
 
 <style>
 
+* {
+    box-sizing: border-box;
+}
+
 body {
-    background: #020617;
-    color: white;
+    margin: 0;
     font-family: Arial;
+    background: #e2e8f0;
+}
+
+.navbar {
+    background: #0f172a;
+    color: white;
+    padding: 20px 40px;
+}
+
+.navbar h1 {
     margin: 0;
 }
 
-header {
-    padding: 25px;
-    background: #0f172a;
-    text-align: center;
-}
-
-.dashboard {
-    max-width: 1000px;
-    margin: 40px auto;
+.container {
+    max-width: 1100px;
+    margin: 35px auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 25px;
 }
 
-.panel {
-    background: #111827;
-    padding: 25px;
+.card {
+    background: white;
+    padding: 30px;
     border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
 }
 
-input[type="number"] {
+.card h2 {
+    color: #1e293b;
+}
+
+.amount {
     width: 100%;
     padding: 15px;
-    box-sizing: border-box;
-    margin: 15px 0;
-    background: #1e293b;
-    color: white;
-    border: 1px solid #475569;
+    font-size: 20px;
+    border: 1px solid #cbd5e1;
     border-radius: 8px;
+    margin-bottom: 20px;
 }
 
-label {
-    display: block;
-    padding: 10px;
+.indicator {
+    display: flex;
+    justify-content: space-between;
+    padding: 13px;
+    margin: 7px 0;
+    background: #f8fafc;
+    border-radius: 8px;
 }
 
 button {
     width: 100%;
     padding: 15px;
-    margin-top: 20px;
-    background: #7c3aed;
-    color: white;
+    background: #2563eb;
     border: none;
+    color: white;
+    font-size: 17px;
     border-radius: 8px;
-    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
 }
 
-.score {
+.risk-score {
     text-align: center;
-    font-size: 50px;
+    font-size: 55px;
     font-weight: bold;
-    padding: 30px;
+    margin: 25px;
 }
 
-#decision {
+.decision {
     text-align: center;
-    font-size: 25px;
     padding: 15px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.section {
+    margin-top: 25px;
+}
+
+li {
+    margin: 10px 0;
+}
+
+@media(max-width: 700px) {
+
+    .container {
+        grid-template-columns: 1fr;
+        margin: 15px;
+    }
+
 }
 
 </style>
@@ -82,94 +120,111 @@ button {
 
 <body>
 
-<header>
+<div class="navbar">
 
-<h1>🤖 SecureFlow AI</h1>
+<h1>🛡 SecureFlow AI</h1>
 
-<p>Real-Time UPI Fraud Detection System</p>
+<p>UPI Fraud Detection & Risk Intelligence</p>
 
-</header>
+</div>
 
-<div class="dashboard">
+<div class="container">
 
-<div class="panel">
+<div class="card">
 
-<h2>Transaction Analysis</h2>
+<h2>Transaction Details</h2>
 
 <input
+class="amount"
 type="number"
 id="amount"
-placeholder="Transaction Amount">
+placeholder="Transaction Amount ₹">
 
-<label>
+<div class="indicator">
+<span>Unusual Time</span>
 <input type="checkbox" id="unusual_time">
-Unusual Time
-</label>
+</div>
 
-<label>
+<div class="indicator">
+<span>Unusual Frequency</span>
 <input type="checkbox" id="unusual_frequency">
-Unusual Frequency
-</label>
+</div>
 
-<label>
+<div class="indicator">
+<span>New Device</span>
 <input type="checkbox" id="new_device">
-New Device
-</label>
+</div>
 
-<label>
+<div class="indicator">
+<span>Unusual Location</span>
 <input type="checkbox" id="unusual_location">
-Unusual Location
-</label>
+</div>
 
-<label>
+<div class="indicator">
+<span>Sudden Location Change</span>
 <input type="checkbox" id="sudden_location_change">
-Sudden Location Change
-</label>
+</div>
 
-<label>
+<div class="indicator">
+<span>Unknown Beneficiary</span>
 <input type="checkbox" id="unknown_beneficiary">
-Unknown Beneficiary
-</label>
+</div>
 
-<label>
+<div class="indicator">
+<span>No Previous Transactions</span>
 <input type="checkbox" id="no_previous_transactions">
-No Previous Transactions
-</label>
+</div>
 
-<label>
+<div class="indicator">
+<span>Unusual Beneficiary Amount</span>
 <input type="checkbox" id="unusual_beneficiary_amount">
-Unusual Beneficiary Amount
-</label>
+</div>
 
 <button onclick="analyze()">
-RUN AI ANALYSIS
+Analyze Transaction
 </button>
 
 </div>
 
-<div class="panel">
 
-<h2>AI Security Result</h2>
+<div class="card">
 
-<div class="score" id="score">
+<h2>AI Security Assessment</h2>
+
+<div class="risk-score"
+id="score">
+
 --
+
 </div>
 
-<div id="decision">
-Waiting for transaction...
+<div class="decision"
+id="decision">
+
+Waiting for transaction
+
 </div>
 
-<h3>Detected Threats</h3>
+<div class="section">
+
+<h3>🚨 Risk Indicators</h3>
 
 <ul id="reasons"></ul>
 
-<h3>AI Questions</h3>
+</div>
+
+<div class="section">
+
+<h3>🤖 AI Verification Questions</h3>
 
 <ul id="questions"></ul>
 
 </div>
 
 </div>
+
+</div>
+
 
 <script>
 
@@ -187,44 +242,77 @@ async function analyze() {
     ];
 
     const data = {
-        amount: Number(document.getElementById("amount").value)
+        amount: parseFloat(
+            document.getElementById("amount").value
+        )
     };
 
     ids.forEach(id => {
-        data[id] = document.getElementById(id).checked;
+
+        data[id] =
+            document.getElementById(id).checked;
+
     });
 
-    const response = await fetch(
-        "http://127.0.0.1:8000/transaction",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        }
-    );
+    try {
 
-    const result = await response.json();
+        const response = await fetch(
+            "http://127.0.0.1:8000/transaction",
+            {
+                method: "POST",
 
-    document.getElementById("score").innerText =
-        result.risk_score;
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
 
-    document.getElementById("decision").innerText =
-        result.decision;
+                body: JSON.stringify(data)
+            }
+        );
 
-    document.getElementById("reasons").innerHTML =
-        result.reasons
-        .map(x => `<li>${x}</li>`)
-        .join("");
+        const result =
+            await response.json();
 
-    document.getElementById("questions").innerHTML =
-        result.ai_questions
-        .map(x => `<li>${x}</li>`)
-        .join("");
+        document.getElementById("score")
+            .innerText =
+            result.risk_score;
+
+        document.getElementById("decision")
+            .innerText =
+            result.decision;
+
+        document.getElementById("reasons")
+            .innerHTML =
+            result.reasons
+            .map(reason =>
+                `<li>${reason}</li>`
+            )
+            .join("");
+
+        document.getElementById("questions")
+            .innerHTML =
+            result.ai_questions
+            .map(question =>
+                `<li>${question}</li>`
+            )
+            .join("");
+
+    }
+
+    catch(error) {
+
+        document.getElementById("decision")
+            .innerText =
+            "Backend connection failed";
+
+        console.error(error);
+
+    }
+
 }
 
 </script>
 
 </body>
+
 </html>
