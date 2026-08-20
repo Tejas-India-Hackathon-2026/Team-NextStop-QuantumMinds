@@ -1,897 +1,1469 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+from pathlib import Path
+from datetime import datetime, timedelta
 import sqlite3
-from datetime import datetime
+import math
+import re
 
-
-# =========================================================
+# ============================================================
 # SECUREFLOW-AI
-# FINAL BACKEND SERVER
-# =========================================================
+# DATABASE-DRIVEN BEHAVIOURAL FRAUD ENGINE
+# ============================================================
 
-
-app = FastAPI(
-    title="SecureFlow-AI",
-    description="AI-driven real-time transaction fraud prevention system",
-    version="1.0.0"
-)
-
-
-# =========================================================
-# CORS
-# =========================================================
+app = FastAPI(title="SecureFlow-AI Behaviour Engine")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
+# ------------------------------------------------------------
+# DATABASE LOCATION
+# ------------------------------------------------------------
 
-# =========================================================
-# DATABASE
-# =========================================================
+BASE_DIR = Path(__file__).resolve().parent
 
-DATABASE = "secureflow.db"
+POSSIBLE_DATABASES = [
+    "SecureFlow-AI.db",
+    "secureflow-ai.db",
+    "secureflow.db",
+    "secureflow_ai.db",
+    "database.db",
+    "transactions.db",
+]
 
+DB_PATH = None
 
-def get_db():
+for filename in POSSIBLE_DATABASES:
+    candidate = BASE_DIR / filename
+    if candidate.exists():
+        DB_PATH = candidate
+        break
 
-    db = sqlite3.connect(DATABASE)
+if DB_PATH is None:
+    db_files = list(BASE_DIR.glob("*.db"))
+    if db_files:
+        DB_PATH = db_files[0]
 
-    db.row_factory = sqlite3.Row
-
-    return db
-
-
-def create_database():
-
-    db = get_db()
-
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-            user_id TEXT UNIQUE NOT NULL,
-
-            name TEXT NOT NULL,
-
-            average_amount REAL DEFAULT 0,
-
-            known_device TEXT,
-
-            known_location TEXT,
-
-            known_beneficiary TEXT,
-
-            total_transactions INTEGER DEFAULT 0
-
-        )
-    """)
-
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS transactions (
-
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-            user_id TEXT NOT NULL,
-
-            amount REAL NOT NULL,
-
-            device TEXT,
-
-            location TEXT,
-
-            beneficiary TEXT,
-
-            transaction_time TEXT,
-
-            risk_score REAL,
-
-            risk_level TEXT,
-
-            decision TEXT,
-
-            reasons TEXT,
-
-            created_at TEXT
-
-        )
-    """)
-
-    db.commit()
-    db.close()
+if DB_PATH is None:
+    DB_PATH = BASE_DIR / "SecureFlow-AI.db"
 
 
-create_database()
+# ============================================================
+# DATABASE HELPERS
+# ============================================================
+
+def get_connection():
+    connection = sqlite3.connect(str(DB_PATH))
+    connection.row_factory = sqlite3.Row
+    return connection
 
 
-# =========================================================
-# DEMO USER
-# =========================================================
+def get_tables(connection):
+    rows = connection.execute(
+        """
+        SELECT name
+        FROM sqlite_master
+        WHERE type='table'
+        AND name NOT LIKE 'sqlite_%'
+        """
+    ).fetchall()
 
-def create_demo_user():
-
-    db = get_db()
-
-    user = db.execute(
-        "SELECT user_id FROM users WHERE user_id = ?",
-        ("USER001",)
-    ).fetchone()
-
-    if user is None:
-
-        db.execute("""
-            INSERT INTO users (
-                user_id,
-                name,
-                average_amount,
-                known_device,
-                known_location,
-                known_beneficiary,
-                total_transactions
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (
-            "USER001",
-            "Demo User",
-            1200.0,
-            "Android-Primary",
-            "Kolkata",
-            "rahul@upi",
-            42
-        ))
-
-        db.commit()
-
-    db.close()
+    return [row["name"] for row in rows]
 
 
-create_demo_user()
+def get_columns(connection, table):
+    rows = connection.execute(
+        f'PRAGMA table_info("{table}")'
+    ).fetchall()
+
+    return [row["name"] for row in rows]
 
 
-# =========================================================
-# REQUEST MODELS
-# =========================================================
+def normalize(value):
+    if value is None:
+        return ""
 
-class TransactionRequest(BaseModel):
-
-    user_id: str
-
-    amount: float = Field(gt=0)
-
-    device: str
-
-    location: str
-
-    beneficiary: str
-
-    transaction_time: str
-
-    recent_transactions: int = Field(
-        default=0,
-        ge=0
+    return re.sub(
+        r"[^a-z0-9]",
+        "",
+        str(value).lower()
     )
 
 
-class VerificationRequest(BaseModel):
+def find_table(connection, keywords):
+    tables = get_tables(connection)
 
-    transaction_id: int
+    best_table = None
+    best_score = 0
 
-    confirmed: bool
+    for table in tables:
 
+        name = normalize(table)
+        score = 0
 
-# =========================================================
-# USER PROFILE
-# =========================================================
+        for keyword in keywords:
+            if normalize(keyword) in name:
+                score += 1
 
-def get_user(user_id):
+        columns = get_columns(connection, table)
 
-    db = get_db()
+        for column in columns:
+            column_name = normalize(column)
 
-    user = db.execute(
-        """
-        SELECT *
-        FROM users
-        WHERE user_id = ?
-        """,
-        (user_id,)
-    ).fetchone()
+            for keyword in keywords:
+                if normalize(keyword) in column_name:
+                    score += 0.5
 
-    db.close()
+        if score > best_score:
+            best_score = score
+            best_table = table
 
-    return user
-
-
-# =========================================================
-# RISK ANALYSIS
-# =========================================================
-
-def calculate_risk(
-    transaction,
-    user
-):
-
-    score = 0
-
-    reasons = []
+    return best_table
 
 
-    # -----------------------------------------------------
-    # AMOUNT
-    # -----------------------------------------------------
+def find_column(columns, aliases):
 
-    average = user["average_amount"]
+    normalized_columns = {
+        normalize(column): column
+        for column in columns
+    }
 
-    if average > 0:
+    # Exact match first
+    for alias in aliases:
+        key = normalize(alias)
 
-        ratio = transaction.amount / average
+        if key in normalized_columns:
+            return normalized_columns[key]
 
-        if ratio >= 10:
+    # Partial match
+    for column in columns:
 
-            score += 30
+        normalized = normalize(column)
 
-            reasons.append(
-                "Transaction amount is extremely high compared with normal behaviour."
-            )
+        for alias in aliases:
 
-        elif ratio >= 5:
+            alias_normalized = normalize(alias)
 
-            score += 25
+            if (
+                alias_normalized in normalized
+                or normalized in alias_normalized
+            ):
+                return column
 
-            reasons.append(
-                "Transaction amount is significantly higher than normal."
-            )
-
-        elif ratio >= 3:
-
-            score += 18
-
-            reasons.append(
-                "Transaction amount is considerably higher than normal."
-            )
-
-        elif ratio >= 2:
-
-            score += 10
-
-            reasons.append(
-                "Transaction amount is higher than normal."
-            )
+    return None
 
 
-    # -----------------------------------------------------
-    # DEVICE
-    # -----------------------------------------------------
-
-    if transaction.device != user["known_device"]:
-
-        score += 20
-
-        reasons.append(
-            "Unknown device detected."
-        )
-
-
-    # -----------------------------------------------------
-    # LOCATION
-    # -----------------------------------------------------
-
-    if transaction.location != user["known_location"]:
-
-        score += 15
-
-        reasons.append(
-            "Unusual location detected."
-        )
-
-
-    # -----------------------------------------------------
-    # BENEFICIARY
-    # -----------------------------------------------------
-
-    if transaction.beneficiary != user["known_beneficiary"]:
-
-        score += 15
-
-        reasons.append(
-            "New beneficiary detected."
-        )
-
-
-    # -----------------------------------------------------
-    # FREQUENCY
-    # -----------------------------------------------------
-
-    if transaction.recent_transactions >= 8:
-
-        score += 15
-
-        reasons.append(
-            "Very high transaction frequency detected."
-        )
-
-    elif transaction.recent_transactions >= 5:
-
-        score += 8
-
-        reasons.append(
-            "Higher-than-normal transaction frequency detected."
-        )
-
-
-    # -----------------------------------------------------
-    # UNUSUAL TIME
-    # -----------------------------------------------------
+def safe_float(value, default=0.0):
 
     try:
+        return float(value)
+    except:
+        return default
 
-        time = datetime.strptime(
-            transaction.transaction_time,
-            "%I:%M %p"
-        )
 
-        if time.hour >= 23 or time.hour < 5:
+def safe_int(value, default=0):
 
-            score += 15
+    try:
+        return int(value)
+    except:
+        return default
 
-            reasons.append(
-                "Transaction occurred during unusual hours."
-            )
 
-    except ValueError:
+def parse_datetime(value):
 
-        pass
+    if value is None:
+        return None
 
+    if isinstance(value, datetime):
+        return value
 
-    score = min(score, 100)
+    text = str(value).strip()
 
+    formats = [
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%d %H:%M",
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%dT%H:%M",
+        "%d-%m-%Y %H:%M:%S",
+        "%d-%m-%Y %H:%M",
+        "%d/%m/%Y %H:%M:%S",
+        "%d/%m/%Y %H:%M",
+    ]
 
-    # -----------------------------------------------------
-    # RISK LEVEL
-    # -----------------------------------------------------
+    for fmt in formats:
 
-    if score <= 30:
+        try:
+            return datetime.strptime(text, fmt)
+        except:
+            pass
 
-        level = "LOW"
+    return None
 
-    elif score <= 70:
 
-        level = "MEDIUM"
+def row_value(row, columns, aliases, default=None):
 
-    else:
+    column = find_column(columns, aliases)
 
-        level = "HIGH"
+    if column is None:
+        return default
 
+    return row[column]
 
-    return score, level, reasons
 
+# ============================================================
+# DATABASE DISCOVERY
+# ============================================================
 
-# =========================================================
-# DECISION ENGINE
-# =========================================================
+def discover_schema(connection):
 
-def make_decision(score):
-
-    if score <= 30:
-
-        return "ALLOW"
-
-    elif score <= 70:
-
-        return "ALERT"
-
-    else:
-
-        return "BLOCK"
-
-
-# =========================================================
-# VERIFICATION QUESTION
-# =========================================================
-
-def generate_verification(
-    transaction,
-    user
-):
-
-    if transaction.device != user["known_device"]:
-
-        return (
-            "Are you currently using a new device?"
-        )
-
-    if transaction.location != user["known_location"]:
-
-        return (
-            "Are you currently making this transaction from a new location?"
-        )
-
-    if transaction.beneficiary != user["known_beneficiary"]:
-
-        return (
-            "Did you intentionally make this payment to this new beneficiary?"
-        )
-
-    if transaction.amount > user["average_amount"] * 3:
-
-        return (
-            "Did you personally initiate this high-value transaction?"
-        )
-
-    return (
-        "Did you personally initiate this transaction?"
-    )
-
-
-# =========================================================
-# MAIN TRANSACTION API
-# =========================================================
-
-@app.post("/api/transaction")
-def analyze_transaction(
-    transaction: TransactionRequest
-):
-
-    # -----------------------------------------------------
-    # FIND USER
-    # -----------------------------------------------------
-
-    user = get_user(
-        transaction.user_id
-    )
-
-    if user is None:
-
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
-        )
-
-
-    # -----------------------------------------------------
-    # RISK ANALYSIS
-    # -----------------------------------------------------
-
-    score, level, reasons = calculate_risk(
-        transaction,
-        user
-    )
-
-
-    # -----------------------------------------------------
-    # DECISION
-    # -----------------------------------------------------
-
-    decision = make_decision(score)
-
-
-    # -----------------------------------------------------
-    # VERIFICATION
-    # -----------------------------------------------------
-
-    verification = None
-
-    if decision == "ALERT":
-
-        verification = generate_verification(
-            transaction,
-            user
-        )
-
-
-    # -----------------------------------------------------
-    # SAVE TRANSACTION
-    # -----------------------------------------------------
-
-    db = get_db()
-
-    cursor = db.execute("""
-        INSERT INTO transactions (
-
-            user_id,
-            amount,
-            device,
-            location,
-            beneficiary,
-            transaction_time,
-            risk_score,
-            risk_level,
-            decision,
-            reasons,
-            created_at
-
-        )
-
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-
-    """, (
-
-        transaction.user_id,
-        transaction.amount,
-        transaction.device,
-        transaction.location,
-        transaction.beneficiary,
-        transaction.transaction_time,
-        score,
-        level,
-        decision,
-        " | ".join(reasons),
-        datetime.now().isoformat()
-
-    ))
-
-    transaction_id = cursor.lastrowid
-
-    db.commit()
-
-    db.close()
-
-
-    # -----------------------------------------------------
-    # RESPONSE
-    # -----------------------------------------------------
-
-    return {
-
-        "success": True,
-
-        "transaction_id":
-            transaction_id,
-
-        "risk": {
-
-            "score":
-                score,
-
-            "level":
-                level,
-
-            "reasons":
-                reasons
-
-        },
-
-        "decision":
-            decision,
-
-        "verification":
-            verification
-
-    }
-
-
-# =========================================================
-# VERIFICATION API
-# =========================================================
-
-@app.post("/api/verification")
-def verify_transaction(
-    request: VerificationRequest
-):
-
-    db = get_db()
-
-    transaction = db.execute(
-        """
-        SELECT *
-        FROM transactions
-        WHERE id = ?
-        """,
-        (request.transaction_id,)
-    ).fetchone()
-
-
-    if transaction is None:
-
-        db.close()
-
-        raise HTTPException(
-            status_code=404,
-            detail="Transaction not found"
-        )
-
-
-    if request.confirmed:
-
-        decision = "ALLOW"
-
-        message = (
-            "Transaction verified by user and allowed."
-        )
-
-    else:
-
-        decision = "BLOCK"
-
-        message = (
-            "Transaction rejected by user and blocked."
-        )
-
-
-    db.execute(
-        """
-        UPDATE transactions
-        SET decision = ?
-        WHERE id = ?
-        """,
-        (
-            decision,
-            request.transaction_id
-        )
-    )
-
-    db.commit()
-
-    db.close()
-
-
-    return {
-
-        "success": True,
-
-        "transaction_id":
-            request.transaction_id,
-
-        "decision":
-            decision,
-
-        "message":
-            message
-
-    }
-
-
-# =========================================================
-# TRANSACTION HISTORY
-# =========================================================
-
-@app.get("/api/transactions/{user_id}")
-def transaction_history(
-    user_id: str
-):
-
-    db = get_db()
-
-    rows = db.execute(
-        """
-        SELECT *
-        FROM transactions
-        WHERE user_id = ?
-        ORDER BY id DESC
-        LIMIT 50
-        """,
-        (user_id,)
-    ).fetchall()
-
-    db.close()
-
-
-    return {
-
-        "success": True,
-
-        "transactions": [
-            dict(row)
-            for row in rows
+    users_table = find_table(
+        connection,
+        [
+            "users",
+            "user",
+            "profiles",
+            "customers",
+            "accounts"
         ]
-
-    }
-
-
-# =========================================================
-# ALERTS
-# =========================================================
-
-@app.get("/api/alerts/{user_id}")
-def alerts(
-    user_id: str
-):
-
-    db = get_db()
-
-    rows = db.execute(
-        """
-        SELECT *
-        FROM transactions
-
-        WHERE user_id = ?
-
-        AND (
-            risk_level = 'HIGH'
-            OR decision = 'ALERT'
-            OR decision = 'BLOCK'
-        )
-
-        ORDER BY id DESC
-
-        LIMIT 20
-        """,
-        (user_id,)
-    ).fetchall()
-
-    db.close()
-
-
-    return {
-
-        "success": True,
-
-        "alerts": [
-            dict(row)
-            for row in rows
-        ]
-
-    }
-
-
-# =========================================================
-# DASHBOARD
-# =========================================================
-
-@app.get("/api/dashboard/{user_id}")
-def dashboard(
-    user_id: str
-):
-
-    db = get_db()
-
-
-    total = db.execute(
-        """
-        SELECT COUNT(*) AS count
-        FROM transactions
-        WHERE user_id = ?
-        """,
-        (user_id,)
-    ).fetchone()["count"]
-
-
-    allowed = db.execute(
-        """
-        SELECT COUNT(*) AS count
-        FROM transactions
-        WHERE user_id = ?
-        AND decision = 'ALLOW'
-        """,
-        (user_id,)
-    ).fetchone()["count"]
-
-
-    alerts = db.execute(
-        """
-        SELECT COUNT(*) AS count
-        FROM transactions
-        WHERE user_id = ?
-        AND decision = 'ALERT'
-        """,
-        (user_id,)
-    ).fetchone()["count"]
-
-
-    blocked = db.execute(
-        """
-        SELECT COUNT(*) AS count
-        FROM transactions
-        WHERE user_id = ?
-        AND decision = 'BLOCK'
-        """,
-        (user_id,)
-    ).fetchone()["count"]
-
-
-    db.close()
-
-
-    return {
-
-        "success": True,
-
-        "statistics": {
-
-            "total_transactions":
-                total,
-
-            "allowed":
-                allowed,
-
-            "alerts":
-                alerts,
-
-            "blocked":
-                blocked
-
-        }
-
-    }
-
-
-# =========================================================
-# USER PROFILE API
-# =========================================================
-
-@app.get("/api/user/{user_id}")
-def user_profile(
-    user_id: str
-):
-
-    user = get_user(
-        user_id
     )
 
-    if user is None:
+    beneficiaries_table = find_table(
+        connection,
+        [
+            "beneficiaries",
+            "beneficiary",
+            "recipients",
+            "recipient",
+            "contacts"
+        ]
+    )
 
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
-        )
+    transactions_table = find_table(
+        connection,
+        [
+            "transactions",
+            "transaction",
+            "payments",
+            "payment",
+            "history"
+        ]
+    )
 
     return {
-
-        "success": True,
-
-        "user":
-            dict(user)
-
+        "users": users_table,
+        "beneficiaries": beneficiaries_table,
+        "transactions": transactions_table,
     }
 
 
-# =========================================================
-# HEALTH CHECK
-# =========================================================
+# ============================================================
+# API MODELS
+# ============================================================
 
-@app.get("/health")
-def health():
+class PaymentRequest(BaseModel):
 
-    return {
+    amount: float
+    recipient_id: str
 
-        "status": "online",
+    # Automatically supplied by browser.
+    # These are NOT manually controlled risk switches.
+    device_id: str = ""
+    timezone: str = ""
 
-        "service":
-            "SecureFlow-AI",
-
-        "database":
-            "SQLite"
-
-    }
+    latitude: float | None = None
+    longitude: float | None = None
 
 
-# =========================================================
+# ============================================================
 # HOME
-# =========================================================
+# ============================================================
 
 @app.get("/")
 def home():
 
     return {
-
-        "project":
-            "SecureFlow-AI",
-
-        "status":
-            "Backend is running",
-
-        "docs":
-            "/docs"
-
+        "message": "SecureFlow-AI Behaviour Engine",
+        "database": str(DB_PATH.name),
+        "status": "running"
     }
 
 
-# =========================================================
-# START SERVER
-# =========================================================
+# ============================================================
+# DATABASE STATUS
+# ============================================================
 
-if __name__ == "__main__":
+@app.get("/database-status")
+def database_status():
 
-    import uvicorn
+    connection = get_connection()
 
-    uvicorn.run(
-        "server:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True
+    try:
+
+        tables = get_tables(connection)
+
+        schema = discover_schema(connection)
+
+        return {
+            "database": DB_PATH.name,
+            "connected": True,
+            "tables": tables,
+            "detected_schema": schema
+        }
+
+    finally:
+
+        connection.close()
+
+
+# ============================================================
+# GET PAYER FROM DATABASE
+# ============================================================
+
+@app.get("/profile")
+def profile():
+
+    connection = get_connection()
+
+    try:
+
+        schema = discover_schema(connection)
+
+        users_table = schema["users"]
+
+        if not users_table:
+
+            raise HTTPException(
+                status_code=500,
+                detail="Users table was not found in SQLite database."
+            )
+
+        columns = get_columns(
+            connection,
+            users_table
+        )
+
+        rows = connection.execute(
+            f'SELECT * FROM "{users_table}" LIMIT 1'
+        ).fetchall()
+
+        if not rows:
+
+            raise HTTPException(
+                status_code=404,
+                detail="No users found in database."
+            )
+
+        row = rows[0]
+
+        user_id = row_value(
+            row,
+            columns,
+            [
+                "user_id",
+                "userid",
+                "id",
+                "customer_id"
+            ],
+            "1"
+        )
+
+        name = row_value(
+            row,
+            columns,
+            [
+                "name",
+                "user_name",
+                "username",
+                "full_name",
+                "customer_name"
+            ],
+            "User"
+        )
+
+        return {
+            "user_id": str(user_id),
+            "name": str(name)
+        }
+
+    finally:
+
+        connection.close()
+
+
+# ============================================================
+# GET RECIPIENTS FROM DATABASE
+# ============================================================
+
+@app.get("/recipients")
+def recipients():
+
+    connection = get_connection()
+
+    try:
+
+        schema = discover_schema(connection)
+
+        table = schema["beneficiaries"]
+
+        if not table:
+
+            raise HTTPException(
+                status_code=500,
+                detail="Beneficiary/recipient table was not found."
+            )
+
+        columns = get_columns(
+            connection,
+            table
+        )
+
+        rows = connection.execute(
+            f'SELECT * FROM "{table}"'
+        ).fetchall()
+
+        result = []
+
+        for row in rows:
+
+            recipient_id = row_value(
+                row,
+                columns,
+                [
+                    "beneficiary_id",
+                    "beneficiaryid",
+                    "recipient_id",
+                    "recipientid",
+                    "contact_id",
+                    "id",
+                    "upi_id"
+                ]
+            )
+
+            name = row_value(
+                row,
+                columns,
+                [
+                    "beneficiary_name",
+                    "recipient_name",
+                    "name",
+                    "full_name",
+                    "beneficiary",
+                    "recipient"
+                ]
+            )
+
+            upi_id = row_value(
+                row,
+                columns,
+                [
+                    "upi_id",
+                    "upi",
+                    "vpa",
+                    "upi_address"
+                ],
+                ""
+            )
+
+            if name is None:
+                continue
+
+            result.append({
+                "id": str(
+                    recipient_id
+                    if recipient_id is not None
+                    else upi_id
+                    if upi_id
+                    else name
+                ),
+                "name": str(name),
+                "upi_id": str(upi_id or "")
+            })
+
+        return result
+
+    finally:
+
+        connection.close()
+
+
+# ============================================================
+# BEHAVIOURAL ENGINE
+# ============================================================
+
+def calculate_risk(
+    connection,
+    user_id,
+    recipient_id,
+    amount,
+    device_id,
+    timezone,
+    latitude,
+    longitude
+):
+
+    schema = discover_schema(connection)
+
+    users_table = schema["users"]
+    beneficiaries_table = schema["beneficiaries"]
+    transactions_table = schema["transactions"]
+
+    risk = 0
+    reasons = []
+    signals = []
+
+    # --------------------------------------------------------
+    # SCORE DEFINITIONS
+    # --------------------------------------------------------
+
+    # Your exact scoring system:
+    #
+    # Amount deviation          +10
+    # Time anomaly               +7
+    # Frequency anomaly         +12
+    # New device                +15
+    # Unusual location          +15
+    # Sudden location change     +6
+    # Unknown beneficiary       +12
+    # Previous transaction      +13
+    # Typical amount            +10
+    #
+    # TOTAL                     100
+    # --------------------------------------------------------
+
+    # --------------------------------------------------------
+    # USER INFORMATION
+    # --------------------------------------------------------
+
+    user_row = None
+
+    if users_table:
+
+        user_columns = get_columns(
+            connection,
+            users_table
+        )
+
+        id_column = find_column(
+            user_columns,
+            [
+                "user_id",
+                "userid",
+                "id",
+                "customer_id"
+            ]
+        )
+
+        if id_column:
+
+            user_row = connection.execute(
+                f'''
+                SELECT *
+                FROM "{users_table}"
+                WHERE "{id_column}" = ?
+                LIMIT 1
+                ''',
+                (user_id,)
+            ).fetchone()
+
+    # --------------------------------------------------------
+    # HISTORICAL TRANSACTIONS
+    # --------------------------------------------------------
+
+    transaction_rows = []
+
+    if transactions_table:
+
+        transaction_columns = get_columns(
+            connection,
+            transactions_table
+        )
+
+        user_column = find_column(
+            transaction_columns,
+            [
+                "user_id",
+                "userid",
+                "customer_id",
+                "payer_id"
+            ]
+        )
+
+        if user_column:
+
+            transaction_rows = connection.execute(
+                f'''
+                SELECT *
+                FROM "{transactions_table}"
+                WHERE "{user_column}" = ?
+                ''',
+                (user_id,)
+            ).fetchall()
+
+        else:
+
+            transaction_rows = connection.execute(
+                f'''
+                SELECT *
+                FROM "{transactions_table}"
+                '''
+            ).fetchall()
+
+    else:
+
+        transaction_columns = []
+
+    # --------------------------------------------------------
+    # AMOUNT BEHAVIOUR
+    # --------------------------------------------------------
+
+    historical_amounts = []
+
+    amount_column = find_column(
+        transaction_columns,
+        [
+            "amount",
+            "transaction_amount",
+            "payment_amount",
+            "value"
+        ]
     )
+
+    if amount_column:
+
+        for row in transaction_rows:
+
+            value = safe_float(
+                row[amount_column]
+            )
+
+            if value > 0:
+                historical_amounts.append(value)
+
+    average_amount = 0
+
+    if historical_amounts:
+
+        average_amount = (
+            sum(historical_amounts)
+            / len(historical_amounts)
+        )
+
+    elif user_row and users_table:
+
+        user_columns = get_columns(
+            connection,
+            users_table
+        )
+
+        average_column = find_column(
+            user_columns,
+            [
+                "average_transaction",
+                "average_amount",
+                "avg_amount",
+                "typical_amount"
+            ]
+        )
+
+        if average_column:
+
+            average_amount = safe_float(
+                user_row[average_column]
+            )
+
+    amount_anomaly = False
+
+    if average_amount > 0:
+
+        # Significant deviation from historical behaviour.
+        if amount > average_amount * 2:
+
+            amount_anomaly = True
+
+    elif amount > 10000:
+
+        amount_anomaly = True
+
+    if amount_anomaly:
+
+        risk += 10
+
+        reasons.append(
+            "Amount deviates significantly from normal behaviour"
+        )
+
+        signals.append({
+            "name": "Amount deviation",
+            "score": 10
+        })
+
+    # --------------------------------------------------------
+    # TIME BEHAVIOUR
+    # --------------------------------------------------------
+
+    now = datetime.now()
+
+    current_hour = now.hour
+
+    time_anomaly = False
+
+    if user_row and users_table:
+
+        user_columns = get_columns(
+            connection,
+            users_table
+        )
+
+        start_column = find_column(
+            user_columns,
+            [
+                "normal_start_time",
+                "usual_start_time",
+                "usual_start",
+                "start_time"
+            ]
+        )
+
+        end_column = find_column(
+            user_columns,
+            [
+                "normal_end_time",
+                "usual_end_time",
+                "usual_end",
+                "end_time"
+            ]
+        )
+
+        if start_column and end_column:
+
+            try:
+
+                start = int(
+                    str(
+                        user_row[start_column]
+                    )[:2]
+                )
+
+                end = int(
+                    str(
+                        user_row[end_column]
+                    )[:2]
+                )
+
+                if start <= end:
+
+                    if not (
+                        start <= current_hour <= end
+                    ):
+                        time_anomaly = True
+
+                else:
+
+                    if not (
+                        current_hour >= start
+                        or current_hour <= end
+                    ):
+                        time_anomaly = True
+
+            except:
+
+                pass
+
+    if time_anomaly:
+
+        risk += 7
+
+        reasons.append(
+            "Transaction time is unusual for this user"
+        )
+
+        signals.append({
+            "name": "Time anomaly",
+            "score": 7
+        })
+
+    # --------------------------------------------------------
+    # TRANSACTION FREQUENCY
+    # --------------------------------------------------------
+
+    recent_transactions = []
+
+    date_column = find_column(
+        transaction_columns,
+        [
+            "transaction_time",
+            "transaction_date",
+            "created_at",
+            "timestamp",
+            "date",
+            "time"
+        ]
+    )
+
+    if date_column:
+
+        for row in transaction_rows:
+
+            dt = parse_datetime(
+                row[date_column]
+            )
+
+            if dt:
+
+                if now - dt <= timedelta(days=1):
+
+                    recent_transactions.append(dt)
+
+    frequency_anomaly = False
+
+    normal_daily = None
+
+    if user_row and users_table:
+
+        user_columns = get_columns(
+            connection,
+            users_table
+        )
+
+        frequency_column = find_column(
+            user_columns,
+            [
+                "typical_daily_transactions",
+                "daily_transactions",
+                "average_daily_transactions",
+                "usual_frequency"
+            ]
+        )
+
+        if frequency_column:
+
+            normal_daily = safe_int(
+                user_row[frequency_column]
+            )
+
+    if normal_daily and normal_daily > 0:
+
+        if len(recent_transactions) >= normal_daily * 2:
+
+            frequency_anomaly = True
+
+    else:
+
+        if len(recent_transactions) >= 6:
+
+            frequency_anomaly = True
+
+    if frequency_anomaly:
+
+        risk += 12
+
+        reasons.append(
+            "Transaction frequency is higher than normal"
+        )
+
+        signals.append({
+            "name": "Frequency anomaly",
+            "score": 12
+        })
+
+    # --------------------------------------------------------
+    # DEVICE BEHAVIOUR
+    # --------------------------------------------------------
+
+    known_device = False
+
+    if user_row and users_table and device_id:
+
+        user_columns = get_columns(
+            connection,
+            users_table
+        )
+
+        device_column = find_column(
+            user_columns,
+            [
+                "known_device",
+                "trusted_device",
+                "device_id",
+                "device"
+            ]
+        )
+
+        if device_column:
+
+            stored_device = str(
+                user_row[device_column]
+            ).strip()
+
+            known_device = (
+                stored_device.lower()
+                == device_id.lower()
+            )
+
+    if not known_device:
+
+        risk += 15
+
+        reasons.append(
+            "New or unknown device/session"
+        )
+
+        signals.append({
+            "name": "New device",
+            "score": 15
+        })
+
+    # --------------------------------------------------------
+    # LOCATION BEHAVIOUR
+    # --------------------------------------------------------
+
+    unusual_location = False
+    sudden_location_change = False
+
+    stored_latitude = None
+    stored_longitude = None
+
+    if user_row and users_table:
+
+        user_columns = get_columns(
+            connection,
+            users_table
+        )
+
+        lat_column = find_column(
+            user_columns,
+            [
+                "latitude",
+                "usual_latitude",
+                "location_latitude"
+            ]
+        )
+
+        lon_column = find_column(
+            user_columns,
+            [
+                "longitude",
+                "usual_longitude",
+                "location_longitude"
+            ]
+        )
+
+        if lat_column:
+
+            stored_latitude = safe_float(
+                user_row[lat_column],
+                None
+            )
+
+        if lon_column:
+
+            stored_longitude = safe_float(
+                user_row[lon_column],
+                None
+            )
+
+    # If the database contains coordinates,
+    # calculate real geographic distance.
+
+    if (
+        latitude is not None
+        and longitude is not None
+        and stored_latitude is not None
+        and stored_longitude is not None
+    ):
+
+        R = 6371
+
+        lat1 = math.radians(
+            stored_latitude
+        )
+
+        lat2 = math.radians(
+            latitude
+        )
+
+        dlat = math.radians(
+            latitude - stored_latitude
+        )
+
+        dlon = math.radians(
+            longitude - stored_longitude
+        )
+
+        a = (
+            math.sin(dlat / 2) ** 2
+            +
+            math.cos(lat1)
+            *
+            math.cos(lat2)
+            *
+            math.sin(dlon / 2) ** 2
+        )
+
+        distance = (
+            2
+            * R
+            * math.asin(
+                math.sqrt(a)
+            )
+        )
+
+        if distance > 25:
+
+            unusual_location = True
+
+        if distance > 100:
+
+            sudden_location_change = True
+
+    if unusual_location:
+
+        risk += 15
+
+        reasons.append(
+            "Current location differs from usual location"
+        )
+
+        signals.append({
+            "name": "Unusual location",
+            "score": 15
+        })
+
+    if sudden_location_change:
+
+        risk += 6
+
+        reasons.append(
+            "Sudden location change detected"
+        )
+
+        signals.append({
+            "name": "Sudden location change",
+            "score": 6
+        })
+
+    # --------------------------------------------------------
+    # BENEFICIARY BEHAVIOUR
+    # --------------------------------------------------------
+
+    beneficiary_row = None
+
+    if beneficiaries_table:
+
+        beneficiary_columns = get_columns(
+            connection,
+            beneficiaries_table
+        )
+
+        id_column = find_column(
+            beneficiary_columns,
+            [
+                "beneficiary_id",
+                "beneficiaryid",
+                "recipient_id",
+                "recipientid",
+                "id",
+                "upi_id"
+            ]
+        )
+
+        if id_column:
+
+            beneficiary_row = connection.execute(
+                f'''
+                SELECT *
+                FROM "{beneficiaries_table}"
+                WHERE "{id_column}" = ?
+                LIMIT 1
+                ''',
+                (recipient_id,)
+            ).fetchone()
+
+        if beneficiary_row is None:
+
+            name_column = find_column(
+                beneficiary_columns,
+                [
+                    "beneficiary_name",
+                    "recipient_name",
+                    "name",
+                    "full_name"
+                ]
+            )
+
+            upi_column = find_column(
+                beneficiary_columns,
+                [
+                    "upi_id",
+                    "upi",
+                    "vpa"
+                ]
+            )
+
+            if name_column:
+
+                beneficiary_row = connection.execute(
+                    f'''
+                    SELECT *
+                    FROM "{beneficiaries_table}"
+                    WHERE "{name_column}" = ?
+                    LIMIT 1
+                    ''',
+                    (recipient_id,)
+                ).fetchone()
+
+            elif upi_column:
+
+                beneficiary_row = connection.execute(
+                    f'''
+                    SELECT *
+                    FROM "{beneficiaries_table}"
+                    WHERE "{upi_column}" = ?
+                    LIMIT 1
+                    ''',
+                    (recipient_id,)
+                ).fetchone()
+
+    known_beneficiary = beneficiary_row is not None
+
+    if not known_beneficiary:
+
+        risk += 12
+
+        reasons.append(
+            "Recipient is not present in the user's known beneficiary history"
+        )
+
+        signals.append({
+            "name": "Unknown beneficiary",
+            "score": 12
+        })
+
+    # --------------------------------------------------------
+    # PREVIOUS TRANSACTIONS WITH RECIPIENT
+    # --------------------------------------------------------
+
+    previous_transaction = False
+    beneficiary_historical_amounts = []
+
+    if transactions_table and transaction_rows:
+
+        recipient_column = find_column(
+            transaction_columns,
+            [
+                "beneficiary_id",
+                "recipient_id",
+                "beneficiary",
+                "recipient",
+                "upi_id",
+                "receiver_upi",
+                "to_upi"
+            ]
+        )
+
+        if recipient_column:
+
+            for row in transaction_rows:
+
+                value = str(
+                    row[recipient_column]
+                ).strip().lower()
+
+                if value == str(
+                    recipient_id
+                ).strip().lower():
+
+                    previous_transaction = True
+
+                    if amount_column:
+
+                        historical_value = safe_float(
+                            row[amount_column]
+                        )
+
+                        if historical_value > 0:
+
+                            beneficiary_historical_amounts.append(
+                                historical_value
+                            )
+
+    if not previous_transaction:
+
+        risk += 13
+
+        reasons.append(
+            "No previous transaction history with this recipient"
+        )
+
+        signals.append({
+            "name": "Previous transaction history",
+            "score": 13
+        })
+
+    # --------------------------------------------------------
+    # TYPICAL AMOUNT WITH THIS BENEFICIARY
+    # --------------------------------------------------------
+
+    typical_amount = True
+
+    if beneficiary_historical_amounts:
+
+        beneficiary_average = (
+            sum(
+                beneficiary_historical_amounts
+            )
+            /
+            len(
+                beneficiary_historical_amounts
+            )
+        )
+
+        if amount > beneficiary_average * 2:
+
+            typical_amount = False
+
+    elif beneficiary_row and beneficiaries_table:
+
+        beneficiary_columns = get_columns(
+            connection,
+            beneficiaries_table
+        )
+
+        avg_column = find_column(
+            beneficiary_columns,
+            [
+                "average_amount",
+                "avg_amount",
+                "typical_amount"
+            ]
+        )
+
+        if avg_column:
+
+            beneficiary_average = safe_float(
+                beneficiary_row[avg_column]
+            )
+
+            if (
+                beneficiary_average > 0
+                and amount > beneficiary_average * 2
+            ):
+
+                typical_amount = False
+
+    if not typical_amount:
+
+        risk += 10
+
+        reasons.append(
+            "Amount is unusual for this recipient"
+        )
+
+        signals.append({
+            "name": "Unusual beneficiary amount",
+            "score": 10
+        })
+
+    # --------------------------------------------------------
+    # HARD CAP
+    # --------------------------------------------------------
+
+    risk = min(
+        max(risk, 0),
+        100
+    )
+
+    # --------------------------------------------------------
+    # DECISION
+    # --------------------------------------------------------
+
+    if risk <= 40:
+
+        decision = "ALLOW"
+        status = "Payment approved"
+
+    elif risk <= 70:
+
+        decision = "ALERT"
+        status = "Payment temporarily held"
+
+    else:
+
+        decision = "BLOCK"
+        status = "Payment blocked"
+
+    # --------------------------------------------------------
+    # DYNAMIC QUESTIONS
+    #
+    # ONLY GENERATED WHEN RISK > 50
+    # --------------------------------------------------------
+
+    dynamic_questions = []
+
+    if risk > 50:
+
+        if amount_anomaly:
+
+            dynamic_questions.append(
+                f"Can you confirm this payment of ₹{amount:,.2f}?"
+            )
+
+        if time_anomaly:
+
+            dynamic_questions.append(
+                "This payment is being made at an unusual time. Did you initiate it?"
+            )
+
+        if frequency_anomaly:
+
+            dynamic_questions.append(
+                "We detected unusually frequent payment activity. Are these transactions yours?"
+            )
+
+        if not known_device:
+
+            dynamic_questions.append(
+                "This payment is being made from a new device. Do you recognize this device?"
+            )
+
+        if unusual_location:
+
+            dynamic_questions.append(
+                "The current location differs from your usual payment location. Did you initiate this payment?"
+            )
+
+        if sudden_location_change:
+
+            dynamic_questions.append(
+                "A significant location change was detected. Did you recently travel?"
+            )
+
+        if not known_beneficiary:
+
+            dynamic_questions.append(
+                "This recipient is not part of your previous payment history. Do you recognize this recipient?"
+            )
+
+        if not previous_transaction:
+
+            dynamic_questions.append(
+                "You have no previous payment history with this recipient. Did you intend to pay them?"
+            )
+
+        if not typical_amount:
+
+            dynamic_questions.append(
+                "The amount is significantly different from your usual payments to this recipient. Is this amount correct?"
+            )
+
+    return {
+        "risk_score": risk,
+        "decision": decision,
+        "status": status,
+        "signals": signals,
+        "reasons": reasons,
+        "dynamic_questions": dynamic_questions
+    }
+
+
+# ============================================================
+# PAYMENT ANALYSIS ENDPOINT
+# ============================================================
+
+@app.post("/transaction")
+def transaction(payment: PaymentRequest):
+
+    if payment.amount <= 0:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Payment amount must be greater than zero."
+        )
+
+    connection = get_connection()
+
+    try:
+
+        # The first user in the database is the
+        # payer for this demonstration.
+
+        schema = discover_schema(connection)
+
+        users_table = schema["users"]
+
+        if not users_table:
+
+            raise HTTPException(
+                status_code=500,
+                detail="Users table not found."
+            )
+
+        user_columns = get_columns(
+            connection,
+            users_table
+        )
+
+        user_id_column = find_column(
+            user_columns,
+            [
+                "user_id",
+                "userid",
+                "id",
+                "customer_id"
+            ]
+        )
+
+        if not user_id_column:
+
+            raise HTTPException(
+                status_code=500,
+                detail="Could not identify user ID column."
+            )
+
+        user_row = connection.execute(
+            f'''
+            SELECT *
+            FROM "{users_table}"
+            ORDER BY "{user_id_column}"
+            LIMIT 1
+            '''
+        ).fetchone()
+
+        if not user_row:
+
+            raise HTTPException(
+                status_code=404,
+                detail="No payer found in database."
+            )
+
+        user_id = user_row[user_id_column]
+
+        result = calculate_risk(
+            connection=connection,
+            user_id=user_id,
+            recipient_id=payment.recipient_id,
+            amount=payment.amount,
+            device_id=payment.device_id,
+            timezone=payment.timezone,
+            latitude=payment.latitude,
+            longitude=payment.longitude
+        )
+
+        return result
+
+    finally:
+
+        connection.close()
+
+
+# ============================================================
+# RUN:
+#
+# uvicorn main:app --reload
+# ============================================================
