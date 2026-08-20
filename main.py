@@ -1,68 +1,59 @@
-# security/pin_monitor.py
+# services/geofence.py
 
-from datetime import datetime, timedelta
+from math import radians, sin, cos, sqrt, atan2
 
 
-class PINAttemptMonitor:
+class GeoFence:
 
-    def __init__(
+    EARTH_RADIUS = 6371
+
+    def distance(
         self,
-        max_attempts=3,
-        lock_minutes=10
+        lat1,
+        lon1,
+        lat2,
+        lon2
     ):
 
-        self.max_attempts = max_attempts
-        self.lock_minutes = lock_minutes
-        self.users = {}
+        lat1 = radians(lat1)
+        lat2 = radians(lat2)
 
-    def failed_attempt(self, user_id):
+        dlat = radians(lat2 - lat1)
+        dlon = radians(lon2 - lon1)
 
-        now = datetime.utcnow()
-
-        record = self.users.setdefault(
-            user_id,
-            {
-                "attempts": 0,
-                "locked_until": None
-            }
+        a = (
+            sin(dlat / 2) ** 2
+            +
+            cos(lat1)
+            * cos(lat2)
+            * sin(dlon / 2) ** 2
         )
 
-        record["attempts"] += 1
-
-        if record["attempts"] >= self.max_attempts:
-
-            record["locked_until"] = (
-                now
-                + timedelta(
-                    minutes=self.lock_minutes
-                )
-            )
-
-        return record
-
-    def is_locked(self, user_id):
-
-        record = self.users.get(user_id)
-
-        if not record:
-            return False
-
-        locked_until = record["locked_until"]
-
-        if not locked_until:
-            return False
-
-        if datetime.utcnow() < locked_until:
-            return True
-
-        record["attempts"] = 0
-        record["locked_until"] = None
-
-        return False
-
-    def successful_login(self, user_id):
-
-        self.users.pop(
-            user_id,
-            None
+        c = 2 * atan2(
+            sqrt(a),
+            sqrt(1 - a)
         )
+
+        return self.EARTH_RADIUS * c
+
+    def inside(
+        self,
+        user_lat,
+        user_lon,
+        center_lat,
+        center_lon,
+        radius_km
+    ):
+
+        distance = self.distance(
+            user_lat,
+            user_lon,
+            center_lat,
+            center_lon
+        )
+
+        return {
+            "inside": distance <= radius_km,
+            "distance_km": round(distance, 2),
+            "radius_km": radius_km
+        }s
