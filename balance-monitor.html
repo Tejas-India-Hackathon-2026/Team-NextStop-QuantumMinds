@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Bank Accounts</title>
+<title>SecureFlow-AI | Amount Analysis</title>
 
 <link rel="stylesheet" href="style10.css">
+
 </head>
 
 <body>
@@ -16,21 +18,43 @@
 <header class="header">
 
 <div>
-<h1>Bank Accounts</h1>
-<p>Connected account and balance information</p>
+<h1>Amount Analysis</h1>
+<p>Detection of unusual payment amounts</p>
 </div>
 
-<div class="avatar">BA</div>
+<div class="avatar">₹</div>
 
 </header>
+
+<section class="stats">
+
+<div class="stat">
+<div class="stat-title">TOTAL VALUE</div>
+<div class="stat-number blue">₹8.4L</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">AVERAGE</div>
+<div class="stat-number green">₹21K</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">UNUSUAL</div>
+<div class="stat-number red">08</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">NORMAL</div>
+<div class="stat-number green">32</div>
+</div>
+
+</section>
 
 <section class="panel factors">
 
 <div class="panel-title">
-
-<h2>Registered Accounts</h2>
-<p>SecureFlow-AI account database</p>
-
+<h2>Amount Risk Analysis</h2>
+<p>AI analysis of transaction amounts</p>
 </div>
 
 <table>
@@ -38,12 +62,12 @@
 <thead>
 
 <tr>
-<th>Account ID</th>
-<th>User</th>
-<th>Bank</th>
-<th>Balance</th>
+<th>Transaction</th>
+<th>Amount</th>
+<th>User Average</th>
+<th>Deviation</th>
 <th>Risk</th>
-<th>Status</th>
+<th>Result</th>
 </tr>
 
 </thead>
@@ -51,30 +75,30 @@
 <tbody>
 
 <tr>
-<td>ACC001</td>
-<td>Rahul Sharma</td>
-<td>Secure Bank</td>
-<td>₹40,000</td>
+<td>TXN1001</td>
+<td>₹2,500</td>
+<td>₹2,800</td>
+<td>Low</td>
 <td>12</td>
-<td><span class="badge safe">ACTIVE</span></td>
+<td><span class="badge safe">NORMAL</span></td>
 </tr>
 
 <tr>
-<td>ACC002</td>
-<td>Amit Kumar</td>
-<td>Secure Bank</td>
-<td>₹50,000</td>
-<td>91</td>
-<td><span class="badge high">RESTRICTED</span></td>
+<td>TXN1004</td>
+<td>₹18,500</td>
+<td>₹7,500</td>
+<td>High</td>
+<td>67</td>
+<td><span class="badge review">ALERT</span></td>
 </tr>
 
 <tr>
-<td>ACC003</td>
-<td>Sneha Das</td>
-<td>National Bank</td>
-<td>₹27,800</td>
-<td>08</td>
-<td><span class="badge safe">ACTIVE</span></td>
+<td>TXN1006</td>
+<td>₹75,000</td>
+<td>₹9,000</td>
+<td>Extreme</td>
+<td>96</td>
+<td><span class="badge high">BLOCKED</span></td>
 </tr>
 
 </tbody>
