@@ -1,245 +1,308 @@
-* {
-    box-sizing: border-box;
-}
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
 
-body {
+    <meta charset="UTF-8">
 
-    margin: 0;
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    font-family: Arial, sans-serif;
+    <title>SecureFlow-AI Dashboard</title>
 
-    background: #f4f7fb;
+    <link rel="stylesheet" href="style.css">
 
-    color: #1f2937;
+</head>
 
-    min-height: 100vh;
 
-    display: flex;
+<body>
 
-    flex-direction: column;
-}
+    <!-- HEADER -->
 
+    <header class="topbar">
 
-/* =====================================
-   HEADER
-===================================== */
+        <div>
+            <h1>🛡️ SecureFlow-AI</h1>
 
-header {
+            <p>
+                AI Transaction Security Dashboard
+            </p>
+        </div>
 
-    background: #111827;
+        <button
+            class="logout-button"
+            onclick="logout()"
+        >
+            Logout
+        </button>
 
-    color: white;
+    </header>
 
-    text-align: center;
 
-    padding: 25px;
-}
+    <!-- MAIN -->
 
+    <main class="dashboard">
 
-header h1 {
+        <!-- WELCOME -->
 
-    margin: 0;
+        <section class="welcome">
 
-    font-size: 30px;
-}
+            <div>
 
+                <h2>
+                    Welcome, <span id="userName">User</span>
+                </h2>
 
-header p {
+                <p>
+                    Monitor your transaction security in real time.
+                </p>
 
-    margin-top: 8px;
+            </div>
 
-    color: #d1d5db;
-}
 
+            <div class="security-status">
 
-/* =====================================
-   MAIN
-===================================== */
+                <span class="status-dot"></span>
 
-main {
+                <span>
+                    System Protected
+                </span>
 
-    flex: 1;
+            </div>
 
-    display: flex;
+        </section>
 
-    justify-content: center;
 
-    align-items: center;
+        <!-- STATISTICS -->
 
-    padding: 30px;
-}
+        <section class="stats-grid">
 
 
-/* =====================================
-   AUTH CARD
-===================================== */
+            <div class="stat-card">
 
-.auth-card {
+                <div class="stat-icon">
+                    💳
+                </div>
 
-    width: 100%;
+                <h3>
+                    Total Transactions
+                </h3>
 
-    max-width: 480px;
+                <strong id="totalTransactions">
+                    0
+                </strong>
 
-    background: white;
+            </div>
 
-    padding: 35px;
 
-    border-radius: 16px;
+            <div class="stat-card">
 
-    box-shadow:
-        0 10px 30px
-        rgba(0, 0, 0, 0.08);
-}
+                <div class="stat-icon">
+                    ✅
+                </div>
 
+                <h3>
+                    Allowed
+                </h3>
 
-.auth-card h2 {
+                <strong id="allowedTransactions">
+                    0
+                </strong>
 
-    margin-top: 0;
+            </div>
 
-    text-align: center;
 
-    font-size: 28px;
-}
+            <div class="stat-card">
 
+                <div class="stat-icon">
+                    ⚠️
+                </div>
 
-.auth-card > p {
+                <h3>
+                    Alerts
+                </h3>
 
-    text-align: center;
+                <strong id="alertTransactions">
+                    0
+                </strong>
 
-    color: #6b7280;
+            </div>
 
-    margin-bottom: 25px;
-}
 
+            <div class="stat-card">
 
-/* =====================================
-   INPUTS
-===================================== */
+                <div class="stat-icon">
+                    🚫
+                </div>
 
-.input-group {
+                <h3>
+                    Blocked
+                </h3>
 
-    margin-bottom: 18px;
-}
+                <strong id="blockedTransactions">
+                    0
+                </strong>
 
+            </div>
 
-.input-group label {
+        </section>
 
-    display: block;
 
-    margin-bottom: 7px;
+        <!-- ACTIONS -->
 
-    font-weight: bold;
+        <section class="actions">
 
-    font-size: 14px;
-}
+            <h2>
+                Security Actions
+            </h2>
 
 
-.input-group input {
+            <div class="action-grid">
 
-    width: 100%;
 
-    padding: 12px;
+                <button
+                    class="action-card"
+                    onclick="openTransaction()"
+                >
 
-    border: 1px solid #d1d5db;
+                    <span>
+                        💸
+                    </span>
 
-    border-radius: 8px;
+                    <strong>
+                        Make Transaction
+                    </strong>
 
-    font-size: 15px;
+                    <small>
+                        Analyze a new transaction
+                    </small>
 
-    outline: none;
-}
+                </button>
 
 
-.input-group input:focus {
+                <button
+                    class="action-card"
+                    onclick="viewHistory()"
+                >
 
-    border-color: #2563eb;
-}
+                    <span>
+                        📊
+                    </span>
 
+                    <strong>
+                        Transaction History
+                    </strong>
 
-/* =====================================
-   HIDDEN
-===================================== */
+                    <small>
+                        View previous transactions
+                    </small>
 
-.hidden {
+                </button>
 
-    display: none;
-}
 
+                <button
+                    class="action-card"
+                    onclick="viewAlerts()"
+                >
 
-/* =====================================
-   MAIN BUTTON
-===================================== */
+                    <span>
+                        🔔
+                    </span>
 
-#authButton {
+                    <strong>
+                        Security Alerts
+                    </strong>
 
-    width: 100%;
+                    <small>
+                        View suspicious activity
+                    </small>
 
-    padding: 13px;
+                </button>
 
-    border: none;
 
-    border-radius: 8px;
+            </div>
 
-    background: #2563eb;
+        </section>
 
-    color: white;
 
-    font-size: 16px;
+        <!-- USER PROFILE -->
 
-    cursor: pointer;
+        <section class="profile-card">
 
-    margin-top: 5px;
-}
+            <h2>
+                Your Security Profile
+            </h2>
 
 
-#authButton:hover {
+            <div class="profile-grid">
 
-    background: #1d4ed8;
-}
+                <div>
 
+                    <span>
+                        User ID
+                    </span>
 
-/* =====================================
-   MESSAGE
-===================================== */
+                    <strong id="profileUserId">
+                        -
+                    </strong>
 
-.message {
+                </div>
 
-    margin-top: 15px;
 
-    text-align: center;
+                <div>
 
-    font-size: 14px;
+                    <span>
+                        Known Device
+                    </span>
 
-    min-height: 20px;
-}
+                    <strong id="profileDevice">
+                        -
+                    </strong>
 
+                </div>
 
-/* =====================================
-   SWITCH
-===================================== */
 
-.switch-text {
+                <div>
 
-    margin-top: 22px !important;
+                    <span>
+                        Known Location
+                    </span>
 
-    margin-bottom: 0;
+                    <strong id="profileLocation">
+                        -
+                    </strong>
 
-    text-align: center;
-}
+                </div>
 
 
-.switch-button {
+                <div>
 
-    border: none;
+                    <span>
+                        Average Transaction
+                    </span>
 
-    background: none;
+                    <strong id="profileAverage">
+                        ₹0
+                    </strong>
 
-    color: #2563eb;
+                </div>
 
-    cursor: pointer;
+            </div>
 
-    font-size: 14px;
+        </section>
 
-    font-weight: bold;
-}
+
+        <!-- LOADING / ERROR -->
+
+        <div id="message"></div>
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
