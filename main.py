@@ -1,9 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 import sqlite3
 import uuid
 import random
@@ -11,13 +11,13 @@ import random
 
 # ============================================================
 # SECUREFLOW-AI
-# Behavioural UPI Fraud Detection Backend
+# Behavioural UPI Fraud Detection + Dynamic Verification
 # ============================================================
 
 app = FastAPI(
     title="SecureFlow-AI",
     description="Behavioural UPI fraud detection and dynamic verification engine",
-    version="5.0"
+    version="6.0"
 )
 
 
@@ -42,21 +42,27 @@ BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "SecureFlow-AI5.db"
 
 
-def db():
+def get_db():
     """
     Open the SQLite database.
     """
+
     if not DB_PATH.exists():
         raise HTTPException(
             status_code=500,
             detail=(
-                f"Database not found: {DB_PATH.name}. "
-                f"Put SecureFlow-AI5.db in the same folder as main.py."
+                f"Database not found: {DB_PATH}. "
+                "Put SecureFlow-AI5.db in the same folder as main.py."
             )
         )
 
-    connection = sqlite3.connect(str(DB_PATH))
+    connection = sqlite3.connect(
+        str(DB_PATH),
+        timeout=10
+    )
+
     connection.row_factory = sqlite3.Row
+
     return connection
 
 
@@ -66,94 +72,49 @@ def db():
 
 def initialize_database():
 
-    con = db()
-    cur = con.cursor()
+    con = get_db()
 
-    # --------------------------------------------------------
-    # Create a live balance column.
-    #
-    # Original database contains:
-    # initial_bank_balance
-    #
-    # We keep that value untouched and create:
-    # current_bank_balance
-    # --------------------------------------------------------
+    try:
 
-    columns = cur.execute(
-        "PRAGMA table_info(users)"
-    ).fetchall()
+        cur = con.cursor()
 
-    column_names = [row["name"] for row in columns]
-
-    if "current_bank_balance" not in column_names:
+        # ----------------------------------------------------
+        # Dynamic challenge table
+        # ----------------------------------------------------
 
         cur.execute(
             """
-            ALTER TABLE users
-            ADD COLUMN current_bank_balance REAL
+            CREATE TABLE IF NOT EXISTS challenge_sessions (
+
+                challenge_id TEXT PRIMARY KEY,
+
+                user_id TEXT NOT NULL,
+
+                recipient_id TEXT NOT NULL,
+
+                transaction_amount REAL NOT NULL,
+
+                risk_score INTEGER NOT NULL,
+
+                question TEXT NOT NULL,
+
+                expected_answer TEXT NOT NULL,
+
+                created_at TEXT NOT NULL,
+
+                expires_at TEXT NOT NULL,
+
+                status TEXT NOT NULL DEFAULT 'PENDING'
+
+            )
             """
         )
 
-        cur.execute(
-            """
-            UPDATE users
-            SET current_bank_balance = initial_bank_balance
-            WHERE current_bank_balance IS NULL
-            """
-        )
+        con.commit()
 
-    else:
+    finally:
 
-        # Make sure old NULL values are initialized.
-        cur.execute(
-            """
-            UPDATE users
-            SET current_bank_balance = initial_bank_balance
-            WHERE current_bank_balance IS NULL
-            """
-        )
-
-    # --------------------------------------------------------
-    # Challenge table
-    #
-    # Stores dynamic questions temporarily.
-    # --------------------------------------------------------
-
-    cur.execute(
-        """
-        CREATE TABLE IF NOT EXISTS challenge_sessions (
-
-            challenge_id TEXT PRIMARY KEY,
-
-            user_id TEXT NOT NULL,
-
-            recipient_id TEXT,
-
-            transaction_amount REAL NOT NULL,
-
-            risk_score INTEGER NOT NULL,
-
-            question TEXT NOT NULL,
-
-            expected_answer TEXT NOT NULL,
-
-            created_at TEXT NOT NULL,
-
-            expires_at TEXT NOT NULL,
-
-            status TEXT NOT NULL DEFAULT 'PENDING'
-
-        )
-        """
-    )
-
-    # --------------------------------------------------------
-    # Demo transaction table
-    # We continue using the original transactions table.
-    # --------------------------------------------------------
-
-    con.commit()
-    con.close()
+        con.close()
 
 
 @app.on_event("startup")
@@ -168,20 +129,17 @@ def startup():
 
 class AnalyzePayment(BaseModel):
 
-    # Payer selected from database
+    # Payer MUST come from database
     payer_id: str
 
-    # Recipient can be selected/entered by judge
+    # Recipient can be ANYTHING entered by the judge
     recipient_name: str
     recipient_upi_id: str
 
     amount: float = Field(gt=0)
 
     # --------------------------------------------------------
-    # FINAL RISK ENGINE CONTROLS
-    #
-    # Amount deviation is deliberately NOT included.
-    # The backend determines amount risk automatically.
+    # FINAL RISK ENGINE
     # --------------------------------------------------------
 
     new_beneficiary: bool = False
@@ -216,10 +174,11 @@ def home():
         "status": "online",
         "database": DB_PATH.name,
         "engine": "Behavioural Risk Engine",
+        "risk_scale": "0-100",
         "thresholds": {
-            "allow": "0-44",
+            "pay": "0-44",
             "hold": "45-69",
-            "block": "70+"
+            "block": "70-100"
         }
     }
 
@@ -227,7 +186,7 @@ def home():
 @app.get("/health")
 def health():
 
-    con = db()
+    con = get_db()
 
     try:
 
@@ -244,13 +203,122 @@ def health():
 
 
 # ============================================================
+# DATABASE INFORMATION
+# ============================================================
+
+@app.get("/database-info")
+def database_info():
+
+    con = get_db()
+
+    try:
+
+        users_count = con.execute(
+            "SELECT COUNT(*) FROM users"
+        ).fetchone()[0]
+
+        recipients_count = con.execute(
+            "SELECT COUNT(*) FROM recipients"
+        ).fetchone()[0]
+
+        transactions_count = con.execute(
+            "SELECT COUNT(*) FROM transactions"
+        ).fetchone()[0]
+
+        return {
+            "database": DB_PATH.name,
+            "connected": True,
+            "users": users_count,
+            "recipients": recipients_count,
+            "transactions": transactions_count
+        }
+
+    finally:
+
+        con.close()
+
+
+# ============================================================
+# CURRENT BALANCE
+#
+# IMPORTANT:
+#
+# The actual database contains:
+#
+# initial_bank_balance
+#
+# We calculate live balance as:
+#
+# initial balance - SUCCESS transactions
+#
+# This means we don't need to modify your original users table.
+# ============================================================
+
+def calculate_current_balance(
+    con,
+    user_id
+):
+
+    row = con.execute(
+        """
+        SELECT
+            initial_bank_balance
+
+        FROM users
+
+        WHERE user_id = ?
+
+        LIMIT 1
+        """,
+        (user_id,)
+    ).fetchone()
+
+    if not row:
+        return None
+
+    initial_balance = float(
+        row["initial_bank_balance"] or 0
+    )
+
+    spent_row = con.execute(
+        """
+        SELECT
+            COALESCE(SUM(amount), 0) AS total_spent
+
+        FROM transactions
+
+        WHERE user_id = ?
+
+        AND UPPER(
+            TRIM(transaction_status)
+        ) = 'SUCCESS'
+        """,
+        (user_id,)
+    ).fetchone()
+
+    total_spent = float(
+        spent_row["total_spent"] or 0
+    )
+
+    current_balance = (
+        initial_balance -
+        total_spent
+    )
+
+    return max(
+        0,
+        round(current_balance, 2)
+    )
+
+
+# ============================================================
 # GET PAYERS
 # ============================================================
 
 @app.get("/users")
 def get_users():
 
-    con = db()
+    con = get_db()
 
     try:
 
@@ -262,14 +330,72 @@ def get_users():
                 living_area,
                 common_location,
                 known_device,
-                current_bank_balance
+                initial_bank_balance,
+                average_transaction,
+                total_transactions
+
             FROM users
+
             ORDER BY name
             """
         ).fetchall()
 
+        users = []
+
+        for row in rows:
+
+            user = dict(row)
+
+            user["current_balance"] = (
+                calculate_current_balance(
+                    con,
+                    row["user_id"]
+                )
+            )
+
+            users.append(user)
+
         return {
-            "users": [dict(row) for row in rows]
+            "users": users
+        }
+
+    finally:
+
+        con.close()
+
+
+# ============================================================
+# GET CURRENT BALANCE
+# ============================================================
+
+@app.get("/balance/{user_id}")
+def get_balance(user_id: str):
+
+    con = get_db()
+
+    try:
+
+        payer = find_payer(
+            con,
+            user_id
+        )
+
+        if not payer:
+
+            raise HTTPException(
+                status_code=404,
+                detail="Payer not found."
+            )
+
+        balance = calculate_current_balance(
+            con,
+            user_id
+        )
+
+        return {
+            "user_id": user_id,
+            "name": payer["name"],
+            "balance": balance
         }
 
     finally:
@@ -279,12 +405,16 @@ def get_users():
 
 # ============================================================
 # GET RECIPIENTS
+#
+# This is ONLY for optional quick selection.
+#
+# A judge can still enter ANY recipient manually.
 # ============================================================
 
 @app.get("/recipients")
 def get_recipients():
 
-    con = db()
+    con = get_db()
 
     try:
 
@@ -297,13 +427,18 @@ def get_recipients():
                 recipient_device_name,
                 recipient_location,
                 recipient_type
+
             FROM recipients
+
             ORDER BY recipient_name
             """
         ).fetchall()
 
         return {
-            "recipients": [dict(row) for row in rows]
+            "recipients": [
+                dict(row)
+                for row in rows
+            ]
         }
 
     finally:
@@ -312,54 +447,138 @@ def get_recipients():
 
 
 # ============================================================
-# FIND RECIPIENT
-# ============================================================
-
-def find_recipient(
-    con,
-    recipient_name: str,
-    recipient_upi_id: str
-):
-
-    row = con.execute(
-        """
-        SELECT *
-        FROM recipients
-        WHERE LOWER(upi_id) = LOWER(?)
-
-           OR LOWER(recipient_name) = LOWER(?)
-
-        LIMIT 1
-        """,
-        (
-            recipient_upi_id.strip(),
-            recipient_name.strip()
-        )
-    ).fetchone()
-
-    return row
-
-
-# ============================================================
 # FIND PAYER
 # ============================================================
 
-def find_payer(con, payer_id):
+def find_payer(
+    con,
+    payer_id
+):
 
-    row = con.execute(
+    return con.execute(
         """
         SELECT *
+
         FROM users
+
         WHERE user_id = ?
+
+        LIMIT 1
         """,
         (payer_id,)
     ).fetchone()
 
-    return row
+
+# ============================================================
+# FIND EXISTING RECIPIENT
+# ============================================================
+
+def find_recipient(
+    con,
+    recipient_name,
+    recipient_upi_id
+):
+
+    return con.execute(
+        """
+        SELECT *
+
+        FROM recipients
+
+        WHERE
+            LOWER(TRIM(upi_id))
+            =
+            LOWER(TRIM(?))
+
+        OR
+            LOWER(TRIM(recipient_name))
+            =
+            LOWER(TRIM(?))
+
+        LIMIT 1
+        """,
+        (
+            recipient_upi_id,
+            recipient_name
+        )
+    ).fetchone()
 
 
 # ============================================================
-# RECIPIENT-SPECIFIC HISTORY
+# ENSURE RECIPIENT
+#
+# Recipient can be entered manually.
+#
+# If it already exists -> use it.
+#
+# If it doesn't exist -> create a minimal recipient record.
+#
+# The judge therefore NEVER needs the recipient to already
+# exist in the database.
+# ============================================================
+
+def ensure_recipient(
+    con,
+    recipient_name,
+    recipient_upi_id
+):
+
+    existing = find_recipient(
+        con,
+        recipient_name,
+        recipient_upi_id
+    )
+
+    if existing:
+
+        return existing
+
+    recipient_id = (
+        "R-" +
+        uuid.uuid4().hex[:10].upper()
+    )
+
+    con.execute(
+        """
+        INSERT INTO recipients (
+
+            recipient_id,
+            recipient_name,
+            upi_id,
+            recipient_device_name,
+            recipient_location,
+            recipient_type
+
+        )
+
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (
+            recipient_id,
+            recipient_name.strip(),
+            recipient_upi_id.strip(),
+            "UNKNOWN",
+            "UNKNOWN",
+            "Unknown"
+        )
+    )
+
+    return con.execute(
+        """
+        SELECT *
+
+        FROM recipients
+
+        WHERE recipient_id = ?
+
+        LIMIT 1
+        """,
+        (recipient_id,)
+    ).fetchone()
+
+
+# ============================================================
+# RELATIONSHIP
 # ============================================================
 
 def get_relationship(
@@ -371,10 +590,14 @@ def get_relationship(
     return con.execute(
         """
         SELECT *
+
         FROM sender_recipient_connections
 
-        WHERE user_id = ?
-        AND recipient_id = ?
+        WHERE
+            user_id = ?
+
+        AND
+            recipient_id = ?
 
         LIMIT 1
         """,
@@ -406,10 +629,14 @@ def get_transaction_history(
 
         FROM transactions
 
-        WHERE user_id = ?
-        AND recipient_id = ?
+        WHERE
+            user_id = ?
 
-        ORDER BY transaction_time DESC
+        AND
+            recipient_id = ?
+
+        ORDER BY
+            transaction_time DESC
         """,
         (
             user_id,
@@ -419,17 +646,13 @@ def get_transaction_history(
 
 
 # ============================================================
-# AI AMOUNT RISK
+# AMOUNT RISK
 #
-# This replaces the old "Amount deviation ON/OFF" switch.
+# Amount deviation is NOT a checkbox.
 #
-# The score is automatically calculated from:
+# AI/backend automatically evaluates it.
 #
-# 1. Payer's average transaction amount
-# 2. Payer-recipient transaction history
-# 3. Typical amount sent to this recipient
-#
-# Maximum = 9
+# Maximum = 9 points.
 # ============================================================
 
 def calculate_amount_risk(
@@ -446,22 +669,24 @@ def calculate_amount_risk(
     )
 
     historical_amounts = [
-        float(row["amount"])
-        for row in history
-        if row["transaction_status"] == "SUCCESS"
-    ]
 
-    # --------------------------------------------------------
-    # If there is recipient-specific history,
-    # use that as the strongest signal.
-    # Otherwise use payer average.
-    # --------------------------------------------------------
+        float(row["amount"])
+
+        for row in history
+
+        if str(
+            row["transaction_status"]
+        ).upper() == "SUCCESS"
+
+    ]
 
     if historical_amounts:
 
-        typical_amount = sum(
-            historical_amounts
-        ) / len(historical_amounts)
+        typical_amount = (
+            sum(historical_amounts)
+            /
+            len(historical_amounts)
+        )
 
     else:
 
@@ -471,218 +696,316 @@ def calculate_amount_risk(
 
     if typical_amount <= 0:
 
-        return 0, typical_amount
+        return 0, 0
 
-    ratio = amount / typical_amount
+    ratio = (
+        amount /
+        typical_amount
+    )
 
-    # --------------------------------------------------------
-    # Amount risk is intentionally below 10.
-    # --------------------------------------------------------
-
-    if ratio <= 1.50:
-
+    if ratio <= 1.5:
         score = 0
 
-    elif ratio <= 2.00:
-
+    elif ratio <= 2.0:
         score = 3
 
-    elif ratio <= 2.50:
-
+    elif ratio <= 2.5:
         score = 5
 
-    elif ratio <= 3.00:
-
+    elif ratio <= 3.0:
         score = 7
 
     else:
-
         score = 9
 
     return score, typical_amount
 
 
 # ============================================================
-# AI QUESTION GENERATOR
+# DYNAMIC QUESTION GENERATOR
 #
-# Questions are generated from actual database facts.
-#
-# No hard-coded Rahul/Amit/etc. is assumed.
+# Questions are based on actual payer information in DB.
 # ============================================================
 
-def generate_dynamic_questions(
+def generate_dynamic_question(
     con,
     payer,
     recipient,
-    relationship,
-    amount,
-    amount_risk
+    relationship
 ):
 
-    questions = []
+    candidates = []
 
-    payer_name = payer["name"]
+    # --------------------------------------------------------
+    # Payer's college
+    # --------------------------------------------------------
 
-    recipient_name = recipient["recipient_name"]
+    if payer["college_name"]:
 
-    recipient_location = recipient["recipient_location"]
+        candidates.append(
+            {
+                "question":
+                    "What college is registered "
+                    "on your SecureFlow profile?",
 
-    payer_location = payer["common_location"]
+                "answer":
+                    str(
+                        payer["college_name"]
+                    )
+            }
+        )
 
-    payer_device = payer["known_device"]
+    # --------------------------------------------------------
+    # Payer's living area
+    # --------------------------------------------------------
 
-    previous_count = 0
+    if payer["living_area"]:
 
-    previous_connection = False
+        candidates.append(
+            {
+                "question":
+                    "What is the living area "
+                    "registered on your profile?",
+
+                "answer":
+                    str(
+                        payer["living_area"]
+                    )
+            }
+        )
+
+    # --------------------------------------------------------
+    # Common location
+    # --------------------------------------------------------
+
+    if payer["common_location"]:
+
+        candidates.append(
+            {
+                "question":
+                    "What is your usual payment location?",
+
+                "answer":
+                    str(
+                        payer["common_location"]
+                    )
+            }
+        )
+
+    # --------------------------------------------------------
+    # Known device
+    # --------------------------------------------------------
+
+    if payer["known_device"]:
+
+        candidates.append(
+            {
+                "question":
+                    "What device is normally "
+                    "registered to your account?",
+
+                "answer":
+                    str(
+                        payer["known_device"]
+                    )
+            }
+        )
+
+    # --------------------------------------------------------
+    # Recipient relationship
+    # --------------------------------------------------------
 
     if relationship:
-
-        previous_count = int(
-            relationship["previous_transaction_count"] or 0
-        )
 
         previous_connection = bool(
             relationship["previous_connection"]
         )
 
-    # --------------------------------------------------------
-    # Question 1: Recipient relationship
-    # --------------------------------------------------------
-
-    if not previous_connection or previous_count == 0:
-
-        questions.append(
-            {
-                "question":
-                    f"Is {recipient_name} a recipient you have "
-                    f"previously paid?",
-                "answer":
-                    "no"
-            }
+        count = int(
+            relationship[
+                "previous_transaction_count"
+            ] or 0
         )
 
-    else:
+        if previous_connection:
 
-        questions.append(
-            {
-                "question":
-                    f"You have previously paid {recipient_name}. "
-                    f"Do you recognize this recipient?",
-                "answer":
-                    "yes"
-            }
+            candidates.append(
+                {
+                    "question":
+                        f"Have you previously paid "
+                        f"{recipient['recipient_name']}?",
+
+                    "answer":
+                        "yes"
+                }
+            )
+
+            candidates.append(
+                {
+                    "question":
+                        f"Approximately how many previous "
+                        f"payments have you made to "
+                        f"{recipient['recipient_name']}?",
+
+                    "answer":
+                        str(count)
+                }
+            )
+
+            if relationship["connection_type"]:
+
+                candidates.append(
+                    {
+                        "question":
+                            f"What is the relationship type "
+                            f"you have with "
+                            f"{recipient['recipient_name']}?",
+
+                        "answer":
+                            str(
+                                relationship[
+                                    "connection_type"
+                                ]
+                            )
+                    }
+                )
+
+        else:
+
+            candidates.append(
+                {
+                    "question":
+                        f"Have you previously paid "
+                        f"{recipient['recipient_name']}?",
+
+                    "answer":
+                        "no"
+                }
+            )
+
+    # --------------------------------------------------------
+    # Recipient information, ONLY if recipient exists in DB
+    # --------------------------------------------------------
+
+    if recipient:
+
+        if recipient["recipient_location"]:
+
+            candidates.append(
+                {
+                    "question":
+                        f"What location is associated "
+                        f"with {recipient['recipient_name']}?",
+
+                    "answer":
+                        str(
+                            recipient[
+                                "recipient_location"
+                            ]
+                        )
+                }
+            )
+
+        if recipient["recipient_type"]:
+
+            candidates.append(
+                {
+                    "question":
+                        f"What type of recipient is "
+                        f"{recipient['recipient_name']} "
+                        f"according to the profile?",
+
+                    "answer":
+                        str(
+                            recipient[
+                                "recipient_type"
+                            ]
+                        )
+                }
+            )
+
+    # --------------------------------------------------------
+    # If possible, use transaction history to make question
+    # --------------------------------------------------------
+
+    if recipient:
+
+        history = get_transaction_history(
+            con,
+            payer["user_id"],
+            recipient["recipient_id"]
         )
 
+        successful_amounts = [
+
+            float(row["amount"])
+
+            for row in history
+
+            if str(
+                row["transaction_status"]
+            ).upper() == "SUCCESS"
+
+        ]
+
+        if successful_amounts:
+
+            average = (
+                sum(successful_amounts)
+                /
+                len(successful_amounts)
+            )
+
+            candidates.append(
+                {
+                    "question":
+                        f"Approximately how much do you "
+                        f"usually send to "
+                        f"{recipient['recipient_name']}?",
+
+                    "answer":
+                        str(round(average))
+                }
+            )
+
     # --------------------------------------------------------
-    # Question 2: Recipient type
+    # Remove duplicates
     # --------------------------------------------------------
 
-    recipient_type = recipient["recipient_type"]
+    unique = []
 
-    questions.append(
-        {
+    seen = set()
+
+    for item in candidates:
+
+        key = (
+            item["question"],
+            item["answer"]
+        )
+
+        if key not in seen:
+
+            seen.add(key)
+
+            unique.append(item)
+
+    # --------------------------------------------------------
+    # Random dynamic question
+    # --------------------------------------------------------
+
+    if not unique:
+
+        return {
+
             "question":
-                f"What type of recipient is {recipient_name} "
-                f"according to your payment history? "
-                f"(Example: {recipient_type})",
+                "What is your registered payer name?",
+
             "answer":
-                str(recipient_type).lower()
+                str(payer["name"])
+
         }
-    )
 
-    # --------------------------------------------------------
-    # Question 3: Location
-    # --------------------------------------------------------
-
-    questions.append(
-        {
-            "question":
-                f"What is your usual payment location?",
-            "answer":
-                str(payer_location).lower()
-        }
-    )
-
-    # --------------------------------------------------------
-    # Question 4: Recipient location
-    # --------------------------------------------------------
-
-    questions.append(
-        {
-            "question":
-                f"What location is associated with "
-                f"{recipient_name}?",
-            "answer":
-                str(recipient_location).lower()
-        }
-    )
-
-    # --------------------------------------------------------
-    # Question 5: Known device
-    # --------------------------------------------------------
-
-    questions.append(
-        {
-            "question":
-                f"What device is normally associated with "
-                f"your account?",
-            "answer":
-                str(payer_device).lower()
-        }
-    )
-
-    # --------------------------------------------------------
-    # Question 6: Transaction amount behaviour
-    # --------------------------------------------------------
-
-    history = get_transaction_history(
-        con,
-        payer["user_id"],
-        recipient["recipient_id"]
-    )
-
-    successful_amounts = [
-        float(row["amount"])
-        for row in history
-        if row["transaction_status"] == "SUCCESS"
-    ]
-
-    if successful_amounts:
-
-        typical = sum(successful_amounts) / len(
-            successful_amounts
-        )
-
-        questions.append(
-            {
-                "question":
-                    f"Approximately how much do you usually "
-                    f"send to {recipient_name}?",
-                "answer":
-                    str(round(typical))
-            }
-        )
-
-    # --------------------------------------------------------
-    # Select a small random set.
-    #
-    # This makes the challenge dynamic.
-    # --------------------------------------------------------
-
-    # We don't want too many questions during a demo.
-
-    if len(questions) > 3:
-
-        selected = random.sample(
-            questions,
-            3
-        )
-
-    else:
-
-        selected = questions
-
-    return selected
+    return random.choice(unique)
 
 
 # ============================================================
@@ -691,27 +1014,15 @@ def generate_dynamic_questions(
 
 def normalize_answer(value):
 
-    value = str(value).strip().lower()
-
-    replacements = {
-        "yes": "yes",
-        "y": "yes",
-        "yeah": "yes",
-        "yep": "yes",
-
-        "no": "no",
-        "n": "no",
-        "nope": "no"
-    }
-
-    return replacements.get(
-        value,
-        value
+    return (
+        str(value)
+        .strip()
+        .lower()
     )
 
 
 # ============================================================
-# ANSWER VERIFICATION
+# ANSWER CHECK
 # ============================================================
 
 def answer_is_correct(
@@ -719,44 +1030,54 @@ def answer_is_correct(
     expected_answer
 ):
 
-    user_answer = normalize_answer(
+    user = normalize_answer(
         user_answer
     )
 
-    expected_answer = normalize_answer(
+    expected = normalize_answer(
         expected_answer
     )
 
-    # --------------------------------------------------------
-    # Direct match
-    # --------------------------------------------------------
-
-    if user_answer == expected_answer:
+    # Exact
+    if user == expected:
 
         return True
 
-    # --------------------------------------------------------
-    # Numeric answers
-    # --------------------------------------------------------
+    # Yes/no variations
+    yes_values = {
+        "yes",
+        "y",
+        "yeah",
+        "yep",
+        "correct"
+    }
 
+    no_values = {
+        "no",
+        "n",
+        "nope"
+    }
+
+    if expected == "yes" and user in yes_values:
+        return True
+
+    if expected == "no" and user in no_values:
+        return True
+
+    # Numeric tolerance
     try:
 
-        user_number = float(
-            user_answer
-        )
+        user_number = float(user)
+        expected_number = float(expected)
 
-        expected_number = float(
-            expected_answer
-        )
-
-        # Allow a reasonable approximation for
-        # "approximately how much".
-        if abs(
-            user_number - expected_number
-        ) <= max(
+        tolerance = max(
             100,
             expected_number * 0.15
-        ):
+        )
+
+        if abs(
+            user_number - expected_number
+        ) <= tolerance:
 
             return True
 
@@ -764,13 +1085,13 @@ def answer_is_correct(
 
         pass
 
-    # --------------------------------------------------------
     # Text containment
-    # --------------------------------------------------------
-
     if (
-        expected_answer in user_answer
-        or user_answer in expected_answer
+        len(expected) >= 3
+        and (
+            expected in user
+            or user in expected
+        )
     ):
 
         return True
@@ -779,31 +1100,75 @@ def answer_is_correct(
 
 
 # ============================================================
-# SCORE HELPERS
+# INSERT TRANSACTION
 # ============================================================
 
-def add_signal(
-    signals,
-    name,
-    points,
-    active
+def insert_transaction(
+    con,
+    transaction_id,
+    payer,
+    recipient,
+    amount,
+    status,
+    relationship=None
 ):
 
-    if active:
+    now = datetime.now().strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
 
-        signals.append(
-            {
-                "name": name,
-                "score": points
-            }
+    previous_connection = 0
+
+    if relationship:
+
+        previous_connection = int(
+            bool(
+                relationship[
+                    "previous_connection"
+                ]
+            )
         )
+
+    con.execute(
+        """
+        INSERT INTO transactions (
+
+            transaction_id,
+            user_id,
+            recipient_id,
+            amount,
+            transaction_time,
+            sender_device_name,
+            recipient_device_name,
+            payment_location,
+            previous_location,
+            previous_connection,
+            transaction_status,
+            created_at
+
+        )
+
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            transaction_id,
+            payer["user_id"],
+            recipient["recipient_id"],
+            amount,
+            now,
+            payer["known_device"],
+            recipient["recipient_device_name"],
+            payer["common_location"],
+            payer["common_location"],
+            previous_connection,
+            status,
+            now
+        )
+    )
 
 
 # ============================================================
 # ANALYZE + PAY
-#
-# IMPORTANT:
-# Risk score is calculated ONLY when this endpoint is called.
 # ============================================================
 
 @app.post("/analyze-payment")
@@ -811,12 +1176,12 @@ def analyze_payment(
     payment: AnalyzePayment
 ):
 
-    con = db()
+    con = get_db()
 
     try:
 
         # ====================================================
-        # FIND PAYER
+        # PAYER
         # ====================================================
 
         payer = find_payer(
@@ -828,110 +1193,73 @@ def analyze_payment(
 
             raise HTTPException(
                 status_code=404,
-                detail="Payer not found in database."
+                detail="Selected payer does not exist."
             )
 
         # ====================================================
-        # FIND RECIPIENT
+        # RECIPIENT
+        #
+        # Can be ANYTHING entered by judge.
         # ====================================================
 
-        recipient = find_recipient(
+        recipient = ensure_recipient(
             con,
             payment.recipient_name,
             payment.recipient_upi_id
         )
 
-        if not recipient:
+        # ====================================================
+        # LIVE BALANCE
+        # ====================================================
 
-            # Unknown recipient is allowed to be entered.
-            # It becomes a high-risk/new-beneficiary signal,
-            # but no recipient-specific challenge can be created.
-            recipient_id = None
-
-        else:
-
-            recipient_id = recipient["recipient_id"]
+        current_balance = (
+            calculate_current_balance(
+                con,
+                payer["user_id"]
+            )
+        )
 
         # ====================================================
         # BALANCE CHECK
         # ====================================================
 
-        balance = float(
-            payer["current_bank_balance"] or 0
-        )
-
-        if payment.amount > balance:
+        if payment.amount > current_balance:
 
             return {
                 "status": "FAILED",
                 "decision": "INSUFFICIENT_BALANCE",
+                "risk_score": 0,
+                "balance": current_balance,
                 "message":
-                    "Payment failed because the payer does "
-                    "not have sufficient balance.",
-                "balance": balance
+                    "Payment failed because the payer "
+                    "does not have sufficient balance."
             }
 
         # ====================================================
         # RELATIONSHIP
         # ====================================================
 
-        relationship = None
+        relationship = get_relationship(
+            con,
+            payer["user_id"],
+            recipient["recipient_id"]
+        )
 
-        if recipient_id:
+        # ====================================================
+        # AMOUNT RISK
+        # ====================================================
 
-            relationship = get_relationship(
+        amount_risk, typical_amount = (
+            calculate_amount_risk(
                 con,
-                payment.payer_id,
-                recipient_id
+                payer,
+                recipient["recipient_id"],
+                payment.amount
             )
+        )
 
         # ====================================================
-        # AUTOMATIC AMOUNT RISK
-        # ====================================================
-
-        if recipient_id:
-
-            amount_risk, typical_amount = (
-                calculate_amount_risk(
-                    con,
-                    payer,
-                    recipient_id,
-                    payment.amount
-                )
-            )
-
-        else:
-
-            # Completely unknown recipient:
-            # compare with payer's average.
-            typical_amount = float(
-                payer["average_transaction"] or 0
-            )
-
-            if typical_amount > 0:
-
-                ratio = (
-                    payment.amount /
-                    typical_amount
-                )
-
-                if ratio <= 1.5:
-                    amount_risk = 0
-                elif ratio <= 2:
-                    amount_risk = 3
-                elif ratio <= 2.5:
-                    amount_risk = 5
-                elif ratio <= 3:
-                    amount_risk = 7
-                else:
-                    amount_risk = 9
-
-            else:
-
-                amount_risk = 0
-
-        # ====================================================
-        # RISK ENGINE
+        # RISK SIGNALS
         # ====================================================
 
         signals = []
@@ -944,8 +1272,11 @@ def analyze_payment(
 
             signals.append(
                 {
-                    "name": "Amount deviation",
-                    "score": amount_risk
+                    "name":
+                        "Amount deviation",
+
+                    "score":
+                        amount_risk
                 }
             )
 
@@ -953,29 +1284,25 @@ def analyze_payment(
         # New beneficiary +15
         # ----------------------------------------------------
 
-        new_beneficiary = (
+        is_new_beneficiary = (
             payment.new_beneficiary
         )
-
-        # Database can also identify a new relationship.
 
         if relationship:
 
             if not bool(
-                relationship["previous_connection"]
+                relationship[
+                    "previous_connection"
+                ]
             ):
 
-                new_beneficiary = True
-
-        elif recipient_id:
-
-            new_beneficiary = True
+                is_new_beneficiary = True
 
         add_signal(
             signals,
             "New beneficiary",
             15,
-            new_beneficiary
+            is_new_beneficiary
         )
 
         # ----------------------------------------------------
@@ -1012,7 +1339,7 @@ def analyze_payment(
         )
 
         # ----------------------------------------------------
-        # Transaction velocity +10
+        # Velocity +10
         # ----------------------------------------------------
 
         add_signal(
@@ -1034,20 +1361,30 @@ def analyze_payment(
         )
 
         # ====================================================
-        # TOTAL SCORE
+        # TOTAL
         # ====================================================
 
         risk_score = sum(
-            item["score"]
-            for item in signals
+            signal["score"]
+            for signal in signals
         )
 
-        # Maximum possible with current design:
-        # 9 + 15 + 20 + 15 + 10 + 10 + 15 = 94
+        # Keep it within the displayed 0-100 scale.
+        risk_score = max(
+            0,
+            min(
+                100,
+                risk_score
+            )
+        )
 
-        risk_score = min(
-            risk_score,
-            94
+        # ====================================================
+        # TRANSACTION ID
+        # ====================================================
+
+        transaction_id = (
+            "T-" +
+            uuid.uuid4().hex[:10].upper()
         )
 
         # ====================================================
@@ -1056,55 +1393,14 @@ def analyze_payment(
 
         if risk_score >= 70:
 
-            transaction_id = (
-                "T" +
-                uuid.uuid4().hex[:10].upper()
-            )
-
-            now = datetime.now().strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-
-            con.execute(
-                """
-                INSERT INTO transactions (
-
-                    transaction_id,
-                    user_id,
-                    recipient_id,
-                    amount,
-                    transaction_time,
-                    sender_device_name,
-                    recipient_device_name,
-                    payment_location,
-                    previous_location,
-                    previous_connection,
-                    transaction_status,
-                    created_at
-
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    transaction_id,
-                    payer["user_id"],
-                    recipient_id,
-                    payment.amount,
-                    now,
-                    payer["known_device"],
-                    recipient["recipient_device_name"]
-                    if recipient else "UNKNOWN",
-                    payer["common_location"],
-                    payer["common_location"],
-                    int(
-                        bool(
-                            relationship["previous_connection"]
-                        )
-                    )
-                    if relationship else 0,
-                    "BLOCKED",
-                    now
-                )
+            insert_transaction(
+                con,
+                transaction_id,
+                payer,
+                recipient,
+                payment.amount,
+                "BLOCKED",
+                relationship
             )
 
             con.commit()
@@ -1117,94 +1413,34 @@ def analyze_payment(
                 "signals": signals,
                 "message":
                     "Payment blocked immediately because "
-                    "the risk score is 70 or above."
+                    "the risk score is 70 or above.",
+                "balance": current_balance
             }
 
         # ====================================================
-        # 0-44 = PAY
+        # 0-44 = SUCCESS
         # ====================================================
 
         if risk_score <= 44:
 
-            transaction_id = (
-                "T" +
-                uuid.uuid4().hex[:10].upper()
-            )
-
-            now = datetime.now().strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-
-            # ------------------------------------------------
-            # Deduct balance
-            # ------------------------------------------------
-
-            new_balance = (
-                balance -
-                payment.amount
-            )
-
-            con.execute(
-                """
-                UPDATE users
-
-                SET current_bank_balance = ?
-
-                WHERE user_id = ?
-                """,
-                (
-                    new_balance,
-                    payer["user_id"]
-                )
-            )
-
-            # ------------------------------------------------
-            # Save transaction
-            # ------------------------------------------------
-
-            con.execute(
-                """
-                INSERT INTO transactions (
-
-                    transaction_id,
-                    user_id,
-                    recipient_id,
-                    amount,
-                    transaction_time,
-                    sender_device_name,
-                    recipient_device_name,
-                    payment_location,
-                    previous_location,
-                    previous_connection,
-                    transaction_status,
-                    created_at
-
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    transaction_id,
-                    payer["user_id"],
-                    recipient_id,
-                    payment.amount,
-                    now,
-                    payer["known_device"],
-                    recipient["recipient_device_name"]
-                    if recipient else "UNKNOWN",
-                    payer["common_location"],
-                    payer["common_location"],
-                    int(
-                        bool(
-                            relationship["previous_connection"]
-                        )
-                    )
-                    if relationship else 0,
-                    "SUCCESS",
-                    now
-                )
+            insert_transaction(
+                con,
+                transaction_id,
+                payer,
+                recipient,
+                payment.amount,
+                "SUCCESS",
+                relationship
             )
 
             con.commit()
+
+            new_balance = (
+                calculate_current_balance(
+                    con,
+                    payer["user_id"]
+                )
+            )
 
             return {
                 "status": "SUCCESS",
@@ -1212,60 +1448,24 @@ def analyze_payment(
                 "transaction_id": transaction_id,
                 "risk_score": risk_score,
                 "signals": signals,
-                "previous_balance": balance,
+                "previous_balance": current_balance,
                 "new_balance": new_balance,
                 "message":
                     "Payment completed successfully."
             }
 
         # ====================================================
-        # 45-69 = HOLD + DYNAMIC QUESTION
+        # 45-69 = HOLD
         # ====================================================
 
-        # At this point payment is NOT deducted.
-
-        if not recipient:
-
-            # We cannot create a recipient-specific
-            # challenge when the recipient doesn't exist
-            # in the database.
-
-            return {
-                "status": "HELD",
-                "decision": "HOLD",
-                "risk_score": risk_score,
-                "signals": signals,
-                "message":
-                    "Payment is on hold. The recipient is not "
-                    "present in the behavioural database, so "
-                    "recipient-specific verification data is "
-                    "unavailable."
-            }
-
-        # ----------------------------------------------------
-        # Generate questions from database
-        # ----------------------------------------------------
-
-        generated_questions = (
-            generate_dynamic_questions(
+        dynamic_question = (
+            generate_dynamic_question(
                 con,
                 payer,
                 recipient,
-                relationship,
-                payment.amount,
-                amount_risk
+                relationship
             )
         )
-
-        # ----------------------------------------------------
-        # Create a challenge for the FIRST question.
-        #
-        # The frontend can submit the answer.
-        # If correct -> payment completes.
-        # If incorrect -> payment cancelled.
-        # ----------------------------------------------------
-
-        selected_question = generated_questions[0]
 
         challenge_id = (
             "CH-" +
@@ -1279,20 +1479,16 @@ def analyze_payment(
         )
 
         expires_at = (
-            now.replace(
-                second=0
-            )
-        )
-
-        # 5 minute challenge
-        from datetime import timedelta
-
-        expires_at = (
             now +
             timedelta(minutes=5)
         ).strftime(
             "%Y-%m-%d %H:%M:%S"
         )
+
+        # ----------------------------------------------------
+        # Store expected answer SERVER SIDE.
+        # The frontend never receives it.
+        # ----------------------------------------------------
 
         con.execute(
             """
@@ -1310,6 +1506,7 @@ def analyze_payment(
                 status
 
             )
+
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
@@ -1318,8 +1515,8 @@ def analyze_payment(
                 recipient["recipient_id"],
                 payment.amount,
                 risk_score,
-                selected_question["question"],
-                selected_question["answer"],
+                dynamic_question["question"],
+                dynamic_question["answer"],
                 created_at,
                 expires_at,
                 "PENDING"
@@ -1328,19 +1525,25 @@ def analyze_payment(
 
         con.commit()
 
+        # IMPORTANT:
+        # No balance deduction happens here.
+
         return {
             "status": "HELD",
             "decision": "HOLD",
+            "transaction_id": transaction_id,
             "risk_score": risk_score,
             "signals": signals,
-
             "challenge": {
-                "challenge_id": challenge_id,
-                "question":
-                    selected_question["question"],
-                "expires_in_seconds": 300
-            },
+                "challenge_id":
+                    challenge_id,
 
+                "question":
+                    dynamic_question["question"],
+
+                "expires_in_seconds":
+                    300
+            },
             "message":
                 "Payment temporarily held for dynamic "
                 "behavioural verification."
@@ -1360,13 +1563,14 @@ def verify_challenge(
     verification: VerifyChallenge
 ):
 
-    con = db()
+    con = get_db()
 
     try:
 
         challenge = con.execute(
             """
             SELECT *
+
             FROM challenge_sessions
 
             WHERE challenge_id = ?
@@ -1382,7 +1586,8 @@ def verify_challenge(
 
             raise HTTPException(
                 status_code=404,
-                detail="Verification challenge not found."
+                detail=
+                    "Verification challenge not found."
             )
 
         # ====================================================
@@ -1394,8 +1599,11 @@ def verify_challenge(
             return {
                 "status": "FAILED",
                 "decision": "CANCEL",
+                "risk_score":
+                    challenge["risk_score"],
                 "message":
-                    "This verification challenge is no longer active."
+                    "This verification challenge "
+                    "is no longer active."
             }
 
         # ====================================================
@@ -1427,12 +1635,15 @@ def verify_challenge(
             return {
                 "status": "FAILED",
                 "decision": "CANCEL",
+                "risk_score":
+                    challenge["risk_score"],
                 "message":
-                    "Verification expired. Payment cancelled."
+                    "Verification expired. "
+                    "Payment cancelled."
             }
 
         # ====================================================
-        # CHECK ANSWER
+        # VERIFY ANSWER
         # ====================================================
 
         correct = answer_is_correct(
@@ -1441,7 +1652,7 @@ def verify_challenge(
         )
 
         # ====================================================
-        # WRONG ANSWER = CANCEL
+        # WRONG ANSWER
         # ====================================================
 
         if not correct:
@@ -1459,40 +1670,23 @@ def verify_challenge(
                 )
             )
 
-            # ------------------------------------------------
-            # Record failed transaction
-            # ------------------------------------------------
-
-            transaction_id = (
-                "T" +
-                uuid.uuid4().hex[:10].upper()
+            payer = find_payer(
+                con,
+                challenge["user_id"]
             )
-
-            now = datetime.now().strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-
-            payer = con.execute(
-                """
-                SELECT *
-                FROM users
-
-                WHERE user_id = ?
-                """,
-                (
-                    challenge["user_id"],
-                )
-            ).fetchone()
 
             recipient = con.execute(
                 """
                 SELECT *
+
                 FROM recipients
 
                 WHERE recipient_id = ?
+
+                LIMIT 1
                 """,
                 (
-                    challenge["recipient_id"],
+                    challenge["recipient_id"]
                 )
             ).fetchone()
 
@@ -1502,52 +1696,29 @@ def verify_challenge(
                 challenge["recipient_id"]
             )
 
-            con.execute(
-                """
-                INSERT INTO transactions (
+            transaction_id = (
+                "T-" +
+                uuid.uuid4().hex[:10].upper()
+            )
 
-                    transaction_id,
-                    user_id,
-                    recipient_id,
-                    amount,
-                    transaction_time,
-                    sender_device_name,
-                    recipient_device_name,
-                    payment_location,
-                    previous_location,
-                    previous_connection,
-                    transaction_status,
-                    created_at
-
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    transaction_id,
-                    challenge["user_id"],
-                    challenge["recipient_id"],
-                    challenge["transaction_amount"],
-                    now,
-                    payer["known_device"]
-                    if payer else "UNKNOWN",
-                    recipient["recipient_device_name"]
-                    if recipient else "UNKNOWN",
-                    payer["common_location"]
-                    if payer else "UNKNOWN",
-                    payer["common_location"]
-                    if payer else "UNKNOWN",
-                    int(
-                        bool(
-                            relationship["previous_connection"]
-                        )
-                    )
-                    if relationship else 0,
-                    "CANCELLED",
-                    now
-                )
+            insert_transaction(
+                con,
+                transaction_id,
+                payer,
+                recipient,
+                challenge["transaction_amount"],
+                "CANCELLED",
+                relationship
             )
 
             con.commit()
+
+            current_balance = (
+                calculate_current_balance(
+                    con,
+                    challenge["user_id"]
+                )
+            )
 
             return {
                 "status": "FAILED",
@@ -1556,25 +1727,21 @@ def verify_challenge(
                     challenge["risk_score"],
                 "transaction_id":
                     transaction_id,
+                "new_balance":
+                    current_balance,
                 "message":
-                    "Verification failed. Payment cancelled immediately."
+                    "Verification answer was incorrect. "
+                    "Payment cancelled immediately."
             }
 
         # ====================================================
-        # CORRECT ANSWER = COMPLETE PAYMENT
+        # CORRECT ANSWER
         # ====================================================
 
-        payer = con.execute(
-            """
-            SELECT *
-            FROM users
-
-            WHERE user_id = ?
-            """,
-            (
-                challenge["user_id"],
-            )
-        ).fetchone()
+        payer = find_payer(
+            con,
+            challenge["user_id"]
+        )
 
         if not payer:
 
@@ -1586,26 +1753,43 @@ def verify_challenge(
         recipient = con.execute(
             """
             SELECT *
+
             FROM recipients
 
             WHERE recipient_id = ?
+
+            LIMIT 1
             """,
             (
-                challenge["recipient_id"],
+                challenge["recipient_id"]
             )
         ).fetchone()
 
-        # ----------------------------------------------------
-        # LIVE BALANCE
-        # ----------------------------------------------------
+        if not recipient:
 
-        current_balance = float(
-            payer["current_bank_balance"] or 0
+            raise HTTPException(
+                status_code=404,
+                detail="Recipient record not found."
+            )
+
+        # ====================================================
+        # GET FRESH BALANCE
+        # ====================================================
+
+        current_balance = (
+            calculate_current_balance(
+                con,
+                challenge["user_id"]
+            )
         )
 
         payment_amount = float(
             challenge["transaction_amount"]
         )
+
+        # ====================================================
+        # BALANCE CHECK AGAIN
+        # ====================================================
 
         if payment_amount > current_balance:
 
@@ -1627,37 +1811,16 @@ def verify_challenge(
             return {
                 "status": "FAILED",
                 "decision": "CANCEL",
+                "risk_score":
+                    challenge["risk_score"],
                 "message":
-                    "Payment cancelled because the balance "
-                    "is no longer sufficient."
+                    "Payment cancelled because the payer "
+                    "no longer has sufficient balance."
             }
 
-        # ----------------------------------------------------
-        # Deduct money
-        # ----------------------------------------------------
-
-        new_balance = (
-            current_balance -
-            payment_amount
-        )
-
-        con.execute(
-            """
-            UPDATE users
-
-            SET current_bank_balance = ?
-
-            WHERE user_id = ?
-            """,
-            (
-                new_balance,
-                challenge["user_id"]
-            )
-        )
-
-        # ----------------------------------------------------
-        # Mark challenge completed
-        # ----------------------------------------------------
+        # ====================================================
+        # MARK VERIFIED
+        # ====================================================
 
         con.execute(
             """
@@ -1672,17 +1835,16 @@ def verify_challenge(
             )
         )
 
-        # ----------------------------------------------------
-        # Record transaction
-        # ----------------------------------------------------
+        # ====================================================
+        # RECORD SUCCESS
+        #
+        # This is what effectively deducts the money because
+        # current balance = initial balance - SUCCESS total.
+        # ====================================================
 
         transaction_id = (
-            "T" +
+            "T-" +
             uuid.uuid4().hex[:10].upper()
-        )
-
-        now = datetime.now().strftime(
-            "%Y-%m-%d %H:%M:%S"
         )
 
         relationship = get_relationship(
@@ -1691,49 +1853,28 @@ def verify_challenge(
             challenge["recipient_id"]
         )
 
-        con.execute(
-            """
-            INSERT INTO transactions (
-
-                transaction_id,
-                user_id,
-                recipient_id,
-                amount,
-                transaction_time,
-                sender_device_name,
-                recipient_device_name,
-                payment_location,
-                previous_location,
-                previous_connection,
-                transaction_status,
-                created_at
-
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                transaction_id,
-                challenge["user_id"],
-                challenge["recipient_id"],
-                payment_amount,
-                now,
-                payer["known_device"],
-                recipient["recipient_device_name"]
-                if recipient else "UNKNOWN",
-                payer["common_location"],
-                payer["common_location"],
-                int(
-                    bool(
-                        relationship["previous_connection"]
-                    )
-                )
-                if relationship else 0,
-                "SUCCESS",
-                now
-            )
+        insert_transaction(
+            con,
+            transaction_id,
+            payer,
+            recipient,
+            payment_amount,
+            "SUCCESS",
+            relationship
         )
 
         con.commit()
+
+        # ====================================================
+        # NEW BALANCE
+        # ====================================================
+
+        new_balance = (
+            calculate_current_balance(
+                con,
+                challenge["user_id"]
+            )
+        )
 
         return {
             "status": "SUCCESS",
@@ -1747,44 +1888,8 @@ def verify_challenge(
             "new_balance":
                 new_balance,
             "message":
-                "Verification successful. Payment completed."
-        }
-
-    finally:
-
-        con.close()
-
-
-# ============================================================
-# GET CURRENT BALANCE
-# ============================================================
-
-@app.get("/balance/{user_id}")
-def get_balance(user_id: str):
-
-    con = db()
-
-    try:
-
-        user = find_payer(
-            con,
-            user_id
-        )
-
-        if not user:
-
-            raise HTTPException(
-                status_code=404,
-                detail="Payer not found."
-            )
-
-        return {
-            "user_id": user["user_id"],
-            "name": user["name"],
-            "balance":
-                float(
-                    user["current_bank_balance"] or 0
-                )
+                "Verification successful. "
+                "Payment completed."
         }
 
     finally:
@@ -1799,24 +1904,34 @@ def get_balance(user_id: str):
 @app.get("/transactions/{user_id}")
 def get_transactions(user_id: str):
 
-    con = db()
+    con = get_db()
 
     try:
 
         rows = con.execute(
             """
             SELECT
+
                 t.transaction_id,
+
                 t.amount,
+
                 t.transaction_time,
+
                 t.transaction_status,
+
+                t.payment_location,
+
                 r.recipient_name,
+
                 r.upi_id
 
             FROM transactions t
 
             LEFT JOIN recipients r
-                ON t.recipient_id = r.recipient_id
+
+                ON t.recipient_id =
+                   r.recipient_id
 
             WHERE t.user_id = ?
 
@@ -1832,7 +1947,10 @@ def get_transactions(user_id: str):
 
         return {
             "transactions":
-                [dict(row) for row in rows]
+                [
+                    dict(row)
+                    for row in rows
+                ]
         }
 
     finally:
@@ -1841,10 +1959,28 @@ def get_transactions(user_id: str):
 
 
 # ============================================================
-# RUN
+# ADD SIGNAL
 # ============================================================
 
-# Do NOT use app.run().
+def add_signal(
+    signals,
+    name,
+    points,
+    active
+):
+
+    if active:
+
+        signals.append(
+            {
+                "name": name,
+                "score": points
+            }
+        )
+
+
+# ============================================================
+# RUN
 #
 # Start with:
 #
