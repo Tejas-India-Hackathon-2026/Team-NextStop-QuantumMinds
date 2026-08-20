@@ -1,44 +1,49 @@
-# security/rate_limiter.py
+# security/audit.py
 
-import time
+from datetime import datetime
+import json
 
 
-class RateLimiter:
+class AuditLogger:
 
-    def __init__(
+    def __init__(self, file_path="audit.log"):
+
+        self.file_path = file_path
+
+    def record(
         self,
-        max_requests=30,
-        window_seconds=60
+        user_id,
+        transaction_id,
+        event,
+        details
     ):
 
-        self.max_requests = max_requests
-        self.window_seconds = window_seconds
-        self.requests = {}
+        entry = {
+            "timestamp":
+                datetime.utcnow().isoformat(),
 
-    def allow(self, client_id):
+            "user_id":
+                user_id,
 
-        now = time.time()
+            "transaction_id":
+                transaction_id,
 
-        timestamps = self.requests.get(
-            client_id,
-            []
-        )
+            "event":
+                event,
 
-        timestamps = [
-            timestamp
-            for timestamp in timestamps
-            if now - timestamp
-            < self.window_seconds
-        ]
+            "details":
+                details
+        }
 
-        if len(timestamps) >= self.max_requests:
+        with open(
+            self.file_path,
+            "a",
+            encoding="utf-8"
+        ) as file:
 
-            self.requests[client_id] = timestamps
+            file.write(
+                json.dumps(entry)
+                + "\n"
+            )
 
-            return False
-
-        timestamps.append(now)
-
-        self.requests[client_id] = timestamps
-
-        return True
+        return entry
