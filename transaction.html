@@ -2,92 +2,133 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Security Shield</title>
+<title>Fraud Investigation</title>
 
 <style>
 body{
 margin:0;
-font-family:Arial;
-background:linear-gradient(#020617,#172554);
-color:white;
-text-align:center;
+font-family:monospace;
+background:#111;
+color:#ddd;
+}
+
+header{
+background:#222;
+padding:20px;
+border-bottom:2px solid #777;
 }
 
 .container{
-width:650px;
-max-width:90%;
-margin:50px auto;
+max-width:1000px;
+margin:30px auto;
+padding:20px;
 }
 
-.shield{
-width:180px;
-height:210px;
-margin:auto;
-background:#2563eb;
-clip-path:polygon(50% 0,90% 15%,85% 70%,50% 100%,15% 70%,10% 15%);
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:50px;
-}
-
-.panel{
-margin-top:30px;
-background:#ffffff15;
-padding:30px;
-border-radius:20px;
+.case{
+background:#1b1b1b;
+border:1px solid #555;
+padding:25px;
 }
 
 input[type=number]{
-width:100%;
+background:#111;
+color:white;
+border:1px solid #777;
 padding:15px;
+width:100%;
 box-sizing:border-box;
 }
 
-label{
-display:block;
-padding:8px;
-text-align:left;
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+}
+
+td,th{
+padding:15px;
+border:1px solid #444;
 }
 
 button{
-width:100%;
 padding:15px;
-background:#22c55e;
-border:0;
-border-radius:8px;
-font-weight:bold;
-margin-top:15px;
+width:100%;
+background:#444;
+color:white;
+border:1px solid #aaa;
+margin-top:20px;
+}
+
+#result{
+margin-top:25px;
 }
 </style>
 </head>
 
 <body>
 
+<header>
+<h1>SECUREFLOW // FRAUD INVESTIGATION CONSOLE</h1>
+</header>
+
 <div class="container">
 
-<div class="shield">🛡️</div>
+<div class="case">
 
-<h1>SecureFlow Protection</h1>
-<p>AI Payment Security Shield</p>
+<h2>CASE #SF-001</h2>
 
-<div class="panel">
+<input id="amount" type="number" placeholder="Transaction Amount">
 
-<input id="amount" type="number" placeholder="Transaction Amount ₹">
+<table>
 
-<label><input id="unusual_time" type="checkbox"> Time anomaly</label>
-<label><input id="unusual_frequency" type="checkbox"> Frequency anomaly</label>
-<label><input id="new_device" type="checkbox"> New device</label>
-<label><input id="unusual_location" type="checkbox"> Location anomaly</label>
-<label><input id="sudden_location_change" type="checkbox"> Location change</label>
-<label><input id="unknown_beneficiary" type="checkbox"> Unknown recipient</label>
-<label><input id="no_previous_transactions" type="checkbox"> First transaction</label>
-<label><input id="unusual_beneficiary_amount" type="checkbox"> Amount anomaly</label>
+<tr>
+<th>Security Indicator</th>
+<th>Detected</th>
+</tr>
 
-<button onclick="protect()">ACTIVATE AI PROTECTION</button>
+<tr>
+<td>Unusual Time</td>
+<td><input id="unusual_time" type="checkbox"></td>
+</tr>
 
-<h1 id="score">--</h1>
-<h2 id="decision">Shield Ready</h2>
+<tr>
+<td>Unusual Frequency</td>
+<td><input id="unusual_frequency" type="checkbox"></td>
+</tr>
+
+<tr>
+<td>New Device</td>
+<td><input id="new_device" type="checkbox"></td>
+</tr>
+
+<tr>
+<td>Unusual Location</td>
+<td><input id="unusual_location" type="checkbox"></td>
+</tr>
+
+<tr>
+<td>Sudden Location Change</td>
+<td><input id="sudden_location_change" type="checkbox"></td>
+</tr>
+
+<tr>
+<td>Unknown Beneficiary</td>
+<td><input id="unknown_beneficiary" type="checkbox"></td>
+</tr>
+
+<tr>
+<td>No Previous Transaction</td>
+<td><input id="no_previous_transactions" type="checkbox"></td>
+</tr>
+
+<tr>
+<td>Unusual Beneficiary Amount</td>
+<td><input id="unusual_beneficiary_amount" type="checkbox"></td>
+</tr>
+
+</table>
+
+<button onclick="investigate()">START INVESTIGATION</button>
 
 <div id="result"></div>
 
@@ -95,27 +136,29 @@ margin-top:15px;
 </div>
 
 <script>
-async function protect(){
+async function investigate(){
 
 const ids=["unusual_time","unusual_frequency","new_device","unusual_location","sudden_location_change","unknown_beneficiary","no_previous_transactions","unusual_beneficiary_amount"];
 
 let data={amount:Number(document.getElementById("amount").value)};
 ids.forEach(id=>data[id]=document.getElementById(id).checked);
 
-const r=await fetch("http://127.0.0.1:8000/transaction",{
+const response=await fetch("http://127.0.0.1:8000/transaction",{
 method:"POST",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify(data)
 });
 
-const x=await r.json();
+const r=await response.json();
 
-document.getElementById("score").innerText="Risk "+x.risk_score;
-document.getElementById("decision").innerText=x.decision;
-
-document.getElementById("result").innerHTML=
-x.reasons.map(a=>`<p>⚠ ${a}</p>`).join("");
+document.getElementById("result").innerHTML=`
+<h2>RISK SCORE: ${r.risk_score}</h2>
+<h2>DECISION: ${r.decision}</h2>
+<h3>Evidence</h3>
+${r.reasons.map(x=>`<p>→ ${x}</p>`).join("")}
+`;
 }
 </script>
+
 </body>
 </html>
