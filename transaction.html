@@ -2,122 +2,110 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>SecureFlow Command Center</title>
+<title>Secure Payment Card</title>
 
 <style>
 body{
 margin:0;
+background:#dbeafe;
 font-family:Arial;
-background:#0f172a;
+}
+
+.card{
+width:650px;
+max-width:90%;
+margin:50px auto;
+}
+
+.bankcard{
+height:230px;
+background:linear-gradient(135deg,#111827,#1e3a8a);
 color:white;
-}
-
-.top{
-padding:25px;
-background:#020617;
-}
-
-.grid{
-max-width:1000px;
-margin:30px auto;
-display:grid;
-grid-template-columns:250px 1fr;
-gap:20px;
-}
-
-.menu{
-background:#1e293b;
-padding:20px;
-border-radius:15px;
-}
-
-.menu p{
-padding:15px;
-border-bottom:1px solid #334155;
-}
-
-.main{
-background:#1e293b;
+border-radius:20px;
 padding:30px;
+box-shadow:0 15px 30px #94a3b8;
+}
+
+.chip{
+width:50px;
+height:35px;
+background:#fbbf24;
+border-radius:7px;
+}
+
+.amount{
+font-size:35px;
+margin-top:35px;
+}
+
+.panel{
+margin-top:25px;
+background:white;
+padding:25px;
 border-radius:15px;
 }
 
 input[type=number]{
 width:100%;
 padding:15px;
-background:#0f172a;
-color:white;
-border:1px solid #475569;
 box-sizing:border-box;
 }
 
 label{
-display:inline-block;
-width:48%;
-padding:12px 0;
+display:block;
+padding:8px;
 }
 
 button{
 width:100%;
 padding:15px;
-background:#14b8a6;
+background:#1e3a8a;
 color:white;
 border:0;
-border-radius:8px;
-}
-
-.score{
-font-size:60px;
-text-align:center;
+margin-top:15px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="top">
-<h1>🎛 SecureFlow Command Center</h1>
+<div class="card">
+
+<div class="bankcard">
+
+<div class="chip"></div>
+
+<h2>SECUREFLOW AI</h2>
+
+<div class="amount" id="display">₹ 0</div>
+
 </div>
 
-<div class="grid">
+<div class="panel">
 
-<div class="menu">
-<h3>CONTROL PANEL</h3>
-<p>Overview</p>
-<p>Fraud Detection</p>
-<p>Transactions</p>
-<p>Risk Engine</p>
-<p>AI Questions</p>
-</div>
+<h2>Security Verification</h2>
 
-<div class="main">
+<input id="amount" type="number" placeholder="Enter amount"
+oninput="display.innerText='₹ '+this.value">
 
-<h2>Transaction Risk Engine</h2>
+<label><input id="unusual_time" type="checkbox"> Unusual Time</label>
+<label><input id="unusual_frequency" type="checkbox"> Unusual Frequency</label>
+<label><input id="new_device" type="checkbox"> New Device</label>
+<label><input id="unusual_location" type="checkbox"> Unusual Location</label>
+<label><input id="sudden_location_change" type="checkbox"> Location Change</label>
+<label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label>
+<label><input id="no_previous_transactions" type="checkbox"> No Previous Transaction</label>
+<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
 
-<input id="amount" type="number" placeholder="Transaction Amount">
+<button onclick="verify()">VERIFY TRANSACTION</button>
 
-<label><input id="unusual_time" type="checkbox"> Time</label>
-<label><input id="unusual_frequency" type="checkbox"> Frequency</label>
-<label><input id="new_device" type="checkbox"> Device</label>
-<label><input id="unusual_location" type="checkbox"> Location</label>
-<label><input id="sudden_location_change" type="checkbox"> Movement</label>
-<label><input id="unknown_beneficiary" type="checkbox"> Recipient</label>
-<label><input id="no_previous_transactions" type="checkbox"> History</label>
-<label><input id="unusual_beneficiary_amount" type="checkbox"> Amount</label>
-
-<button onclick="runEngine()">EXECUTE RISK ENGINE</button>
-
-<div class="score" id="score">--</div>
-
-<h2 id="decision">ENGINE IDLE</h2>
-
-<ul id="reasons"></ul>
+<h2 id="result">Waiting...</h2>
 
 </div>
 </div>
 
 <script>
-async function runEngine(){
+async function verify(){
 
 const ids=["unusual_time","unusual_frequency","new_device","unusual_location","sudden_location_change","unknown_beneficiary","no_previous_transactions","unusual_beneficiary_amount"];
 
@@ -132,9 +120,8 @@ body:JSON.stringify(data)
 
 const x=await r.json();
 
-document.getElementById("score").innerText=x.risk_score;
-document.getElementById("decision").innerText=x.decision;
-document.getElementById("reasons").innerHTML=x.reasons.map(a=>`<li>${a}</li>`).join("");
+document.getElementById("result").innerText=
+x.decision+" | Risk Score: "+x.risk_score;
 }
 </script>
 
