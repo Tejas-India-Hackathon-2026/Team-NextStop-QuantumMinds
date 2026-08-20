@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Complete Analytics</title>
+<title>SecureFlow-AI | Time Analytics</title>
 
 <link rel="stylesheet"
 href="style10.css">
@@ -18,95 +18,22 @@ href="style10.css">
 
 <body>
 
-
 <main class="main">
 
 
 <header class="header">
 
-
 <div>
 
-<h1>
-SecureFlow-AI Analytics
-</h1>
+<h1>Time-Based Fraud Analytics</h1>
 
 <p>
-Complete UPI fraud intelligence dashboard
+Identify suspicious transaction time patterns
 </p>
 
 </div>
 
-
-<div class="avatar">
-AI
-</div>
-
-
 </header>
-
-
-
-<section class="stats">
-
-
-<div class="stat">
-
-<div class="stat-title">
-TOTAL TRANSACTIONS
-</div>
-
-<div class="stat-number blue">
-40
-</div>
-
-</div>
-
-
-
-<div class="stat">
-
-<div class="stat-title">
-SAFE
-</div>
-
-<div class="stat-number green">
-28
-</div>
-
-</div>
-
-
-
-<div class="stat">
-
-<div class="stat-title">
-HIGH RISK
-</div>
-
-<div class="stat-number red">
-07
-</div>
-
-</div>
-
-
-
-<div class="stat">
-
-<div class="stat-title">
-AI ACCURACY
-</div>
-
-<div class="stat-number blue">
-94%
-</div>
-
-</div>
-
-
-</section>
-
 
 
 <section class="panel factors">
@@ -115,36 +42,31 @@ AI ACCURACY
 <div class="panel-title">
 
 <h2>
-Fraud Detection Analytics
+Transaction Activity by Time
 </h2>
 
 <p>
-Real-time analysis of SecureFlow-AI transaction data
+Hourly transaction monitoring
 </p>
 
 </div>
 
 
-
 <table>
-
 
 <thead>
 
 <tr>
 
-<th>Analytics Category</th>
-
-<th>Value</th>
-
-<th>Risk Level</th>
-
-<th>System Decision</th>
+<th>Time Period</th>
+<th>Transactions</th>
+<th>Safe</th>
+<th>Suspicious</th>
+<th>Risk</th>
 
 </tr>
 
 </thead>
-
 
 
 <tbody>
@@ -152,102 +74,63 @@ Real-time analysis of SecureFlow-AI transaction data
 
 <tr>
 
-<td>
-Transaction Volume
-</td>
+<td>06:00 – 10:00</td>
+<td>06</td>
+<td>06</td>
+<td>00</td>
 
 <td>
-40 Transactions
-</td>
-
-<td>
-
-<span class="badge safe">
-NORMAL
-</span>
-
-</td>
-
-<td>
-MONITOR
-</td>
-
-</tr>
-
-
-
-<tr>
-
-<td>
-Safe Transactions
-</td>
-
-<td>
-28 Transactions
-</td>
-
-<td>
-
 <span class="badge safe">
 LOW
 </span>
-
-</td>
-
-<td>
-ALLOW
 </td>
 
 </tr>
 
 
+<tr>
+
+<td>10:00 – 14:00</td>
+<td>12</td>
+<td>10</td>
+<td>02</td>
+
+<td>
+<span class="badge safe">
+LOW
+</span>
+</td>
+
+</tr>
+
 
 <tr>
 
-<td>
-Medium Risk
-</td>
+<td>14:00 – 18:00</td>
+<td>14</td>
+<td>09</td>
+<td>05</td>
 
 <td>
-05 Transactions
-</td>
-
-<td>
-
 <span class="badge review">
 MEDIUM
 </span>
-
-</td>
-
-<td>
-REVIEW
 </td>
 
 </tr>
 
 
-
 <tr>
 
-<td>
-High Risk
-</td>
+<td>18:00 – 22:00</td>
+<td>08</td>
+<td>03</td>
+<td>05</td>
 
 <td>
-07 Transactions
-</td>
-
-<td>
-
 <span class="badge high">
 HIGH
 </span>
-
-</td>
-
-<td>
-BLOCK
 </td>
 
 </tr>
@@ -255,241 +138,35 @@ BLOCK
 
 </tbody>
 
-
 </table>
 
-
 </section>
-
 
 
 <section class="panel factors">
 
-
 <div class="panel-title">
 
 <h2>
-AI Risk Factors
+Peak Risk Period
 </h2>
 
 <p>
-Behavioural indicators detected by the fraud engine
+18:00 – 22:00 shows the highest suspicious activity
 </p>
 
 </div>
-
-
-
-<div class="factor-grid">
-
-
-<div class="factor">
-
-<h3>
-Unusual Amount
-</h3>
-
-<p>
-High-value transaction compared with user history.
-</p>
 
 <div class="progress">
 
-<div style="width:85%"></div>
-
-</div>
-
-</div>
-
-
-
-<div class="factor">
-
-<h3>
-New Recipient
-</h3>
-
-<p>
-Recipient has little or no transaction history.
-</p>
-
-<div class="progress">
-
-<div style="width:72%"></div>
-
-</div>
-
-</div>
-
-
-
-<div class="factor">
-
-<h3>
-Location Anomaly
-</h3>
-
-<p>
-Transaction occurred from an unusual location.
-</p>
-
-<div class="progress">
-
-<div style="width:61%"></div>
-
-</div>
-
-</div>
-
-
-
-<div class="factor">
-
-<h3>
-Transaction Velocity
-</h3>
-
-<p>
-Multiple payments detected within a short period.
-</p>
-
-<div class="progress">
-
-<div style="width:78%"></div>
-
-</div>
-
-</div>
-
-
-
-</div>
-
-
-</section>
-
-
-
-<section class="panel factors">
-
-
-<div class="panel-title">
-
-<h2>
-AI Performance
-</h2>
-
-<p>
-Current SecureFlow-AI detection performance
-</p>
-
-</div>
-
-
-<div class="factor-grid">
-
-
-<div class="factor">
-
-<h3>
-Accuracy
-</h3>
-
-<p>
-94%
-</p>
-
-<div class="progress">
-
-<div style="width:94%"></div>
-
-</div>
-
-</div>
-
-
-<div class="factor">
-
-<h3>
-Precision
-</h3>
-
-<p>
-92%
-</p>
-
-<div class="progress">
-
-<div style="width:92%"></div>
-
-</div>
-
-</div>
-
-
-<div class="factor">
-
-<h3>
-Recall
-</h3>
-
-<p>
-91%
-</p>
-
-<div class="progress">
-
-<div style="width:91%"></div>
-
-</div>
-
-</div>
-
-
-<div class="factor">
-
-<h3>
-F1 Score
-</h3>
-
-<p>
-91.5%
-</p>
-
-<div class="progress">
-
-<div style="width:91.5%"></div>
-
-</div>
-
-</div>
-
+<div style="width:82%"></div>
 
 </div>
 
 </section>
-
-
-
-<footer>
-
-<span>
-© 2026 SecureFlow-AI
-</span>
-
-<span>
-AI-Powered UPI Fraud Detection
-</span>
-
-<span>
-System Status: Operational
-</span>
-
-</footer>
 
 
 </main>
-
 
 </body>
 
