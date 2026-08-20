@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Database Status</title>
+<title>SecureFlow-AI | Notifications</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -18,43 +18,22 @@
 <header class="header">
 
 <div>
-<h1>Database Status</h1>
-<p>SecureFlow-AI database monitoring</p>
+<h1>Notification Center</h1>
+<p>System and security notifications</p>
 </div>
 
-<div class="avatar">DB</div>
+<div class="avatar">N</div>
 
 </header>
-
-<section class="stats">
-
-<div class="stat">
-<div class="stat-title">DATABASE</div>
-<div class="stat-number green">ONLINE</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">USERS</div>
-<div class="stat-number blue">08</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">TRANSACTIONS</div>
-<div class="stat-number blue">40</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">TABLES</div>
-<div class="stat-number green">12</div>
-</div>
-
-</section>
 
 <section class="panel factors">
 
 <div class="panel-title">
-<h2>Database Tables</h2>
-<p>Current SecureFlow-AI database structure</p>
+
+<h2>Recent Notifications</h2>
+
+<p>Important SecureFlow-AI events</p>
+
 </div>
 
 <table>
@@ -62,9 +41,10 @@
 <thead>
 
 <tr>
-<th>Table</th>
-<th>Records</th>
-<th>Purpose</th>
+<th>Time</th>
+<th>Notification</th>
+<th>Category</th>
+<th>Priority</th>
 <th>Status</th>
 </tr>
 
@@ -73,119 +53,27 @@
 <tbody>
 
 <tr>
-<td>users</td>
-<td>08</td>
-<td>User information</td>
-<td><span class="badge safe">ACTIVE</span></td>
+<td>12:45 PM</td>
+<td>High-risk transaction blocked</td>
+<td>Fraud</td>
+<td>Critical</td>
+<td><span class="badge high">NEW</span></td>
 </tr>
 
 <tr>
-<td>transactions</td>
-<td>40</td>
-<td>Transaction history</td>
-<td><span class="badge safe">ACTIVE</span></td>
-</tr>
-
-<tr>
-<td>risk_factors</td>
-<td>120</td>
-<td>Fraud signals</td>
-<td><span class="badge safe">ACTIVE</span></td>
-</tr>
-
-<tr>
-<td>alerts</td>
-<td>12</td>
-<td>Securi<!DOCTYPE html>
-<html lang="en">
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>SecureFlow-AI | Risk Factors</title>
-
-<link rel="stylesheet" href="style10.css">
-
-</head>
-
-<body>
-
-<main class="main">
-
-<header class="header">
-
-<div>
-<h1>Risk Factors</h1>
-<p>Fraud signals contributing to AI risk scores</p>
-</div>
-
-<div class="avatar">RF</div>
-
-</header>
-
-<section class="panel factors">
-
-<div class="panel-title">
-<h2>Risk Factor Database</h2>
-<p>Active fraud detection signals</p>
-</div>
-
-<table>
-
-<thead>
-
-<tr>
-<th>Factor ID</th>
-<th>Risk Factor</th>
-<th>Weight</th>
-<th>Occurrences</th>
-<th>Impact</th>
-<th>Status</th>
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-<td>RF001</td>
-<td>Unknown Recipient</td>
-<td>25</td>
-<td>14</td>
-<td>High</td>
-<td><span class="badge high">ACTIVE</span></td>
-</tr>
-
-<tr>
-<td>RF002</td>
-<td>Unusual Amount</td>
-<td>30</td>
-<td>18</td>
-<td>High</td>
-<td><span class="badge high">ACTIVE</span></td>
-</tr>
-
-<tr>
-<td>RF003</td>
-<td>New Device</td>
-<td>15</td>
-<td>09</td>
+<td>12:40 PM</td>
+<td>Transaction requires review</td>
+<td>Security</td>
 <td>Medium</td>
-<td><span class="badge review">ACTIVE</span></td>
+<td><span class="badge review">NEW</span></td>
 </tr>
 
-</tbody>
-
-</table>
-
-</section>
-
-</main>
-
-</body>
-</html>ty alerts</td>
-<td><span class="badge safe">ACTIVE</span></td>
+<tr>
+<td>12:30 PM</td>
+<td>Database backup completed</td>
+<td>System</td>
+<td>Low</td>
+<td><span class="badge safe">READ</span></td>
 </tr>
 
 </tbody>
