@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Security Events</title>
+<title>SecureFlow-AI | Fraud Statistics</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -18,80 +18,102 @@
 <header class="header">
 
 <div>
-<h1>Security Events</h1>
-<p>Recent security activities across the system</p>
+<h1>Fraud Statistics</h1>
+<p>Security statistics generated from transaction activity</p>
 </div>
 
-<div class="avatar">SE</div>
+<div class="avatar">FS</div>
 
 </header>
+
+
+<section class="stats">
+
+<div class="stat">
+<div class="stat-title">TRANSACTIONS</div>
+<div class="stat-number blue">40</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">FRAUD ALERTS</div>
+<div class="stat-number red">12</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">BLOCKED</div>
+<div class="stat-number red">10</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">SAFE</div>
+<div class="stat-number green">18</div>
+</div>
+
+</section>
 
 
 <section class="panel factors">
 
 <div class="panel-title">
 
-<h2>Event Timeline</h2>
+<h2>Fraud Categories</h2>
 
-<p>Latest system security events</p>
+<p>Distribution of detected suspicious behaviour</p>
 
 </div>
 
 
-<table>
+<div class="factor-grid">
 
-<thead>
+<div class="factor">
 
-<tr>
-<th>Time</th>
-<th>Event</th>
-<th>User</th>
-<th>Risk</th>
-<th>System Action</th>
-<th>Status</th>
-</tr>
+<h3>Unusual Amount</h3>
 
-</thead>
+<p>18 cases</p>
 
+<div class="progress">
+<div style="width:90%"></div>
+</div>
 
-<tbody>
+</div>
 
-<tr>
-<td>12:45</td>
-<td>High Risk Payment</td>
-<td>Amit Kumar</td>
-<td>91</td>
-<td>Transaction Blocked</td>
-<td>
-<span class="badge high">BLOCKED</span>
-</td>
-</tr>
+<div class="factor">
 
-<tr>
-<td>12:42</td>
-<td>Rapid Transactions</td>
-<td>Rohan Gupta</td>
-<td>67</td>
-<td>Analyst Review</td>
-<td>
-<span class="badge review">REVIEW</span>
-</td>
-</tr>
+<h3>Unknown Recipient</h3>
 
-<tr>
-<td>12:39</td>
-<td>Normal Payment</td>
-<td>Rahul Sharma</td>
-<td>12</td>
-<td>Transaction Allowed</td>
-<td>
-<span class="badge safe">SAFE</span>
-</td>
-</tr>
+<p>14 cases</p>
 
-</tbody>
+<div class="progress">
+<div style="width:75%"></div>
+</div>
 
-</table>
+</div>
+
+<div class="factor">
+
+<h3>New Device</h3>
+
+<p>09 cases</p>
+
+<div class="progress">
+<div style="width:55%"></div>
+</div>
+
+</div>
+
+<div class="factor">
+
+<h3>Location Anomaly</h3>
+
+<p>07 cases</p>
+
+<div class="progress">
+<div style="width:45%"></div>
+</div>
+
+</div>
+
+</div>
 
 </section>
 
