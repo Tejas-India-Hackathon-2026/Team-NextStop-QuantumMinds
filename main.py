@@ -1,54 +1,69 @@
-# services/upi_validator.py
+# services/travel_detection.py
 
-import re
+from math import radians, sin, cos, sqrt, atan2
 
 
-class UPIValidator:
+class TravelDetector:
 
-    UPI_PATTERN = re.compile(
-        r"^[a-zA-Z0-9._-]{2,256}@[a-zA-Z]{2,64}$"
-    )
+    EARTH_RADIUS_KM = 6371
 
     @classmethod
-    def validate(cls, upi_id: str):
+    def distance(
+        cls,
+        lat1,
+        lon1,
+        lat2,
+        lon2
+    ):
 
-        if not upi_id:
+        lat1 = radians(lat1)
+        lat2 = radians(lat2)
+
+        delta_lat = radians(lat2 - lat1)
+        delta_lon = radians(lon2 - lon1)
+
+        a = (
+            sin(delta_lat / 2) ** 2
+            +
+            cos(lat1)
+            * cos(lat2)
+            * sin(delta_lon / 2) ** 2
+        )
+
+        c = 2 * atan2(
+            sqrt(a),
+            sqrt(1 - a)
+        )
+
+        return cls.EARTH_RADIUS_KM * c
+
+    @classmethod
+    def detect(
+        cls,
+        previous,
+        current,
+        hours
+    ):
+
+        distance = cls.distance(
+            previous["lat"],
+            previous["lon"],
+            current["lat"],
+            current["lon"]
+        )
+
+        if hours <= 0:
             return {
-                "valid": False,
-                "reason": "UPI ID is empty"
+                "suspicious": True,
+                "distance_km": distance
             }
 
-        upi_id = upi_id.strip()
+        speed = distance / hours
 
-        if not cls.UPI_PATTERN.match(upi_id):
-
-            return {
-                "valid": False,
-                "reason": "Invalid UPI ID format"
-            }
-
-        username, provider = upi_id.split("@", 1)
+        suspicious = speed > 900
 
         return {
-            "valid": True,
-            "username": username,
-            "provider": provider
+            "distance_km": round(distance, 2),
+            "required_speed_kmh": round(speed, 2),
+            "suspicious": suspicious
         }
-
-
-def validate_transaction_upi(
-    sender_upi,
-    receiver_upi
-):
-
-    sender = UPIValidator.validate(sender_upi)
-    receiver = UPIValidator.validate(receiver_upi)
-
-    return {
-        "sender": sender,
-        "receiver": receiver,
-        "valid": (
-            sender["valid"] and
-            receiver["valid"]
-        )
-    }
