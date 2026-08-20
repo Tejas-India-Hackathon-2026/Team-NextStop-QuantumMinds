@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Device Security</title>
+    <title>Location Security</title>
 
     <style>
         body {
@@ -11,95 +11,80 @@
             padding: 30px;
         }
 
-        .device {
+        .location-box {
+            max-width: 700px;
+            margin: auto;
             background: white;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 30px;
+            border-radius: 15px;
         }
 
-        .known {
+        .location {
+            padding: 18px;
+            margin-top: 12px;
+            background: #f9fafb;
+            border-radius: 10px;
+        }
+
+        .safe {
             color: green;
-            font-weight: bold;
         }
 
-        .new {
-            color: red;
-            font-weight: bold;
-        }
-
-        button {
-            padding: 9px 15px;
-            border: none;
-            border-radius: 7px;
-            background: #dc2626;
-            color: white;
-            cursor: pointer;
+        .warning {
+            color: #d97706;
         }
     </style>
 </head>
 
 <body>
 
-<h1>Device Security</h1>
+<div class="location-box">
 
-<div class="device">
+    <h1>Location Security</h1>
 
-    <div>
-        <h3>Windows Desktop</h3>
-        <p>Device ID: DEV-1001</p>
-        <span class="known">Trusted Device</span>
+    <div class="location">
+
+        <h3>Current Location</h3>
+
+        <p>
+            Patna, Bihar
+        </p>
+
+        <strong class="safe">
+            ✓ Recognized Location
+        </strong>
+
     </div>
 
-    <button onclick="removeDevice('DEV-1001')">
-        Remove
-    </button>
+    <div class="location">
 
-</div>
+        <h3>Previous Location</h3>
 
-<div class="device">
+        <p>
+            Delhi, India
+        </p>
 
-    <div>
-        <h3>Android Phone</h3>
-        <p>Device ID: DEV-1002</p>
-        <span class="known">Trusted Device</span>
+        <strong class="safe">
+            ✓ Previously Used
+        </strong>
+
     </div>
 
-    <button onclick="removeDevice('DEV-1002')">
-        Remove
-    </button>
+    <div class="location">
 
-</div>
+        <h3>Recent Suspicious Location</h3>
 
-<div class="device">
+        <p>
+            Unknown Location
+        </p>
 
-    <div>
-        <h3>Unknown Device</h3>
-        <p>Device ID: DEV-1099</p>
-        <span class="new">⚠ New Device</span>
+        <strong class="warning">
+            ⚠ New Location Detected
+        </strong>
+
     </div>
 
-    <button onclick="removeDevice('DEV-1099')">
-        Block
-    </button>
-
 </div>
-
-<script>
-
-function removeDevice(deviceId) {
-
-    alert(
-        "Security action requested for " +
-        deviceId
-    );
-
-}
-
-</script>
 
 </body>
 </html>
