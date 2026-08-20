@@ -3,78 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SecureFlow AI</title>
+<title>SecureFlow-AI FinTech</title>
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:linear-gradient(135deg,#0f0720,#111827,#071426);color:white}
-.sidebar{position:fixed;width:245px;height:100vh;background:rgba(10,8,25,.9);padding:25px;border-right:1px solid #7c3aed}
-.logo{font-size:22px;font-weight:bold;color:#c084fc;margin-bottom:45px}
-nav a{display:block;color:#a78bfa;text-decoration:none;padding:14px;margin:6px 0;border-radius:10px}
-nav a:hover,nav a.active{background:#6d28d9;color:white}
-.main{margin-left:245px;padding:30px}
-header{display:flex;justify-content:space-between}
-header p{color:#a78bfa}
+body{margin:0;font-family:Arial;background:#f0fdf4;color:#052e16}
+.sidebar{position:fixed;width:240px;height:100vh;background:#052e16;padding:25px}
+.logo{color:#22c55e;font-size:21px;font-weight:bold;margin-bottom:40px}
+nav a{display:block;color:#86efac;padding:14px;text-decoration:none;border-radius:8px;margin:5px 0}
+nav a:hover,nav a.active{background:#166534;color:white}
+.main{margin-left:240px;padding:30px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:25px}
-.card{padding:22px;background:rgba(30,20,60,.8);border:1px solid #4c1d95;border-radius:15px}
-.card h2{color:#c084fc}
+.card{background:white;padding:22px;border:1px solid #bbf7d0;border-radius:12px}
+.card h2{color:#16a34a;margin-top:8px}
 .grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-top:20px}
-.panel{background:rgba(20,15,40,.9);border:1px solid #4c1d95;border-radius:15px;overflow:hidden}
+.panel{background:white;border:1px solid #bbf7d0;border-radius:12px;overflow:hidden}
 .panel h2{padding:20px}
 table{width:100%;border-collapse:collapse}
-th{padding:13px;text-align:left;color:#c084fc;background:#17102d}
-td{padding:14px;border-top:1px solid #312e81}
-.high{color:#fb7185}.safe{color:#4ade80}.medium{color:#fbbf24}
-.score{font-size:70px;text-align:center;padding:35px;color:#c084fc}
+th{background:#f0fdf4;padding:13px;text-align:left;color:#166534}
+td{padding:14px;border-top:1px solid #dcfce7}
+.high{color:#dc2626}.safe{color:#16a34a}.review{color:#ea580c}
 </style>
 </head>
 
 <body>
 
 <aside class="sidebar">
-<div class="logo">✦ SecureFlow-AI</div>
+<div class="logo">🛡 SecureFlow</div>
 <nav>
-<a class="active" href="#">⌂ Dashboard</a>
-<a href="#">⇄ Transactions</a>
-<a href="#">⚠ AI Risk Engine</a>
-<a href="#">♙ Users</a>
-<a href="#">▣ Reports</a>
+<a class="active" href="#">Dashboard</a>
+<a href="#">Transactions</a>
+<a href="#">Risk Analysis</a>
+<a href="#">Users</a>
+<a href="#">Reports</a>
 </nav>
 </aside>
 
 <main class="main">
 
-<header>
-<div>
-<h1>AI Fraud Intelligence</h1>
-<p>Behavioural transaction analysis powered by AI</p>
-</div>
-<div>🤖 AI ENGINE ACTIVE</div>
-</header>
+<h1>SecureFlow-AI</h1>
+<p style="color:#64748b">Secure UPI transaction monitoring</p>
 
 <section class="stats">
 <div class="card"><p>Total Transactions</p><h2>40</h2></div>
-<div class="card"><p>AI Alerts</p><h2 class="high">8</h2></div>
+<div class="card"><p>High Risk</p><h2 class="high">8</h2></div>
 <div class="card"><p>Safe</p><h2 class="safe">27</h2></div>
-<div class="card"><p>Review</p><h2 class="medium">5</h2></div>
+<div class="card"><p>Review</p><h2 class="review">5</h2></div>
 </section>
 
 <section class="grid">
 
 <div class="panel">
-<h2>AI Transaction Analysis</h2>
+<h2>Transaction History</h2>
 <table>
-<tr><th>ID</th><th>Sender</th><th>Amount</th><th>Score</th><th>Status</th></tr>
-<tr><td>TXN10001</td><td>Soumadip Das</td><td>₹12,500</td><td class="high">86</td><td class="high">HIGH</td></tr>
-<tr><td>TXN10002</td><td>Shubham Paul</td><td>₹2,000</td><td class="safe">18</td><td class="safe">SAFE</td></tr>
-<tr><td>TXN10003</td><td>Tridip Debroy</td><td>₹35,000</td><td class="high">91</td><td class="high">HIGH</td></tr>
+<tr><th>ID</th><th>Sender</th><th>Receiver</th><th>Amount</th><th>Status</th></tr>
+<tr><td>TXN10001</td><td>Soumadip Das</td><td>Shubham Paul</td><td>₹12,500</td><td class="high">High Risk</td></tr>
+<tr><td>TXN10002</td><td>Shubham Paul</td><td>Tridip Debroy</td><td>₹2,000</td><td class="safe">Safe</td></tr>
+<tr><td>TXN10003</td><td>Tridip Debroy</td><td>Soumadip Das</td><td>₹35,000</td><td class="high">High Risk</td></tr>
 </table>
 </div>
 
 <div class="panel">
-<h2>AI Risk Score</h2>
-<div class="score">62%</div>
-<p style="text-align:center;color:#a78bfa">Behavioural Risk Level</p>
+<h2>Security Status</h2>
+<div style="text-align:center;padding:40px">
+<div style="font-size:65px;color:#16a34a">✓</div>
+<h3>Protected</h3>
+<p>AI monitoring active</p>
+</div>
 </div>
 
 </section>
