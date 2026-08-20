@@ -1,3 +1,49 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+class Transaction(BaseModel):
+
+    # A. Transaction behaviour
+    amount: float
+    unusual_frequency: bool
+    unusual_time: bool
+    high_velocity: bool
+
+    # B. Device behaviour
+    known_device: bool
+    device_changed: bool
+
+    # C. Location behaviour
+    usual_location: bool
+    sudden_location_change: bool
+
+    # D. Relationship/history
+    known_beneficiary: bool
+    previous_transactions: bool
+    typical_amount_with_beneficiary: bool
+    beneficiary_matches_history: bool
+
+
+@app.get("/")
+def home():
+
+    return {
+        "message": "SecureFlow-AI Behavioural Engine is running"
+    }
+
+
 @app.post("/transaction")
 def transaction(tx: Transaction):
 
@@ -5,7 +51,7 @@ def transaction(tx: Transaction):
     reasons = []
     questions = []
 
-    # Transaction behaviour (maximum 35)
+    # Transaction behaviour
 
     if tx.amount > 10000:
         risk += 15
@@ -14,11 +60,14 @@ def transaction(tx: Transaction):
             f"Can you confirm a payment of ₹{tx.amount}?"
         )
 
+    if tx.unusual_frequency:
+        risk += 5
+
     if tx.unusual_time:
         risk += 10
         reasons.append("Time anomaly")
         questions.append(
-            "Are you intentionally making this payment now?"
+            "Do you usually make transactions at this time?"
         )
 
     if tx.high_velocity:
@@ -28,51 +77,59 @@ def transaction(tx: Transaction):
             "Have you made multiple transactions recently?"
         )
 
-    # Device behaviour (maximum 20)
+    # Device behaviour
 
-    if (not tx.known_device) or tx.device_changed:
+    device_flag = (
+        (not tx.known_device)
+        or tx.device_changed
+    )
+
+    if device_flag:
         risk += 20
         reasons.append("New device/session")
         questions.append(
             "Can you confirm that this device belongs to you?"
         )
 
-    # Location behaviour (maximum 15)
+    # Location behaviour
 
-    if (not tx.usual_location) or tx.sudden_location_change:
+    location_flag = (
+        (not tx.usual_location)
+        or tx.sudden_location_change
+    )
+
+    if location_flag:
         risk += 15
         reasons.append("Location anomaly")
         questions.append(
             "Can you confirm your current location?"
         )
 
-    # Relationship/history (maximum 30)
+    # Relationship/history
 
-    relationship_risk = 0
+    beneficiary_flag = not tx.known_beneficiary
 
-    if not tx.known_beneficiary:
-        relationship_risk += 15
+    behaviour_flag = (
+        (not tx.previous_transactions)
+        or (not tx.typical_amount_with_beneficiary)
+        or (not tx.beneficiary_matches_history)
+    )
 
-    if not tx.previous_transactions:
-        relationship_risk += 5
+    if beneficiary_flag:
+        risk += 15
+        reasons.append("New beneficiary")
+        questions.append(
+            "Do you recognize this beneficiary?"
+        )
 
-    if not tx.typical_amount_with_beneficiary:
-        relationship_risk += 5
-
-    if not tx.beneficiary_matches_history:
-        relationship_risk += 5
-
-    if relationship_risk > 0:
-
-        risk += min(15, relationship_risk)
-
+    if behaviour_flag:
+        risk += 15
         reasons.append("Behaviour deviation")
-
         questions.append(
             "Does this transaction match your historical behaviour?"
         )
 
-    # Limit the score to 100
+    # Maximum score = 100
 
     risk = min(risk, 100)
 
@@ -88,6 +145,7 @@ def transaction(tx: Transaction):
     return {
         "risk_score": risk,
         "decision": decision,
+        "transaction_delayed": risk >= 50,
         "reasons": reasons,
         "ai_questions": questions
     }
