@@ -1,39 +1,31 @@
-# services/beneficiary_risk.py
+# services/time_risk.py
 
-from datetime import datetime
-
-
-class BeneficiaryRiskAnalyzer:
+class TransactionTimeAnalyzer:
 
     def analyze(
         self,
-        beneficiary_id,
-        known_beneficiaries,
-        beneficiary_age_days
+        transaction_hour,
+        normal_hours
     ):
 
-        risk = 0
-        reasons = []
+        if transaction_hour in normal_hours:
 
-        if beneficiary_id not in known_beneficiaries:
-            risk += 35
-            reasons.append(
-                "Beneficiary has not been used previously."
-            )
+            return {
+                "risk": 0,
+                "status": "NORMAL",
+                "reason": "Transaction occurred during normal hours."
+            }
 
-        if beneficiary_age_days < 1:
-            risk += 30
-            reasons.append(
-                "Beneficiary was recently added."
-            )
+        if transaction_hour >= 0 and transaction_hour < 5:
 
-        elif beneficiary_age_days < 7:
-            risk += 15
-            reasons.append(
-                "Beneficiary is relatively new."
-            )
+            return {
+                "risk": 30,
+                "status": "HIGH_RISK_TIME",
+                "reason": "Transaction occurred during late-night hours."
+            }
 
         return {
-            "risk_score": min(risk, 100),
-            "reasons": reasons
+            "risk": 15,
+            "status": "UNUSUAL_TIME",
+            "reason": "Transaction occurred outside normal user activity."
         }
