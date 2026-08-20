@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Investigation</title>
+<title>SecureFlow-AI | Alert History</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -20,22 +20,47 @@
 
 <div>
 
-<h1>Alert Investigation</h1>
+<h1>Alert History</h1>
 
-<p>Investigate suspicious transaction behaviour</p>
+<p>Historical record of fraud alerts</p>
 
 </div>
 
 </header>
 
 
+<section class="stats">
+
+<div class="stat">
+<div class="stat-title">TOTAL</div>
+<div class="stat-number blue">42</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">RESOLVED</div>
+<div class="stat-number green">35</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">BLOCKED</div>
+<div class="stat-number red">29</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">PENDING</div>
+<div class="stat-number orange">07</div>
+</div>
+
+</section>
+
+
 <section class="panel factors">
 
 <div class="panel-title">
 
-<h2>Investigation Queue</h2>
+<h2>Previous Alerts</h2>
 
-<p>Alerts requiring security analyst review</p>
+<p>Historical fraud detection records</p>
 
 </div>
 
@@ -46,12 +71,12 @@
 
 <tr>
 
-<th>Case ID</th>
+<th>Alert ID</th>
+<th>Date</th>
 <th>User</th>
-<th>Transaction</th>
 <th>Risk</th>
 <th>Reason</th>
-<th>Investigation</th>
+<th>Status</th>
 
 </tr>
 
@@ -62,14 +87,14 @@
 
 <tr>
 
-<td>CASE001</td>
+<td>ALT001</td>
+<td>21 Aug 2026</td>
 <td>Amit Kumar</td>
-<td>TXN1002</td>
 <td>91</td>
 <td>Unknown Recipient</td>
 
 <td>
-<span class="badge high">URGENT</span>
+<span class="badge high">BLOCKED</span>
 </td>
 
 </tr>
@@ -77,29 +102,29 @@
 
 <tr>
 
-<td>CASE002</td>
+<td>ALT002</td>
+<td>20 Aug 2026</td>
+<td>Vikash Das</td>
+<td>96</td>
+<td>Unusual Amount</td>
+
+<td>
+<span class="badge high">BLOCKED</span>
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>ALT003</td>
+<td>19 Aug 2026</td>
 <td>Rohan Gupta</td>
-<td>TXN1004</td>
 <td>67</td>
-<td>Rapid Transactions</td>
+<td>Rapid Payments</td>
 
 <td>
-<span class="badge review">PENDING</span>
-</td>
-
-</tr>
-
-
-<tr>
-
-<td>CASE003</td>
-<td>Priya Das</td>
-<td>TXN1008</td>
-<td>84</td>
-<td>New Device</td>
-
-<td>
-<span class="badge high">URGENT</span>
+<span class="badge safe">RESOLVED</span>
 </td>
 
 </tr>
@@ -107,50 +132,6 @@
 </tbody>
 
 </table>
-
-</section>
-
-
-<section class="panel factors">
-
-<div class="panel-title">
-
-<h2>Investigation Status</h2>
-
-<p>Current case resolution</p>
-
-</div>
-
-
-<div class="factor-grid">
-
-<div class="factor">
-
-<h3>Open Cases</h3>
-
-<p>03 active investigations</p>
-
-</div>
-
-
-<div class="factor">
-
-<h3>Resolved Cases</h3>
-
-<p>09 investigations completed</p>
-
-</div>
-
-
-<div class="factor">
-
-<h3>Average Response</h3>
-
-<p>4.2 minutes</p>
-
-</div>
-
-</div>
 
 </section>
 
