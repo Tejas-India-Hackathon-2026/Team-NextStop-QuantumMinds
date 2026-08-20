@@ -1,39 +1,31 @@
-# services/moving_average.py
+# services/bayesian.py
 
-def calculate_moving_average(amounts, window=5):
-
-    if not amounts:
-        return 0.0
-
-    recent = amounts[-window:]
-
-    return sum(recent) / len(recent)
-
-
-def compare_with_average(current_amount, average):
-
-    if average == 0:
-        return 0.0
-
-    percentage_difference = (
-        (current_amount - average) / average
-    ) * 100
-
-    return round(percentage_difference, 2)
-
-
-def detect_unusual_spending(
-    current_amount,
-    average,
-    threshold=200
+def bayesian_probability(
+    fraud_probability,
+    feature_probability_given_fraud,
+    feature_probability_given_legitimate
 ):
+    """
+    Simplified Bayesian update.
 
-    difference = compare_with_average(
-        current_amount,
-        average
+    P(Fraud | Feature)
+    """
+
+    numerator = (
+        feature_probability_given_fraud
+        * fraud_probability
     )
 
-    return {
-        "percentage_difference": difference,
-        "unusual": abs(difference) >= threshold
-    }
+    legitimate_probability = 1 - fraud_probability
+
+    denominator = (
+        numerator
+        +
+        feature_probability_given_legitimate
+        * legitimate_probability
+    )
+
+    if denominator == 0:
+        return 0.0
+
+    return numerator / denominator
