@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | KYC</title>
+<title>SecureFlow-AI | User Security</title>
 
 <link rel="stylesheet"
 href="style10.css">
@@ -25,10 +25,10 @@ href="style10.css">
 
 <div>
 
-<h1>KYC Verification Database</h1>
+<h1>User Security Monitoring</h1>
 
 <p>
-Identity verification status of registered users
+Security status and authentication monitoring
 </p>
 
 </div>
@@ -36,15 +36,73 @@ Identity verification status of registered users
 </header>
 
 
+<section class="stats">
+
+
+<div class="stat">
+
+<div class="stat-title">
+SECURE USERS
+</div>
+
+<div class="stat-number green">
+07
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+SUSPICIOUS
+</div>
+
+<div class="stat-number red">
+01
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+2FA ENABLED
+</div>
+
+<div class="stat-number blue">
+08
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+LOCKED
+</div>
+
+<div class="stat-number orange">
+01
+</div>
+
+</div>
+
+
+</section>
+
+
 <section class="panel factors">
 
 
 <div class="panel-title">
 
-<h2>KYC Status</h2>
+<h2>User Security Status</h2>
 
 <p>
-Secure identity verification records
+Authentication and security information
 </p>
 
 </div>
@@ -56,11 +114,12 @@ Secure identity verification records
 
 <tr>
 
-<th>User ID</th>
-<th>Name</th>
-<th>Identity</th>
-<th>Address</th>
-<th>Verification</th>
+<th>User</th>
+<th>2FA</th>
+<th>Last Login</th>
+<th>Failed Attempts</th>
+<th>Device</th>
+<th>Status</th>
 
 </tr>
 
@@ -69,16 +128,26 @@ Secure identity verification records
 
 <tbody>
 
+
 <tr>
 
-<td>USR001</td>
 <td>Rahul Sharma</td>
-<td>Verified</td>
-<td>Verified</td>
 
 <td>
 <span class="badge safe">
-VERIFIED
+ON
+</span>
+</td>
+
+<td>20 Aug 2026</td>
+
+<td>0</td>
+
+<td>Trusted</td>
+
+<td>
+<span class="badge safe">
+SECURE
 </span>
 </td>
 
@@ -87,14 +156,23 @@ VERIFIED
 
 <tr>
 
-<td>USR002</td>
 <td>Priya Singh</td>
-<td>Verified</td>
-<td>Verified</td>
 
 <td>
 <span class="badge safe">
-VERIFIED
+ON
+</span>
+</td>
+
+<td>20 Aug 2026</td>
+
+<td>0</td>
+
+<td>Trusted</td>
+
+<td>
+<span class="badge safe">
+SECURE
 </span>
 </td>
 
@@ -103,10 +181,44 @@ VERIFIED
 
 <tr>
 
-<td>USR003</td>
 <td>Amit Kumar</td>
-<td>Verified</td>
-<td>Pending</td>
+
+<td>
+<span class="badge safe">
+ON
+</span>
+</td>
+
+<td>20 Aug 2026</td>
+
+<td>6</td>
+
+<td>Unknown</td>
+
+<td>
+<span class="badge high">
+SUSPICIOUS
+</span>
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>Rohan Gupta</td>
+
+<td>
+<span class="badge safe">
+ON
+</span>
+</td>
+
+<td>19 Aug 2026</td>
+
+<td>2</td>
+
+<td>Trusted</td>
 
 <td>
 <span class="badge review">
@@ -116,21 +228,6 @@ REVIEW
 
 </tr>
 
-
-<tr>
-
-<td>USR004</td>
-<td>Sneha Das</td>
-<td>Verified</td>
-<td>Verified</td>
-
-<td>
-<span class="badge safe">
-VERIFIED
-</span>
-</td>
-
-</tr>
 
 </tbody>
 
