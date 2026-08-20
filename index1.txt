@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ML Model Performance</title>
+    <title>Security Settings</title>
 
     <style>
         body {
@@ -11,115 +11,134 @@
             padding: 30px;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns:
-                repeat(4, 1fr);
-            gap: 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-        }
-
-        .value {
-            font-size: 35px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        .chart {
-            margin-top: 30px;
+        .settings {
+            max-width: 700px;
+            margin: auto;
             background: white;
             padding: 30px;
-            border-radius: 12px;
+            border-radius: 15px;
         }
 
-        .bar {
-            margin: 20px 0;
+        .setting {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
         }
 
-        .bar-background {
-            background: #e5e7eb;
-            height: 20px;
-            border-radius: 20px;
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
         }
 
-        .bar-value {
-            height: 20px;
+        .enabled {
+            background: #16a34a;
+            color: white;
+        }
+
+        .save {
+            margin-top: 25px;
             background: #111827;
-            border-radius: 20px;
+            color: white;
+            padding: 13px 25px;
         }
     </style>
 </head>
 
 <body>
 
-<h1>AI Model Performance</h1>
+<div class="settings">
 
-<br>
+    <h1>Security Settings</h1>
 
-<div class="grid">
+    <div class="setting">
 
-    <div class="card">
-        <h3>Accuracy</h3>
-        <div class="value">96.4%</div>
+        <div>
+            <h3>Real-Time Fraud Alerts</h3>
+            <p>Receive immediate transaction alerts.</p>
+        </div>
+
+        <button
+            class="enabled"
+            onclick="toggle(this)">
+            ON
+        </button>
+
     </div>
 
-    <div class="card">
-        <h3>Precision</h3>
-        <div class="value">94.8%</div>
+    <div class="setting">
+
+        <div>
+            <h3>New Device Detection</h3>
+            <p>Detect transactions from unknown devices.</p>
+        </div>
+
+        <button
+            class="enabled"
+            onclick="toggle(this)">
+            ON
+        </button>
+
     </div>
 
-    <div class="card">
-        <h3>Recall</h3>
-        <div class="value">93.7%</div>
+    <div class="setting">
+
+        <div>
+            <h3>Location Monitoring</h3>
+            <p>Monitor unusual transaction locations.</p>
+        </div>
+
+        <button
+            class="enabled"
+            onclick="toggle(this)">
+            ON
+        </button>
+
     </div>
 
-    <div class="card">
-        <h3>F1 Score</h3>
-        <div class="value">94.2%</div>
+    <div class="setting">
+
+        <div>
+            <h3>Dynamic Verification</h3>
+            <p>Ask additional questions for suspicious transactions.</p>
+        </div>
+
+        <button
+            class="enabled"
+            onclick="toggle(this)">
+            ON
+        </button>
+
     </div>
+
+    <button class="save">
+        Save Settings
+    </button>
 
 </div>
 
-<div class="chart">
+<script>
 
-    <h2>Model Metrics</h2>
+function toggle(button) {
 
-    <div class="bar">
-        <p>Accuracy</p>
-        <div class="bar-background">
-            <div
-                class="bar-value"
-                style="width:96%;">
-            </div>
-        </div>
-    </div>
+    if (button.innerText === "ON") {
 
-    <div class="bar">
-        <p>Precision</p>
-        <div class="bar-background">
-            <div
-                class="bar-value"
-                style="width:95%;">
-            </div>
-        </div>
-    </div>
+        button.innerText = "OFF";
+        button.style.background = "#6b7280";
 
-    <div class="bar">
-        <p>Recall</p>
-        <div class="bar-background">
-            <div
-                class="bar-value"
-                style="width:94%;">
-            </div>
-        </div>
-    </div>
+    } else {
 
-</div>
+        button.innerText = "ON";
+        button.style.background = "#16a34a";
+
+    }
+
+}
+
+</script>
 
 </body>
 </html>
