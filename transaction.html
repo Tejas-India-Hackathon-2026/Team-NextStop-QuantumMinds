@@ -1,234 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>SecureFlow Control Room</title>
+<title>SecureFlow AI</title>
 
 <style>
-
-*{
-box-sizing:border-box;
-}
-
 body{
-margin:0;
-font-family:Arial;
-background:#0b1120;
-color:#e2e8f0;
+    margin:0;
+    font-family:Arial;
+    background:#eef2ff;
 }
-
 header{
-background:#111827;
-padding:20px 35px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-border-bottom:1px solid #334155;
+    background:#312e81;
+    color:white;
+    padding:25px;
+    text-align:center;
 }
-
-.online{
-color:#22c55e;
+.container{
+    width:900px;
+    max-width:90%;
+    margin:30px auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
 }
-
-.dashboard{
-max-width:1200px;
-margin:30px auto;
-padding:20px;
-display:grid;
-grid-template-columns:2fr 1fr;
-gap:20px;
+.card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 5px 20px #c7d2fe;
 }
-
-.panel{
-background:#111827;
-border:1px solid #334155;
-border-radius:15px;
-padding:25px;
+input{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    box-sizing:border-box;
 }
-
-input[type=number]{
-width:100%;
-padding:15px;
-background:#020617;
-color:white;
-border:1px solid #475569;
-border-radius:8px;
+label{
+    display:block;
+    padding:7px;
 }
-
-.signals{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-margin-top:20px;
-}
-
-.signal{
-background:#1e293b;
-padding:15px;
-border-radius:8px;
-}
-
 button{
-width:100%;
-padding:16px;
-background:#2563eb;
-color:white;
-border:0;
-border-radius:8px;
-font-weight:bold;
-margin-top:20px;
+    width:100%;
+    padding:15px;
+    background:#312e81;
+    color:white;
+    border:0;
+    border-radius:8px;
+    margin-top:15px;
 }
-
-.riskbox{
-text-align:center;
-padding:25px;
-border:1px solid #475569;
-border-radius:15px;
-}
-
 .score{
-font-size:75px;
-font-weight:bold;
+    font-size:60px;
+    text-align:center;
+    font-weight:bold;
 }
-
-.decision{
-font-size:25px;
-padding:15px;
-background:#1e293b;
-border-radius:10px;
-}
-
-.log{
-margin-top:20px;
-background:#020617;
-padding:15px;
-border-radius:8px;
-font-family:monospace;
-min-height:150px;
-}
-
-@media(max-width:800px){
-
-.dashboard{
-grid-template-columns:1fr;
-}
-
-.signals{
-grid-template-columns:1fr;
-}
-
-}
-
 </style>
-
 </head>
 
 <body>
 
 <header>
-
-<div>
-<h2>🛡 SECUREFLOW AI</h2>
-</div>
-
-<div class="online">
-● FRAUD ENGINE ONLINE
-</div>
-
+<h1>🛡 SecureFlow-AI</h1>
+<p>UPI Fraud Detection & Risk Analysis</p>
 </header>
 
-<div class="dashboard">
+<div class="container">
 
-<div class="panel">
+<div class="card">
+<h2>Transaction Details</h2>
 
-<h2>Transaction Control</h2>
+<input id="amount" type="number" placeholder="Amount ₹">
 
-<input
-id="amount"
-type="number"
-placeholder="Enter transaction amount ₹">
+<label><input id="unusual_time" type="checkbox"> Unusual transaction time</label>
+<label><input id="unusual_frequency" type="checkbox"> Unusual frequency</label>
+<label><input id="new_device" type="checkbox"> New device</label>
+<label><input id="unusual_location" type="checkbox"> Unusual location</label>
+<label><input id="sudden_location_change" type="checkbox"> Sudden location change</label>
+<label><input id="unknown_beneficiary" type="checkbox"> Unknown beneficiary</label>
+<label><input id="no_previous_transactions" type="checkbox"> No previous transactions</label>
+<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual beneficiary amount</label>
 
-<div class="signals">
-
-<div class="signal">
-<input id="unusual_time" type="checkbox">
-Unusual Time
+<button onclick="analyze()">ANALYZE TRANSACTION</button>
 </div>
 
-<div class="signal">
-<input id="unusual_frequency" type="checkbox">
-Unusual Frequency
-</div>
-
-<div class="signal">
-<input id="new_device" type="checkbox">
-New Device
-</div>
-
-<div class="signal">
-<input id="unusual_location" type="checkbox">
-Unusual Location
-</div>
-
-<div class="signal">
-<input id="sudden_location_change" type="checkbox">
-Location Change
-</div>
-
-<div class="signal">
-<input id="unknown_beneficiary" type="checkbox">
-Unknown Beneficiary
-</div>
-
-<div class="signal">
-<input id="no_previous_transactions" type="checkbox">
-No Previous Transaction
-</div>
-
-<div class="signal">
-<input id="unusual_beneficiary_amount" type="checkbox">
-Unusual Amount
-</div>
-
-</div>
-
-<button onclick="run()">
-RUN FRAUD DETECTION ENGINE
-</button>
-
-</div>
-
-<div class="panel">
-
-<h2>Live Risk Monitor</h2>
-
-<div class="riskbox">
+<div class="card">
+<h2>AI Risk Result</h2>
 
 <div class="score" id="score">--</div>
 
-<div class="decision" id="decision">
+<h2 id="decision" style="text-align:center">
 WAITING
-</div>
+</h2>
 
-</div>
+<h3>Detected Reasons</h3>
+<div id="reasons"></div>
 
-<h3>Detection Log</h3>
-
-<div class="log" id="log">
-SYSTEM READY...<br>
-Waiting for transaction...
-</div>
+<h3>AI Questions</h3>
+<div id="questions"></div>
 
 </div>
 
 </div>
 
 <script>
-
-async function run(){
+async function analyze(){
 
 const ids=[
 "unusual_time",
@@ -249,11 +124,6 @@ ids.forEach(id=>{
 data[id]=document.getElementById(id).checked;
 });
 
-document.getElementById("log").innerHTML=
-"CONNECTING TO AI ENGINE...<br>";
-
-try{
-
 const response=await fetch(
 "http://127.0.0.1:8000/transaction",
 {
@@ -265,33 +135,17 @@ body:JSON.stringify(data)
 }
 );
 
-const r=await response.json();
+const result=await response.json();
 
-document.getElementById("score")
-.innerText=r.risk_score;
+document.getElementById("score").innerText=result.risk_score;
+document.getElementById("decision").innerText=result.decision;
 
-document.getElementById("decision")
-.innerText=r.decision;
+document.getElementById("reasons").innerHTML=
+result.reasons.map(x=>`<p>⚠ ${x}</p>`).join("");
 
-let log="ANALYSIS COMPLETE...<br>";
-log+="RISK SCORE: "+r.risk_score+"<br>";
-log+="DECISION: "+r.decision+"<br><br>";
-
-r.reasons.forEach(x=>{
-log+="⚠ "+x+"<br>";
-});
-
-document.getElementById("log").innerHTML=log;
-
-}catch(error){
-
-document.getElementById("log").innerHTML=
-"❌ ERROR: FastAPI backend unavailable.";
-
+document.getElementById("questions").innerHTML=
+result.ai_questions.map(x=>`<p>🤖 ${x}</p>`).join("");
 }
-
-}
-
 </script>
 
 </body>
