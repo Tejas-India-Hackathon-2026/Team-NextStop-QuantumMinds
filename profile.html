@@ -2,53 +2,51 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Beneficiary Security</title>
+<title>Device Security Monitor</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:#ecfdf5;
+background:#111827;
+color:white;
+}
+
+header{
+padding:25px;
+background:#030712;
+text-align:center;
 }
 
 .container{
-width:600px;
-max-width:90%;
-margin:50px auto;
+max-width:900px;
+margin:30px auto;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
 }
 
 .card{
-background:white;
-padding:30px;
-border-radius:20px;
-box-shadow:0 8px 30px #a7f3d0;
-}
-
-.receiver{
-text-align:center;
+background:#1f2937;
 padding:25px;
-background:#f0fdf4;
 border-radius:15px;
 }
 
-.avatar{
-width:80px;
-height:80px;
-background:#059669;
-color:white;
-border-radius:50%;
-margin:auto;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:35px;
+.icon{
+font-size:50px;
+text-align:center;
 }
 
 input[type=number]{
 width:100%;
 padding:15px;
 box-sizing:border-box;
-margin:15px 0;
+background:#111827;
+color:white;
+border:1px solid #4b5563;
 }
 
 label{
@@ -59,51 +57,54 @@ padding:8px;
 button{
 width:100%;
 padding:15px;
-background:#059669;
+background:#7c3aed;
 color:white;
 border:0;
 border-radius:8px;
+margin-top:15px;
 }
 
 .result{
+grid-column:1/3;
 text-align:center;
-margin-top:20px;
 }
 </style>
 </head>
 
 <body>
 
+<header>
+<h1>📱 Device & Location Security</h1>
+<p>SecureFlow-AI UPI Fraud Detection</p>
+</header>
+
 <div class="container">
+
+<div class="grid">
 
 <div class="card">
 
-<div class="receiver">
+<div class="icon">📱</div>
 
-<div class="avatar">₹</div>
-
-<h2>UPI Beneficiary</h2>
-<p>Recipient Security Verification</p>
-
-</div>
-
-<input id="amount" type="number"
-placeholder="Payment Amount ₹">
-
-<label>
-<input id="unusual_time" type="checkbox">
- Unusual Time
-</label>
-
-<label>
-<input id="unusual_frequency" type="checkbox">
- Unusual Frequency
-</label>
+<h2>Device Analysis</h2>
 
 <label>
 <input id="new_device" type="checkbox">
  New Device
 </label>
+
+<label>
+<input id="unusual_frequency" type="checkbox">
+ Unusual Transaction Frequency
+</label>
+
+</div>
+
+<div class="card">
+
+<div class="icon">📍</div>
+
+<h2>Location Analysis</h2>
 
 <label>
 <input id="unusual_location" type="checkbox">
@@ -115,30 +116,28 @@ placeholder="Payment Amount ₹">
  Sudden Location Change
 </label>
 
-<label>
-<input id="unknown_beneficiary" type="checkbox">
- Unknown Beneficiary
-</label>
+</div>
 
-<label>
-<input id="no_previous_transactions" type="checkbox">
- No Previous Transaction
-</label>
+<div class="card">
 
-<label>
-<input id="unusual_beneficiary_amount" type="checkbox">
- Unusual Beneficiary Amount
-</label>
+<h2>Transaction Analysis</h2>
 
-<button onclick="verifyBeneficiary()">
-VERIFY BENEFICIARY
-</button>
+<input id="amount" type="number"
+placeholder="Transaction Amount ₹">
 
-<div class="result">
+<label><input id="unusual_time" type="checkbox"> Unusual Time</label>
+<label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label>
+<label><input id="no_previous_transactions" type="checkbox"> No Previous Transaction</label>
+<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
 
-<h2 id="decision">Beneficiary Not Verified</h2>
+<button onclick="analyze()">ANALYZE DEVICE & LOCATION</button>
 
-<h3 id="score"></h3>
+</div>
+
+<div class="card result">
+
+<h1 id="score">--</h1>
+<h2 id="decision">SYSTEM READY</h2>
 
 <div id="reasons"></div>
 
@@ -149,7 +148,7 @@ VERIFY BENEFICIARY
 
 <script>
 
-async function verifyBeneficiary(){
+async function analyze(){
 
 let ids=[
 "unusual_time",
@@ -181,11 +180,11 @@ body:JSON.stringify(data)
 
 let r=await response.json();
 
+document.getElementById("score").innerText=
+"Risk "+r.risk_score;
+
 document.getElementById("decision").innerText=
 r.decision;
-
-document.getElementById("score").innerText=
-"Risk Score: "+r.risk_score;
 
 document.getElementById("reasons").innerHTML=
 r.reasons.map(x=>`<p>⚠ ${x}</p>`).join("");
