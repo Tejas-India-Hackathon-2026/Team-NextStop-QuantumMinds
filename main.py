@@ -1,59 +1,74 @@
-# services/fraud_cases.py
+# ml/metrics.py
 
-import uuid
-from datetime import datetime
+class FraudMetrics:
 
-
-class FraudCaseManager:
-
-    def __init__(self):
-
-        self.cases = {}
-
-    def create_case(
-        self,
-        transaction_id,
-        user_id,
-        risk_score,
-        reasons
+    @staticmethod
+    def calculate(
+        true_values,
+        predicted_values
     ):
 
-        case_id = (
-            "CASE-"
-            + uuid.uuid4().hex[:10].upper()
-        )
-
-        case = {
-            "case_id": case_id,
-            "transaction_id": transaction_id,
-            "user_id": user_id,
-            "risk_score": risk_score,
-            "reasons": reasons,
-            "status": "OPEN",
-            "created_at":
-                datetime.utcnow().isoformat()
-        }
-
-        self.cases[case_id] = case
-
-        return case
-
-    def update_status(
-        self,
-        case_id,
-        status
-    ):
-
-        if case_id not in self.cases:
+        if len(true_values) != len(
+            predicted_values
+        ):
 
             raise ValueError(
-                "Fraud case not found."
+                "Input lengths must match."
             )
 
-        self.cases[case_id]["status"] = status
+        tp = 0
+        tn = 0
+        fp = 0
+        fn = 0
 
-        return self.cases[case_id]
+        for actual, predicted in zip(
+            true_values,
+            predicted_values
+        ):
 
-    def get_case(self, case_id):
+            if actual == 1 and predicted == 1:
+                tp += 1
 
-        return self.cases.get(case_id)
+            elif actual == 0 and predicted == 0:
+                tn += 1
+
+            elif actual == 0 and predicted == 1:
+                fp += 1
+
+            elif actual == 1 and predicted == 0:
+                fn += 1
+
+        total = tp + tn + fp + fn
+
+        accuracy = (
+            (tp + tn) / total
+            if total else 0
+        )
+
+        precision = (
+            tp / (tp + fp)
+            if tp + fp else 0
+        )
+
+        recall = (
+            tp / (tp + fn)
+            if tp + fn else 0
+        )
+
+        f1 = (
+            2 * precision * recall
+            / (precision + recall)
+            if precision + recall
+            else 0
+        )
+
+        return {
+            "true_positive": tp,
+            "true_negative": tn,
+            "false_positive": fp,
+            "false_negative": fn,
+            "accuracy": round(accuracy, 4),
+            "precision": round(precision, 4),
+            "recall": round(recall, 4),
+            "f1_score": round(f1, 4)
+        }
