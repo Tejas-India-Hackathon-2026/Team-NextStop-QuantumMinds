@@ -1,203 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureFlow AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #eef2f7;
-            margin: 0;
-            padding: 0;
-        }
+<title>SecureFlow Banking</title>
 
-        .container {
-            width: 500px;
-            margin: 50px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-        }
+<style>
 
-        h1 {
-            text-align: center;
-            color: #172554;
-        }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+}
 
-        input[type="number"] {
-            width: 100%;
-            padding: 12px;
-            margin: 15px 0;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-        }
+.header {
+    background: #0f172a;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
 
-        .option {
-            margin: 12px 0;
-        }
+.card {
+    max-width: 600px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
 
-        button {
-            width: 100%;
-            padding: 14px;
-            margin-top: 20px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-        }
+.amount {
+    font-size: 35px;
+    text-align: center;
+    margin-bottom: 25px;
+}
 
-        button:hover {
-            background: #1d4ed8;
-        }
+.amount input {
+    width: 90%;
+    padding: 15px;
+    font-size: 20px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+}
 
-        #result {
-            margin-top: 25px;
-            padding: 20px;
-            border-radius: 10px;
-            background: #f8fafc;
-        }
+.security {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
 
-        .risk {
-            font-size: 28px;
-            font-weight: bold;
-            text-align: center;
-        }
+.security label {
+    padding: 15px;
+    background: #f8fafc;
+    border-radius: 10px;
+    cursor: pointer;
+}
 
-        li {
-            margin: 8px 0;
-        }
-    </style>
+button {
+    width: 100%;
+    margin-top: 25px;
+    padding: 16px;
+    background: #16a34a;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.result {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 15px;
+    background: #ecfdf5;
+}
+
+</style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="header">
+    <h1>SecureFlow AI</h1>
+    <p>Secure UPI Transaction Verification</p>
+</div>
 
-    <h1>🛡 SecureFlow AI</h1>
+<div class="card">
 
-    <p style="text-align:center;">
-        UPI Fraud Detection Engine
-    </p>
-
-    <label>Transaction Amount (₹)</label>
-    <input type="number" id="amount" placeholder="Enter amount">
-
-    <div class="option">
-        <input type="checkbox" id="unusual_time">
-        Unusual Time
+    <div class="amount">
+        <input
+            type="number"
+            id="amount"
+            placeholder="₹ Enter Amount">
     </div>
 
-    <div class="option">
-        <input type="checkbox" id="unusual_frequency">
-        Unusual Frequency
+    <div class="security">
+
+        <label>
+            <input type="checkbox" id="unusual_time">
+            Unusual Time
+        </label>
+
+        <label>
+            <input type="checkbox" id="unusual_frequency">
+            Unusual Frequency
+        </label>
+
+        <label>
+            <input type="checkbox" id="new_device">
+            New Device
+        </label>
+
+        <label>
+            <input type="checkbox" id="unusual_location">
+            Unusual Location
+        </label>
+
+        <label>
+            <input type="checkbox" id="sudden_location_change">
+            Location Change
+        </label>
+
+        <label>
+            <input type="checkbox" id="unknown_beneficiary">
+            Unknown Recipient
+        </label>
+
+        <label>
+            <input type="checkbox" id="no_previous_transactions">
+            First Transaction
+        </label>
+
+        <label>
+            <input type="checkbox" id="unusual_beneficiary_amount">
+            Unusual Amount
+        </label>
+
     </div>
 
-    <div class="option">
-        <input type="checkbox" id="new_device">
-        New Device
-    </div>
-
-    <div class="option">
-        <input type="checkbox" id="unusual_location">
-        Unusual Location
-    </div>
-
-    <div class="option">
-        <input type="checkbox" id="sudden_location_change">
-        Sudden Location Change
-    </div>
-
-    <div class="option">
-        <input type="checkbox" id="unknown_beneficiary">
-        Unknown Beneficiary
-    </div>
-
-    <div class="option">
-        <input type="checkbox" id="no_previous_transactions">
-        No Previous Transactions
-    </div>
-
-    <div class="option">
-        <input type="checkbox" id="unusual_beneficiary_amount">
-        Unusual Beneficiary Amount
-    </div>
-
-    <button onclick="analyzeTransaction()">
-        Analyze Transaction
+    <button onclick="checkTransaction()">
+        🔐 Verify Payment
     </button>
 
-    <div id="result"></div>
+    <div class="result" id="result">
+        Transaction analysis will appear here.
+    </div>
 
 </div>
 
 <script>
 
-async function analyzeTransaction() {
+async function checkTransaction() {
 
-    const data = {
-        amount: parseFloat(document.getElementById("amount").value),
+    const fields = [
+        "unusual_time",
+        "unusual_frequency",
+        "new_device",
+        "unusual_location",
+        "sudden_location_change",
+        "unknown_beneficiary",
+        "no_previous_transactions",
+        "unusual_beneficiary_amount"
+    ];
 
-        unusual_time:
-            document.getElementById("unusual_time").checked,
-
-        unusual_frequency:
-            document.getElementById("unusual_frequency").checked,
-
-        new_device:
-            document.getElementById("new_device").checked,
-
-        unusual_location:
-            document.getElementById("unusual_location").checked,
-
-        sudden_location_change:
-            document.getElementById("sudden_location_change").checked,
-
-        unknown_beneficiary:
-            document.getElementById("unknown_beneficiary").checked,
-
-        no_previous_transactions:
-            document.getElementById("no_previous_transactions").checked,
-
-        unusual_beneficiary_amount:
-            document.getElementById("unusual_beneficiary_amount").checked
+    let data = {
+        amount: Number(document.getElementById("amount").value)
     };
 
-    const response = await fetch("http://127.0.0.1:8000/transaction", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
+    fields.forEach(field => {
+        data[field] = document.getElementById(field).checked;
     });
+
+    const response = await fetch(
+        "http://127.0.0.1:8000/transaction",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        }
+    );
 
     const result = await response.json();
 
-    let reasons = result.reasons
-        .map(reason => `<li>${reason}</li>`)
-        .join("");
-
-    let questions = result.ai_questions
-        .map(question => `<li>${question}</li>`)
-        .join("");
-
     document.getElementById("result").innerHTML = `
-        <div class="risk">
-            Risk Score: ${result.risk_score}
-        </div>
+        <h2>Risk Score: ${result.risk_score}</h2>
 
-        <h3>Decision: ${result.decision}</h3>
+        <h2>Decision: ${result.decision}</h2>
 
-        <h3>Reasons</h3>
-        <ul>${reasons}</ul>
+        <h3>Security Reasons</h3>
+        <ul>
+            ${result.reasons.map(r => `<li>${r}</li>`).join("")}
+        </ul>
 
-        <h3>AI Questions</h3>
-        <ul>${questions}</ul>
+        <h3>AI Verification Questions</h3>
+        <ul>
+            ${result.ai_questions.map(q => `<li>${q}</li>`).join("")}
+        </ul>
     `;
 }
 
