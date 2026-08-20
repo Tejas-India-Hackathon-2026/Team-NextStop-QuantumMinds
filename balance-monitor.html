@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Payment Decisions</title>
+<title>SecureFlow-AI | Bank Accounts</title>
 
 <link rel="stylesheet" href="style10.css">
 </head>
@@ -16,44 +16,20 @@
 <header class="header">
 
 <div>
-<h1>Payment Decisions</h1>
-<p>AI decisions for payment transactions</p>
+<h1>Bank Accounts</h1>
+<p>Connected account and balance information</p>
 </div>
 
-<div class="avatar">PD</div>
+<div class="avatar">BA</div>
 
 </header>
-
-<section class="stats">
-
-<div class="stat">
-<div class="stat-title">ALLOW</div>
-<div class="stat-number green">18</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">ALERT</div>
-<div class="stat-number orange">12</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">BLOCK</div>
-<div class="stat-number red">10</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">TOTAL</div>
-<div class="stat-number blue">40</div>
-</div>
-
-</section>
 
 <section class="panel factors">
 
 <div class="panel-title">
 
-<h2>Decision History</h2>
-<p>Recent AI transaction decisions</p>
+<h2>Registered Accounts</h2>
+<p>SecureFlow-AI account database</p>
 
 </div>
 
@@ -62,11 +38,11 @@
 <thead>
 
 <tr>
-<th>Transaction</th>
-<th>Amount</th>
+<th>Account ID</th>
+<th>User</th>
+<th>Bank</th>
+<th>Balance</th>
 <th>Risk</th>
-<th>AI Decision</th>
-<th>Balance Action</th>
 <th>Status</th>
 </tr>
 
@@ -75,30 +51,30 @@
 <tbody>
 
 <tr>
-<td>TXN1001</td>
-<td>₹2,500</td>
+<td>ACC001</td>
+<td>Rahul Sharma</td>
+<td>Secure Bank</td>
+<td>₹40,000</td>
 <td>12</td>
-<td>ALLOW</td>
-<td>Balance Debited</td>
-<td><span class="badge safe">SUCCESS</span></td>
+<td><span class="badge safe">ACTIVE</span></td>
 </tr>
 
 <tr>
-<td>TXN1004</td>
-<td>₹18,500</td>
-<td>67</td>
-<td>ALERT</td>
-<td>Pending Verification</td>
-<td><span class="badge review">REVIEW</span></td>
+<td>ACC002</td>
+<td>Amit Kumar</td>
+<td>Secure Bank</td>
+<td>₹50,000</td>
+<td>91</td>
+<td><span class="badge high">RESTRICTED</span></td>
 </tr>
 
 <tr>
-<td>TXN1006</td>
-<td>₹75,000</td>
-<td>96</td>
-<td>BLOCK</td>
-<td>No Debit</td>
-<td><span class="badge high">BLOCKED</span></td>
+<td>ACC003</td>
+<td>Sneha Das</td>
+<td>National Bank</td>
+<td>₹27,800</td>
+<td>08</td>
+<td><span class="badge safe">ACTIVE</span></td>
 </tr>
 
 </tbody>
