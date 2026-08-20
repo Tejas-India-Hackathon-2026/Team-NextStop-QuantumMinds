@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Admin Activity</title>
+<title>SecureFlow-AI | Settings</title>
 
 <link rel="stylesheet"
 href="style10.css">
@@ -25,10 +25,10 @@ href="style10.css">
 
 <div>
 
-<h1>Administrator Activity</h1>
+<h1>System Settings</h1>
 
 <p>
-Recent actions performed by administrators
+Configure SecureFlow-AI behaviour
 </p>
 
 </div>
@@ -41,10 +41,10 @@ Recent actions performed by administrators
 
 <div class="panel-title">
 
-<h2>Activity Log</h2>
+<h2>Detection Settings</h2>
 
 <p>
-System administrator actions
+Fraud detection configuration
 </p>
 
 </div>
@@ -52,37 +52,47 @@ System administrator actions
 
 <table>
 
-<thead>
 
 <tr>
 
-<th>Time</th>
-<th>Admin</th>
-<th>Action</th>
-<th>Module</th>
-<th>Status</th>
+<th>Low Risk Range</th>
+
+<td>
+0 – 30
+</td>
 
 </tr>
 
-</thead>
 
+<tr>
 
-<tbody>
+<th>Medium Risk Range</th>
+
+<td>
+31 – 70
+</td>
+
+</tr>
 
 
 <tr>
 
-<td>16:20</td>
+<th>High Risk Range</th>
 
-<td>Admin</td>
+<td>
+71 – 100
+</td>
 
-<td>Viewed TXN1002</td>
+</tr>
 
-<td>Transactions</td>
+
+<tr>
+
+<th>Automatic Blocking</th>
 
 <td>
 <span class="badge safe">
-SUCCESS
+ENABLED
 </span>
 </td>
 
@@ -91,17 +101,11 @@ SUCCESS
 
 <tr>
 
-<td>16:15</td>
-
-<td>Security Analyst</td>
-
-<td>Reviewed Alert</td>
-
-<td>Fraud Alerts</td>
+<th>Real-Time Monitoring</th>
 
 <td>
 <span class="badge safe">
-SUCCESS
+ENABLED
 </span>
 </td>
 
@@ -110,17 +114,11 @@ SUCCESS
 
 <tr>
 
-<td>16:05</td>
-
-<td>Admin</td>
-
-<td>Updated Risk Threshold</td>
-
-<td>AI Engine</td>
+<th>AI Behaviour Analysis</th>
 
 <td>
 <span class="badge safe">
-SUCCESS
+ENABLED
 </span>
 </td>
 
@@ -129,24 +127,29 @@ SUCCESS
 
 <tr>
 
-<td>15:54</td>
-
-<td>Fraud Investigator</td>
-
-<td>Blocked User</td>
-
-<td>Users</td>
+<th>Email Alerts</th>
 
 <td>
-<span class="badge high">
-COMPLETED
+<span class="badge safe">
+ENABLED
 </span>
 </td>
 
 </tr>
 
 
-</tbody>
+<tr>
+
+<th>Admin Notifications</th>
+
+<td>
+<span class="badge safe">
+ENABLED
+</span>
+</td>
+
+</tr>
+
 
 </table>
 
