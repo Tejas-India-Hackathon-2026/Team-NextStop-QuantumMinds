@@ -1,74 +1,81 @@
-# ml/metrics.py
+# services/transaction_pipeline.py
 
-class FraudMetrics:
+class SecureFlowPipeline:
 
-    @staticmethod
-    def calculate(
-        true_values,
-        predicted_values
+    def __init__(
+        self,
+        upi_validator,
+        duplicate_detector,
+        rule_engine,
+        time_analyzer,
+        beneficiary_analyzer
     ):
 
-        if len(true_values) != len(
-            predicted_values
-        ):
+        self.upi_validator = upi_validator
+        self.duplicate_detector = duplicate_detector
+        self.rule_engine = rule_engine
+        self.time_analyzer = time_analyzer
+        self.beneficiary_analyzer = beneficiary_analyzer
 
-            raise ValueError(
-                "Input lengths must match."
-            )
+    def process(self, transaction):
 
-        tp = 0
-        tn = 0
-        fp = 0
-        fn = 0
-
-        for actual, predicted in zip(
-            true_values,
-            predicted_values
-        ):
-
-            if actual == 1 and predicted == 1:
-                tp += 1
-
-            elif actual == 0 and predicted == 0:
-                tn += 1
-
-            elif actual == 0 and predicted == 1:
-                fp += 1
-
-            elif actual == 1 and predicted == 0:
-                fn += 1
-
-        total = tp + tn + fp + fn
-
-        accuracy = (
-            (tp + tn) / total
-            if total else 0
+        # 1. Validate UPI information
+        upi_result = self.upi_validator(
+            transaction["sender_upi"],
+            transaction["receiver_upi"]
         )
 
-        precision = (
-            tp / (tp + fp)
-            if tp + fp else 0
+        if not upi_result["valid"]:
+
+            return {
+                "status": "REJECTED",
+                "stage": "UPI_VALIDATION",
+                "reason": "Invalid UPI information."
+            }
+
+        # 2. Duplicate transaction check
+        duplicate = self.duplicate_detector(
+            transaction["user_id"],
+            transaction["receiver_upi"],
+            transaction["amount"]
         )
 
-        recall = (
-            tp / (tp + fn)
-            if tp + fn else 0
+        if duplicate:
+
+            return {
+                "status": "REJECTED",
+                "stage": "DUPLICATE_CHECK",
+                "reason":
+                    "Possible duplicate transaction."
+            }
+
+        # 3. Time analysis
+        time_result = self.time_analyzer(
+            transaction["transaction_hour"],
+            transaction["normal_hours"]
         )
 
-        f1 = (
-            2 * precision * recall
-            / (precision + recall)
-            if precision + recall
-            else 0
+        # 4. Rule analysis
+        rule_result = self.rule_engine(
+            transaction
+        )
+
+        # 5. Beneficiary analysis
+        beneficiary_result = self.beneficiary_analyzer(
+            transaction["beneficiary_id"],
+            transaction["known_beneficiaries"],
+            transaction["beneficiary_age_days"]
         )
 
         return {
-            "true_positive": tp,
-            "true_negative": tn,
-            "false_positive": fp,
-            "false_negative": fn,
-            "accuracy": round(accuracy, 4),
-            "precision": round(precision, 4),
-            "recall": round(recall, 4),
-            "f1_score": round(f1, 4)
+            "status": "ANALYZED",
+
+            "time_analysis":
+                time_result,
+
+            "rule_analysis":
+                rule_result,
+
+            "beneficiary_analysis":
+                beneficiary_result
         }
