@@ -2,151 +2,126 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureFlow-AI Login</title>
+    <title>Live Transaction Monitor</title>
 
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
         body {
-            margin: 0;
-            background: #eef2f7;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: Arial;
+            background: #f4f7fb;
+            padding: 30px;
         }
 
-        .login-box {
-            width: 400px;
-            background: white;
-            padding: 40px;
-            border-radius: 18px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        h1 {
+            margin-bottom: 20px;
         }
 
-        .logo {
-            text-align: center;
-            font-size: 28px;
+        .live {
+            color: green;
             font-weight: bold;
-            margin-bottom: 10px;
         }
 
-        .subtitle {
-            text-align: center;
-            color: #6b7280;
-            margin-bottom: 30px;
-        }
-
-        label {
-            display: block;
-            margin-top: 15px;
-            margin-bottom: 7px;
-        }
-
-        input {
+        table {
             width: 100%;
-            padding: 13px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
+            border-collapse: collapse;
+            background: white;
         }
 
-        button {
-            width: 100%;
-            margin-top: 25px;
+        th, td {
             padding: 14px;
-            border: none;
-            border-radius: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
             background: #111827;
             color: white;
-            font-size: 16px;
-            cursor: pointer;
         }
 
-        #message {
-            text-align: center;
-            margin-top: 15px;
+        .allow {
+            color: green;
+            font-weight: bold;
+        }
+
+        .alert {
+            color: orange;
+            font-weight: bold;
+        }
+
+        .block {
+            color: red;
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
 
-<div class="login-box">
+<h1>
+    Live Transaction Monitor
+    <span class="live">● LIVE</span>
+</h1>
 
-    <div class="logo">SecureFlow-AI</div>
+<table>
 
-    <div class="subtitle">
-        Intelligent UPI Fraud Prevention
-    </div>
+    <thead>
+        <tr>
+            <th>Transaction</th>
+            <th>User</th>
+            <th>Amount</th>
+            <th>Risk</th>
+            <th>Status</th>
+        </tr>
+    </thead>
 
-    <label>User ID</label>
-    <input id="userId" placeholder="USER001">
+    <tbody id="transactions"></tbody>
 
-    <label>Password</label>
-    <input id="password" type="password" placeholder="Password">
-
-    <button onclick="login()">
-        Secure Login
-    </button>
-
-    <div id="message"></div>
-
-</div>
+</table>
 
 <script>
 
-async function login() {
+function addTransaction(tx) {
 
-    const userId = document.getElementById("userId").value;
-    const password = document.getElementById("password").value;
+    const row = document.createElement("tr");
 
-    try {
+    row.innerHTML = `
+        <td>${tx.transaction_id}</td>
+        <td>${tx.user_id}</td>
+        <td>₹${tx.amount}</td>
+        <td>${tx.risk_score}</td>
+        <td class="${tx.action.toLowerCase()}">
+            ${tx.action}
+        </td>
+    `;
 
-        const response = await fetch(
-            "http://localhost:8000/api/auth/login",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    user_id: userId,
-                    password: password
-                })
-            }
-        );
-
-        const data = await response.json();
-
-        if (data.access_token) {
-
-            localStorage.setItem(
-                "access_token",
-                data.access_token
-            );
-
-            window.location.href = "dashboard.html";
-
-        } else {
-
-            document.getElementById("message").innerText =
-                "Login failed.";
-
-        }
-
-    } catch (error) {
-
-        document.getElementById("message").innerText =
-            "Unable to connect to server.";
-
-    }
+    document
+        .getElementById("transactions")
+        .prepend(row);
 }
+
+setInterval(() => {
+
+    const actions = ["ALLOW", "ALERT", "BLOCK"];
+
+    const action =
+        actions[Math.floor(Math.random() * actions.length)];
+
+    addTransaction({
+        transaction_id:
+            "TXN" + Math.floor(Math.random() * 100000),
+
+        user_id: "USER001",
+
+        amount:
+            Math.floor(Math.random() * 10000) + 100,
+
+        risk_score:
+            Math.floor(Math.random() * 100),
+
+        action: action
+    });
+
+}, 3000);
 
 </script>
 
 </body>
-</html>s
+</html>
