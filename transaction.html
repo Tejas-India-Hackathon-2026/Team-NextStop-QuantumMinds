@@ -2,92 +2,101 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Transaction Timeline</title>
+<title>Security Shield</title>
+
 <style>
-body{margin:0;font-family:Arial;background:#f8fafc;color:#172033}
-header{background:#172554;color:white;padding:25px;text-align:center}
-.container{max-width:900px;margin:35px auto;padding:20px}
-.card{background:white;padding:25px;border-radius:15px;box-shadow:0 5px 20px #ddd}
-input[type=number]{width:100%;padding:15px;border:1px solid #ddd;border-radius:8px}
-.timeline{margin:25px 0;border-left:4px solid #2563eb;padding-left:25px}
-.event{background:#eff6ff;padding:15px;margin:15px 0;border-radius:10px}
-button{width:100%;padding:15px;background:#2563eb;color:white;border:0;border-radius:8px}
-.result{text-align:center;margin-top:25px}
-.score{font-size:55px;font-weight:bold}
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(#020617,#172554);
+color:white;
+text-align:center;
+}
+
+.container{
+width:650px;
+max-width:90%;
+margin:50px auto;
+}
+
+.shield{
+width:180px;
+height:210px;
+margin:auto;
+background:#2563eb;
+clip-path:polygon(50% 0,90% 15%,85% 70%,50% 100%,15% 70%,10% 15%);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:50px;
+}
+
+.panel{
+margin-top:30px;
+background:#ffffff15;
+padding:30px;
+border-radius:20px;
+}
+
+input[type=number]{
+width:100%;
+padding:15px;
+box-sizing:border-box;
+}
+
+label{
+display:block;
+padding:8px;
+text-align:left;
+}
+
+button{
+width:100%;
+padding:15px;
+background:#22c55e;
+border:0;
+border-radius:8px;
+font-weight:bold;
+margin-top:15px;
+}
 </style>
 </head>
+
 <body>
 
-<header>
-<h1>🕐 SecureFlow Timeline</h1>
-<p>Transaction Behavior Analysis</p>
-</header>
-
 <div class="container">
-<div class="card">
 
-<h2>Analyze Payment</h2>
+<div class="shield">🛡️</div>
+
+<h1>SecureFlow Protection</h1>
+<p>AI Payment Security Shield</p>
+
+<div class="panel">
 
 <input id="amount" type="number" placeholder="Transaction Amount ₹">
 
-<div class="timeline">
+<label><input id="unusual_time" type="checkbox"> Time anomaly</label>
+<label><input id="unusual_frequency" type="checkbox"> Frequency anomaly</label>
+<label><input id="new_device" type="checkbox"> New device</label>
+<label><input id="unusual_location" type="checkbox"> Location anomaly</label>
+<label><input id="sudden_location_change" type="checkbox"> Location change</label>
+<label><input id="unknown_beneficiary" type="checkbox"> Unknown recipient</label>
+<label><input id="no_previous_transactions" type="checkbox"> First transaction</label>
+<label><input id="unusual_beneficiary_amount" type="checkbox"> Amount anomaly</label>
 
-<div class="event">
-<input id="unusual_time" type="checkbox">
- Payment made at unusual time
-</div>
+<button onclick="protect()">ACTIVATE AI PROTECTION</button>
 
-<div class="event">
-<input id="unusual_frequency" type="checkbox">
- Multiple recent payments
-</div>
+<h1 id="score">--</h1>
+<h2 id="decision">Shield Ready</h2>
 
-<div class="event">
-<input id="new_device" type="checkbox">
- New device detected
-</div>
-
-<div class="event">
-<input id="unusual_location" type="checkbox">
- Unusual location
-</div>
-
-<div class="event">
-<input id="sudden_location_change" type="checkbox">
- Sudden location movement
-</div>
-
-<div class="event">
-<input id="unknown_beneficiary" type="checkbox">
- Unknown recipient
-</div>
-
-<div class="event">
-<input id="no_previous_transactions" type="checkbox">
- No previous transaction
-</div>
-
-<div class="event">
-<input id="unusual_beneficiary_amount" type="checkbox">
- Unusual payment amount
-</div>
-
-</div>
-
-<button onclick="analyze()">BUILD RISK TIMELINE</button>
-
-<div class="result">
-<div class="score" id="score">--</div>
-<h2 id="decision">Waiting</h2>
-<ul id="reasons"></ul>
-</div>
+<div id="result"></div>
 
 </div>
 </div>
 
 <script>
-async function analyze(){
+async function protect(){
+
 const ids=["unusual_time","unusual_frequency","new_device","unusual_location","sudden_location_change","unknown_beneficiary","no_previous_transactions","unusual_beneficiary_amount"];
 
 let data={amount:Number(document.getElementById("amount").value)};
@@ -101,9 +110,11 @@ body:JSON.stringify(data)
 
 const x=await r.json();
 
-document.getElementById("score").innerText=x.risk_score;
+document.getElementById("score").innerText="Risk "+x.risk_score;
 document.getElementById("decision").innerText=x.decision;
-document.getElementById("reasons").innerHTML=x.reasons.map(a=>`<li>${a}</li>`).join("");
+
+document.getElementById("result").innerHTML=
+x.reasons.map(a=>`<p>⚠ ${a}</p>`).join("");
 }
 </script>
 </body>
