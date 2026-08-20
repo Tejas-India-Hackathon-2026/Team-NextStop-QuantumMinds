@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Fraud Statistics</title>
+<title>SecureFlow-AI | Audit Log</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -18,102 +18,80 @@
 <header class="header">
 
 <div>
-<h1>Fraud Statistics</h1>
-<p>Security statistics generated from transaction activity</p>
+<h1>Audit Log</h1>
+<p>System actions and security decisions</p>
 </div>
 
-<div class="avatar">FS</div>
+<div class="avatar">AL</div>
 
 </header>
-
-
-<section class="stats">
-
-<div class="stat">
-<div class="stat-title">TRANSACTIONS</div>
-<div class="stat-number blue">40</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">FRAUD ALERTS</div>
-<div class="stat-number red">12</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">BLOCKED</div>
-<div class="stat-number red">10</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">SAFE</div>
-<div class="stat-number green">18</div>
-</div>
-
-</section>
 
 
 <section class="panel factors">
 
 <div class="panel-title">
 
-<h2>Fraud Categories</h2>
+<h2>System Audit Trail</h2>
 
-<p>Distribution of detected suspicious behaviour</p>
-
-</div>
-
-
-<div class="factor-grid">
-
-<div class="factor">
-
-<h3>Unusual Amount</h3>
-
-<p>18 cases</p>
-
-<div class="progress">
-<div style="width:90%"></div>
-</div>
+<p>Recorded SecureFlow-AI activities</p>
 
 </div>
 
-<div class="factor">
 
-<h3>Unknown Recipient</h3>
+<table>
 
-<p>14 cases</p>
+<thead>
 
-<div class="progress">
-<div style="width:75%"></div>
-</div>
+<tr>
+<th>Time</th>
+<th>Action ID</th>
+<th>Action</th>
+<th>Performed By</th>
+<th>Target</th>
+<th>Status</th>
+</tr>
 
-</div>
+</thead>
 
-<div class="factor">
 
-<h3>New Device</h3>
+<tbody>
 
-<p>09 cases</p>
+<tr>
+<td>12:45</td>
+<td>AUD001</td>
+<td>Transaction Blocked</td>
+<td>AI Engine</td>
+<td>TXN1002</td>
+<td>
+<span class="badge high">SUCCESS</span>
+</td>
+</tr>
 
-<div class="progress">
-<div style="width:55%"></div>
-</div>
+<tr>
+<td>12:42</td>
+<td>AUD002</td>
+<td>Transaction Flagged</td>
+<td>AI Engine</td>
+<td>TXN1004</td>
+<td>
+<span class="badge review">PENDING</span>
+</td>
+</tr>
 
-</div>
+<tr>
+<td>12:39</td>
+<td>AUD003</td>
+<td>Transaction Allowed</td>
+<td>AI Engine</td>
+<td>TXN1001</td>
+<td>
+<span class="badge safe">SUCCESS</span>
+</td>
+</tr>
 
-<div class="factor">
+</tbody>
 
-<h3>Location Anomaly</h3>
-
-<p>07 cases</p>
-
-<div class="progress">
-<div style="width:45%"></div>
-</div>
-
-</div>
-
-</div>
+</table>
 
 </section>
 
