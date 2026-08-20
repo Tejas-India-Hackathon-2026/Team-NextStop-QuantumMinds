@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Behaviour Analysis</title>
+<title>SecureFlow-AI | Alert Center</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -18,58 +18,83 @@
 <header class="header">
 
 <div>
-<h1>Behaviour Analysis</h1>
-<p>AI-powered analysis of user transaction behaviour</p>
+<h1>Alert Center</h1>
+<p>Centralized fraud and security alerts</p>
 </div>
 
-<div class="avatar">BA</div>
+<div class="avatar">!</div>
 
 </header>
+
+<section class="stats">
+
+<div class="stat">
+<div class="stat-title">TOTAL ALERTS</div>
+<div class="stat-number orange">12</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">CRITICAL</div>
+<div class="stat-number red">04</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">REVIEWED</div>
+<div class="stat-number green">07</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">PENDING</div>
+<div class="stat-number blue">05</div>
+</div>
+
+</section>
 
 <section class="panel factors">
 
 <div class="panel-title">
-
-<h2>Behavioural Signals</h2>
-<p>Signals used for fraud detection</p>
-
+<h2>Active Alerts</h2>
+<p>Fraud alerts requiring attention</p>
 </div>
 
-<div class="factor-grid">
+<table>
 
-<div class="factor">
-<h3>Transaction Frequency</h3>
-<p>Measures unusual payment frequency.</p>
-<div class="progress">
-<div style="width:82%"></div>
-</div>
-</div>
+<thead>
 
-<div class="factor">
-<h3>Amount Deviation</h3>
-<p>Compares payment amount with historical behaviour.</p>
-<div class="progress">
-<div style="width:91%"></div>
-</div>
-</div>
+<tr>
+<th>Alert ID</th>
+<th>Transaction</th>
+<th>Reason</th>
+<th>Risk</th>
+<th>Priority</th>
+<th>Status</th>
+</tr>
 
-<div class="factor">
-<h3>Recipient Behaviour</h3>
-<p>Checks whether recipients are familiar.</p>
-<div class="progress">
-<div style="width:76%"></div>
-</div>
-</div>
+</thead>
 
-<div class="factor">
-<h3>Device Behaviour</h3>
-<p>Checks device changes and unusual access.</p>
-<div class="progress">
-<div style="width:68%"></div>
-</div>
-</div>
+<tbody>
 
-</div>
+<tr>
+<td>ALT001</td>
+<td>TXN1004</td>
+<td>Rapid Transactions</td>
+<td>67</td>
+<td>Medium</td>
+<td><span class="badge review">OPEN</span></td>
+</tr>
+
+<tr>
+<td>ALT002</td>
+<td>TXN1006</td>
+<td>Abnormal Amount</td>
+<td>96</td>
+<td>Critical</td>
+<td><span class="badge high">CRITICAL</span></td>
+</tr>
+
+</tbody>
+
+</table>
 
 </section>
 
