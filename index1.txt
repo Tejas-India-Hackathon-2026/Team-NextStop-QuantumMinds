@@ -2,123 +2,131 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureFlow-AI Dashboard</title>
+    <title>Check Transaction - SecureFlow-AI</title>
 
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-
         body {
-            background: #f4f7fb;
-            color: #1f2937;
-        }
-
-        header {
-            background: #111827;
-            color: white;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .status {
-            color: #22c55e;
+            background: #f3f4f6;
+            font-family: Arial;
+            padding: 40px;
         }
 
         .container {
-            padding: 30px 40px;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-
-        .card {
+            max-width: 600px;
+            margin: auto;
             background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            padding: 30px;
+            border-radius: 15px;
         }
 
-        .card h3 {
-            color: #6b7280;
-            margin-bottom: 10px;
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 18px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
         }
 
-        .card p {
-            font-size: 30px;
-            font-weight: bold;
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #111827;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
         }
 
-        .safe {
-            color: #16a34a;
-        }
-
-        .danger {
-            color: #dc2626;
-        }
-
-        .warning {
-            color: #d97706;
-        }
-
-        @media(max-width: 900px) {
-            .cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
         }
     </style>
 </head>
 
 <body>
 
-<header>
-    <div class="logo">SecureFlow-AI</div>
-    <div>System: <span class="status">● Online</span></div>
-</header>
-
 <div class="container">
 
-    <h1>Fraud Prevention Dashboard</h1>
+    <h1>UPI Transaction Check</h1>
     <br>
 
-    <div class="cards">
+    <label>User ID</label>
+    <input id="user_id" placeholder="USER001">
 
-        <div class="card">
-            <h3>Total Transactions</h3>
-            <p>12,458</p>
-        </div>
+    <label>Transaction ID</label>
+    <input id="transaction_id" placeholder="TXN10001">
 
-        <div class="card">
-            <h3>Transactions Allowed</h3>
-            <p class="safe">11,982</p>
-        </div>
+    <label>Amount</label>
+    <input id="amount" type="number" placeholder="5000">
 
-        <div class="card">
-            <h3>Alerts</h3>
-            <p class="warning">341</p>
-        </div>
+    <label>Device ID</label>
+    <input id="device_id" placeholder="DEVICE123">
 
-        <div class="card">
-            <h3>Blocked</h3>
-            <p class="danger">135</p>
-        </div>
+    <label>Location</label>
+    <input id="location" placeholder="Patna">
 
-    </div>
+    <button onclick="checkTransaction()">
+        Analyze Transaction
+    </button>
+
+    <div id="result"></div>
 
 </div>
+
+<script>
+
+async function checkTransaction() {
+
+    const transaction = {
+        user_id: document.getElementById("user_id").value,
+        transaction_id: document.getElementById("transaction_id").value,
+        amount: Number(document.getElementById("amount").value),
+        device_id: document.getElementById("device_id").value,
+        location: document.getElementById("location").value,
+        transaction_hour: new Date().getHours(),
+        average_transaction_amount: 500
+    };
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:8000/api/transactions/check",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(transaction)
+            }
+        );
+
+        const data = await response.json();
+
+        const result = document.getElementById("result");
+
+        result.style.display = "block";
+
+        result.innerHTML = `
+            <h3>Fraud Analysis</h3>
+            <p>Risk Score: ${data.risk_score}</p>
+            <p>Fraud Probability: ${data.fraud_probability}</p>
+            <p>Z-Score: ${data.z_score}</p>
+            <p><strong>Decision: ${data.action}</strong></p>
+        `;
+
+    } catch(error) {
+
+        document.getElementById("result").style.display = "block";
+
+        document.getElementById("result").innerHTML =
+            "Backend connection failed.";
+    }
+}
+
+</script>
 
 </body>
 </html>
