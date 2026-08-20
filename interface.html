@@ -5,61 +5,134 @@
 
 <meta charset="UTF-8">
 
-<title>Smart Transaction</title>
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>SecureFlow AI | SIH Prototype</title>
 
 <style>
+
+*{
+    box-sizing:border-box;
+}
 
 body{
     margin:0;
     font-family:Arial;
-    background:#dbeafe;
+    background:#f1f5f9;
+    color:#0f172a;
 }
 
-.container{
-    width:800px;
-    max-width:90%;
-    margin:60px auto;
+header{
+    background:#0f172a;
+    color:white;
+    padding:20px 50px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-.title{
-    text-align:center;
+.logo{
+    font-size:24px;
+    font-weight:bold;
 }
 
-.cards{
+.status{
+    background:#16a34a;
+    padding:8px 15px;
+    border-radius:20px;
+}
+
+.main{
+    max-width:1200px;
+    margin:35px auto;
+    padding:0 20px;
+}
+
+.hero{
+    margin-bottom:30px;
+}
+
+.hero h1{
+    font-size:38px;
+    margin-bottom:5px;
+}
+
+.dashboard{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:20px;
+    gap:25px;
 }
 
 .card{
     background:white;
-    padding:25px;
-    border-radius:20px;
-    box-shadow:0 8px 20px #93c5fd;
+    border-radius:15px;
+    padding:30px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
 }
 
 .amount{
-    font-size:30px;
     width:100%;
-    border:0;
-    border-bottom:2px solid #2563eb;
-    padding:15px;
+    padding:17px;
+    font-size:20px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
 }
 
 .signal{
-    padding:12px;
-    margin:8px;
-    background:#eff6ff;
-    border-radius:10px;
+    display:flex;
+    justify-content:space-between;
+    padding:14px;
+    margin:7px 0;
+    background:#f8fafc;
+    border-radius:8px;
 }
 
 button{
     width:100%;
-    padding:15px;
+    padding:17px;
+    margin-top:20px;
     border:0;
-    border-radius:10px;
+    border-radius:8px;
     background:#2563eb;
     color:white;
+    font-size:17px;
+    cursor:pointer;
+}
+
+.score{
+    text-align:center;
+    font-size:70px;
+    font-weight:bold;
+    margin:20px;
+}
+
+.decision{
+    text-align:center;
+    font-size:25px;
+    font-weight:bold;
+    padding:15px;
+    border-radius:10px;
+    background:#f1f5f9;
+}
+
+.info{
+    padding:15px;
+    margin-top:15px;
+    background:#eff6ff;
+    border-radius:10px;
+}
+
+@media(max-width:750px){
+
+.dashboard{
+    grid-template-columns:1fr;
+}
+
+header{
+    padding:20px;
+}
+
 }
 
 </style>
@@ -68,88 +141,114 @@ button{
 
 <body>
 
-<div class="container">
+<header>
 
-<div class="title">
+<div class="logo">
+🛡 SecureFlow-AI
+</div>
 
-<h1>💳 SecureFlow AI</h1>
+<div class="status">
+● AI ENGINE ONLINE
+</div>
 
-<p>Smart Transaction Protection</p>
+</header>
+
+<div class="main">
+
+<div class="hero">
+
+<h1>UPI Fraud Detection System</h1>
+
+<p>
+Real-time transaction risk assessment using behavioral security signals.
+</p>
 
 </div>
 
-<div class="cards">
+<div class="dashboard">
 
 <div class="card">
 
-<h2>Payment</h2>
+<h2>Transaction Analysis</h2>
 
-<input class="amount"
+<input
+class="amount"
 id="amount"
 type="number"
-placeholder="₹ Amount">
+placeholder="Enter Transaction Amount ₹">
 
-<h3>Security Signals</h3>
+<h3>Behavioral Indicators</h3>
 
 <div class="signal">
+<span>Unusual Time</span>
 <input id="unusual_time" type="checkbox">
-Unusual Time
 </div>
 
 <div class="signal">
+<span>Unusual Frequency</span>
 <input id="unusual_frequency" type="checkbox">
-Unusual Frequency
 </div>
 
 <div class="signal">
+<span>New Device</span>
 <input id="new_device" type="checkbox">
-New Device
 </div>
 
 <div class="signal">
+<span>Unusual Location</span>
 <input id="unusual_location" type="checkbox">
-Unusual Location
 </div>
 
 <div class="signal">
+<span>Sudden Location Change</span>
 <input id="sudden_location_change" type="checkbox">
-Sudden Location Change
 </div>
 
 <div class="signal">
+<span>Unknown Beneficiary</span>
 <input id="unknown_beneficiary" type="checkbox">
-Unknown Beneficiary
 </div>
 
 <div class="signal">
+<span>No Previous Transactions</span>
 <input id="no_previous_transactions" type="checkbox">
-No Previous Transaction
 </div>
 
 <div class="signal">
+<span>Unusual Beneficiary Amount</span>
 <input id="unusual_beneficiary_amount" type="checkbox">
-Unusual Amount
 </div>
 
-<button onclick="check()">
-CHECK SECURITY
+<button onclick="analyze()">
+🔍 ANALYZE TRANSACTION
 </button>
 
 </div>
 
+
 <div class="card">
 
-<h2>Security Result</h2>
+<h2>AI Risk Assessment</h2>
 
-<h1 id="score">--</h1>
+<div class="score" id="score">
+--
+</div>
 
-<h2 id="decision">Waiting</h2>
+<div class="decision" id="decision">
+Awaiting Analysis
+</div>
 
-<h3>Risk Factors</h3>
+<div class="info">
+
+<h3>🚨 Detected Risk Factors</h3>
 
 <ul id="reasons"></ul>
 
-<h3>Questions</h3>
+</div>
+
+<div class="info">
+
+<h3>🤖 AI Verification</h3>
 
 <ul id="questions"></ul>
 
@@ -159,9 +258,11 @@ CHECK SECURITY
 
 </div>
 
+</div>
+
 <script>
 
-async function check(){
+async function analyze(){
 
 const ids=[
 "unusual_time",
@@ -174,35 +275,57 @@ const ids=[
 "unusual_beneficiary_amount"
 ];
 
-let data={
-amount:Number(document.getElementById("amount").value)
+const data={
+amount:Number(
+document.getElementById("amount").value
+)
 };
 
 ids.forEach(id=>{
 data[id]=document.getElementById(id).checked;
 });
 
+try{
+
 const response=await fetch(
 "http://127.0.0.1:8000/transaction",
 {
 method:"POST",
-headers:{"Content-Type":"application/json"},
+headers:{
+"Content-Type":"application/json"
+},
 body:JSON.stringify(data)
-});
+}
+);
 
-const r=await response.json();
+const result=await response.json();
 
-document.getElementById("score").innerText=
-"Risk: "+r.risk_score;
+document.getElementById("score")
+.innerText=result.risk_score;
 
-document.getElementById("decision").innerText=
-r.decision;
+document.getElementById("decision")
+.innerText=result.decision;
 
-document.getElementById("reasons").innerHTML=
-r.reasons.map(x=>`<li>${x}</li>`).join("");
+document.getElementById("reasons")
+.innerHTML=
+result.reasons
+.map(x=>`<li>${x}</li>`)
+.join("");
 
-document.getElementById("questions").innerHTML=
-r.ai_questions.map(x=>`<li>${x}</li>`).join("");
+document.getElementById("questions")
+.innerHTML=
+result.ai_questions
+.map(x=>`<li>${x}</li>`)
+.join("");
+
+}
+
+catch(error){
+
+document.getElementById("decision")
+.innerText="BACKEND OFFLINE";
+
+}
 
 }
 
