@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>SecureFlow UPI</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f5fb;
+            color: #171722;
+        }
+
+        /* ==============================
+           APP
+        ============================== */
+
+        .app {
+            width: 100%;
+            max-width: 430px;
+            min-height: 100vh;
+            margin: auto;
+            background: #f7f7fb;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ==============================
+           HEADER
+        ============================== */
+
+        .header {
+            background: linear-gradient(
+                135deg,
+                #5b21b6,
+                #7c3aed
+            );
+
+            color: white;
+            padding: 25px 20px 30px;
+            border-radius: 0 0 28px 28px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: white;
+            color: #6d28d9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .profile small {
+            opacity: 0.8;
+        }
+
+        .notification {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .upi-id {
+            margin-top: 20px;
+            font-size: 13px;
+            opacity: 0.85;
+        }
+
+        /* ==============================
+           BALANCE
+        ============================== */
+
+        .balance-card {
+            margin: -15px 18px 0;
+            background: white;
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 2;
+        }
+
+        .balance-title {
+            font-size: 13px;
+            color: #777;
+        }
+
+        .balance {
+            font-size: 25px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .bank {
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        /* ==============================
+           MAIN
+        ============================== */
+
+        .content {
+            padding: 22px 18px 90px;
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: bold;
+            margin: 20px 0 13px;
+        }
+
+        /* ==============================
+           QUICK ACTIONS
+        ============================== */
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .action {
+            background: white;
+            border-radius: 15px;
+            padding: 14px 5px;
+            text-align: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+
+        .action-icon {
+            width: 44px;
+            height: 44px;
+            margin: auto;
+            border-radius: 50%;
+            background: #ede9fe;
+            color: #6d28d9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .action span {
+            display: block;
+            font-size: 11px;
+            margin-top: 8px;
+            color: #555;
+        }
+
+        /* ==============================
+           SEND MONEY CARD
+        ============================== */
+
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .payment-card h2 {
+            font-size: 19px;
+            margin-bottom: 18px;
+        }
+
+        .input-label {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 7px;
+            display: block;
+        }
+
+        .input-box {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 15px;
+            outline: none;
+            margin-bottom: 15px;
+        }
+
+        .input-box:focus {
+            border-color: #7c3aed;
+        }
+
+        .amount-box {
+            position: relative;
+        }
+
+        .rupee {
+            position: absolute;
+            left: 14px;
+            top: 13px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .amount-input {
+            padding-left: 35px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        /* ==============================
+           RECENT CONTACTS
+        ============================== */
+
+        .contacts {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .contact {
+            min-width: 70px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .contact-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #ede9fe;
+            color: #6d28d9;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .contact-name {
+            font-size: 11px;
+            margin-top: 7px;
+        }
+
+        /* ==============================
+           PAY BUTTON
+        ============================== */
+
+        .pay-button {
+            width: 100%;
+            border: none;
+            background: linear-gradient(
+                135deg,
+                #6d28d9,
+                #8b5cf6
+            );
+            color: white;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .pay-button:active {
+            transform: scale(0.98);
+        }
+
+        /* ==============================
+           SECURITY STATUS
+        ============================== */
+
+        .security-card {
+            margin-top: 20px;
+            background: #f5f3ff;
+            border: 1px solid #ddd6fe;
+            border-radius: 15px;
+            padding: 14px;
+        }
+
+        .security-title {
+            color: #5b21b6;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .security-text {
+            color: #666;
+            font-size: 11px;
+            margin-top: 5px;
+            line-height: 1.5;
+        }
+
+        /* ==============================
+           BOTTOM NAV
+        ============================== */
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 430px;
+            height: 68px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .nav-item {
+            text-align: center;
+            font-size: 11px;
+            color: #777;
+        }
+
+        .nav-item.active {
+            color: #6d28d9;
+            font-weight: bold;
+        }
+
+        .nav-icon {
+            font-size: 21px;
+            margin-bottom: 4px;
+        }
+
+        /* ==============================
+           MODAL
+        ============================== */
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 430px;
+            background: white;
+            border-radius: 28px 28px 0 0;
+            padding: 25px 20px 30px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+
+        }
+
+        .modal-handle {
+            width: 45px;
+            height: 5px;
+            background: #ddd;
+            border-radius: 10px;
+            margin: 0 auto 20px;
+        }
+
+        .modal-title {
+            text-align: center;
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .modal-subtitle {
+            text-align: center;
+            color: #777;
+            font-size: 13px;
+            margin-top: 7px;
+        }
+
+        /* ==============================
+           RISK DISPLAY
+        ============================== */
+
+        .risk-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 22px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 9px solid #ede9fe;
+        }
+
+        .risk-number {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .risk-label {
+            font-size: 11px;
+            color: #777;
+        }
+
+        .risk-medium {
+            border-color: #fbbf24;
+        }
+
+        .risk-high {
+            border-color: #ef4444;
+        }
+
+        .risk-low {
+            border-color: #22c55e;
+        }
+
+        /* ==============================
+           HOLD
+        ============================== */
+
+        .hold-box {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 15px;
+            border-radius: 14px;
+            margin: 15px 0;
+        }
+
+        .hold-title {
+            color: #c2410c;
+            font-weight: bold;
+        }
+
+        .hold-text {
+            color: #7c2d12;
+            font-size: 12px;
+            line-height: 1.5;
+            margin-top: 5px;
+        }
+
+        /* ==============================
+           REASON
+        ============================== */
+
+        .reason {
+            padding: 11px;
+            background: #f8fafc;
+            border-radius: 10px;
+            margin-top: 7px;
+            font-size: 12px;
+        }
+
+        /* ==============================
+           QUESTION
+        ============================== */
+
+        .question-box {
+            background: #f5f3ff;
+            border: 1px solid #ddd6fe;
+            padding: 17px;
+            border-radius: 15px;
+            margin-top: 18px;
+        }
+
+        .question-title {
+            font-size: 12px;
+            color: #6d28d9;
+            font-weight: bold;
+            margin-bottom: 9px;
+        }
+
+        .question {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            margin-top: 12px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .verify-button {
+            width: 100%;
+            border: none;
+            background: #6d28d9;
+            color: white;
+            padding: 15px;
+            border-radius: 13px;
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .secondary-button {
+            width: 100%;
+            border: 1px solid #ddd;
+            background: white;
+            color: #555;
+            padding: 13px;
+            border-radius: 13px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        /* ==============================
+           SUCCESS / BLOCK
+        ============================== */
+
+        .status-icon {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .blocked {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-message {
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* ==============================
+           LOADING
+        ============================== */
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .spinner {
+            width: 45px;
+            height: 45px;
+            border: 4px solid #ddd6fe;
+            border-top-color: #6d28d9;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+
+        @keyframes spin {
+
+            to {
+                transform: rotate(360deg);
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="topbar">
+
+            <div class="profile">
+
+                <div class="avatar">
+                    S
+                </div>
+
+                <div>
+
+                    <strong>Shubh</strong>
+
+                    <br>
+
+                    <small>Good afternoon</small>
+
+                </div>
+
+            </div>
+
+            <div class="notification">
+                🔔
+            </div>
+
+        </div>
+
+        <div class="upi-id">
+            shubh@secureflow
+        </div>
+
+    </div>
+
+
+    <!-- BALANCE -->
+
+    <div class="balance-card">
+
+        <div class="balance-title">
+            Available Balance
+        </div>
+
+        <div class="balance">
+            ₹24,680.50
+        </div>
+
+        <div class="bank">
+            SecureFlow Bank •••• 4821
+        </div>
+
+    </div>
+
+
+    <div class="content">
+
+
+        <!-- QUICK ACTIONS -->
+
+        <div class="section-title">
+            Quick Actions
+        </div>
+
+        <div class="actions">
+
+            <div class="action"
+                 onclick="focusPayment()">
+
+                <div class="action-icon">
+                    ₹
+                </div>
+
+                <span>
+                    Send Money
+                </span>
+
+            </div>
+
+
+            <div class="action">
+
+                <div class="action-icon">
+                    ⬇
+                </div>
+
+                <span>
+                    Receive
+                </span>
+
+            </div>
+
+
+            <div class="action">
+
+                <div class="action-icon">
+                    📱
+                </div>
+
+                <span>
+                    Scan QR
+                </span>
+
+            </div>
+
+
+            <div class="action">
+
+                <div class="action-icon">
+                    ⋯
+                </div>
+
+                <span>
+                    More
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECENT CONTACTS -->
+
+        <div class="section-title">
+            Recent
+        </div>
+
+        <div class="contacts">
+
+            <div class="contact"
+                 onclick="selectContact('Rahul@upi')">
+
+                <div class="contact-avatar">
+                    R
+                </div>
+
+                <div class="contact-name">
+                    Rahul
+                </div>
+
+            </div>
+
+
+            <div class="contact"
+                 onclick="selectContact('Priya@upi')">
+
+                <div class="contact-avatar">
+                    P
+                </div>
+
+                <div class="contact-name">
+                    Priya
+                </div>
+
+            </div>
+
+
+            <div class="contact"
+                 onclick="selectContact('Arjun@upi')">
+
+                <div class="contact-avatar">
+                    A
+                </div>
+
+                <div class="contact-name">
+                    Arjun
+                </div>
+
+            </div>
+
+
+            <div class="contact">
+
+                <div class="contact-avatar">
+                    S
+                </div>
+
+                <div class="contact-name">
+                    Sourav
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENT -->
+
+        <div class="section-title">
+            Send Money
+        </div>
+
+
+        <div class="payment-card">
+
+            <h2>
+                Make a UPI Payment
+            </h2>
+
+
+            <label class="input-label">
+                Recipient UPI ID
+            </label>
+
+            <input
+                class="input-box"
+                id="beneficiary"
+                type="text"
+                placeholder="example@upi">
+
+
+            <label class="input-label">
+                Amount
+            </label>
+
+
+            <div class="amount-box">
+
+                <span class="rupee">
+                    ₹
+                </span>
+
+                <input
+                    class="input-box amount-input"
+                    id="amount"
+                    type="number"
+                    placeholder="0.00">
+
+            </div>
+
+
+            <label class="input-label">
+                Note (optional)
+            </label>
+
+            <input
+                class="input-box"
+                id="note"
+                type="text"
+                placeholder="What's this payment for?">
+
+
+            <!-- Demo behavioural signals -->
+
+            <div style="
+                font-size:12px;
+                color:#777;
+                margin:10px 0 8px;
+            ">
+                Payment security signals
+            </div>
+
+
+            <label style="
+                font-size:13px;
+                display:block;
+                margin-bottom:9px;
+            ">
+
+                <input
+                    type="checkbox"
+                    id="unusual_time">
+
+                Unusual payment time
+
+            </label>
+
+
+            <label style="
+                font-size:13px;
+                display:block;
+                margin-bottom:9px;
+            ">
+
+                <input
+                    type="checkbox"
+                    id="unusual_frequency">
+
+                Unusual transaction frequency
+
+            </label>
+
+
+            <label style="
+                font-size:13px;
+                display:block;
+                margin-bottom:9px;
+            ">
+
+                <input
+                    type="checkbox"
+                    id="high_velocity">
+
+                Multiple rapid transactions
+
+            </label>
+
+
+            <label style="
+                font-size:13px;
+                display:block;
+                margin-bottom:9px;
+            ">
+
+                <input
+                    type="checkbox"
+                    id="new_device">
+
+                New device/session
+
+            </label>
+
+
+            <label style="
+                font-size:13px;
+                display:block;
+                margin-bottom:9px;
+            ">
+
+                <input
+                    type="checkbox"
+                    id="location_change">
+
+                Unusual location
+
+            </label>
+
+
+            <label style="
+                font-size:13px;
+                display:block;
+                margin-bottom:9px;
+            ">
+
+                <input
+                    type="checkbox"
+                    id="unknown_beneficiary">
+
+                New beneficiary
+
+            </label>
+
+
+            <button
+                class="pay-button"
+                onclick="analyzePayment()">
+
+                Pay Securely
+
+            </button>
+
+
+            <div class="security-card">
+
+                <div class="security-title">
+
+                    🛡 SecureFlow Protection
+
+                </div>
+
+                <div class="security-text">
+
+                    Every payment is checked against
+                    behavioural signals before processing.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BOTTOM NAV -->
+
+    <div class="bottom-nav">
+
+        <div class="nav-item active">
+
+            <div class="nav-icon">
+                🏠
+            </div>
+
+            Home
+
+        </div>
+
+
+        <div class="nav-item">
+
+            <div class="nav-icon">
+                📜
+            </div>
+
+            History
+
+        </div>
+
+
+        <div class="nav-item">
+
+            <div class="nav-icon">
+                👤
+            </div>
+
+            Profile
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- ==============================
+     SECURITY MODAL
+============================== -->
+
+<div
+    class="overlay"
+    id="securityOverlay">
+
+    <div class="modal">
+
+        <div class="modal-handle"></div>
+
+        <div id="modalContent"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const API_URL =
+        "http://127.0.0.1:8000";
+
+
+    /* ==============================
+       CONTACT
+    ============================== */
+
+    function selectContact(id) {
+
+        document.getElementById(
+            "beneficiary"
+        ).value = id;
+
+        focusPayment();
+
+    }
+
+
+    function focusPayment() {
+
+        document.getElementById(
+            "beneficiary"
+        ).scrollIntoView({
+            behavior: "smooth"
+        });
+
+    }
+
+
+    /* ==============================
+       OPEN MODAL
+    ============================== */
+
+    function openModal(html) {
+
+        document.getElementById(
+            "modalContent"
+        ).innerHTML = html;
+
+        document.getElementById(
+            "securityOverlay"
+        ).style.display = "flex";
+
+    }
+
+
+    /* ==============================
+       CLOSE MODAL
+    ============================== */
+
+    function closeModal() {
+
+        document.getElementById(
+            "securityOverlay"
+        ).style.display = "none";
+
+    }
+
+
+    /* ==============================
+       ANALYZE PAYMENT
+    ============================== */
+
+    async function analyzePayment() {
+
+        const amount =
+            Number(
+                document.getElementById(
+                    "amount"
+                ).value
+            );
+
+
+        const beneficiary =
+            document.getElementById(
+                "beneficiary"
+            ).value.trim();
+
+
+        if (!beneficiary) {
+
+            alert(
+                "Please enter a recipient UPI ID."
+            );
+
+            return;
+
+        }
+
+
+        if (!amount || amount <= 0) {
+
+            alert(
+                "Please enter a valid amount."
+            );
+
+            return;
+
+        }
+
+
+        /* Loading */
+
+        openModal(`
+
+            <div class="modal-title">
+                Securing Payment
+            </div>
+
+            <div class="modal-subtitle">
+                SecureFlow-AI is analysing this transaction
+            </div>
+
+            <div class="loading">
+
+                <div class="spinner"></div>
+
+                <p style="
+                    margin-top:15px;
+                    color:#777;
+                    font-size:13px;
+                ">
+                    Checking behavioural signals...
+                </p>
+
+            </div>
+
+        `);
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API_URL + "/transaction",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            amount: amount,
+
+                            unusual_time:
+                                document.getElementById(
+                                    "unusual_time"
+                                ).checked,
+
+                            unusual_frequency:
+                                document.getElementById(
+                                    "unusual_frequency"
+                                ).checked,
+
+                            high_velocity:
+                                document.getElementById(
+                                    "high_velocity"
+                                ).checked,
+
+                            known_device:
+                                !document.getElementById(
+                                    "new_device"
+                                ).checked,
+
+                            device_changed:
+                                document.getElementById(
+                                    "new_device"
+                                ).checked,
+
+                            usual_location:
+                                !document.getElementById(
+                                    "location_change"
+                                ).checked,
+
+                            sudden_location_change:
+                                document.getElementById(
+                                    "location_change"
+                                ).checked,
+
+                            known_beneficiary:
+                                !document.getElementById(
+                                    "unknown_beneficiary"
+                                ).checked,
+
+                            previous_transactions:
+                                !document.getElementById(
+                                    "unknown_beneficiary"
+                                ).checked,
+
+                            typical_amount_with_beneficiary:
+                                amount <= 10000,
+
+                            beneficiary_matches_history:
+                                !document.getElementById(
+                                    "unknown_beneficiary"
+                                ).checked
+
+                        })
+
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Backend returned " +
+                    response.status
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            showRiskResult(data);
+
+        }
+
+
+        catch (error) {
+
+            openModal(`
+
+                <div class="status-icon blocked">
+                    !
+                </div>
+
+                <div class="modal-title">
+                    Connection Error
+                </div>
+
+                <p class="status-message"
+                   style="margin-top:10px;">
+
+                    Could not connect to
+                    SecureFlow-AI backend.
+
+                    <br><br>
+
+                    Make sure FastAPI is running on
+                    <b>127.0.0.1:8000</b>.
+
+                </p>
+
+                <button
+                    class="secondary-button"
+                    onclick="closeModal()">
+
+                    Close
+
+                </button>
+
+            `);
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    /* ==============================
+       SHOW RISK
+    ============================== */
+
+    function showRiskResult(data) {
+
+        let riskClass =
+            "risk-low";
+
+
+        if (data.risk_score > 40) {
+
+            riskClass =
+                "risk-medium";
+
+        }
+
+
+        if (data.risk_score > 70) {
+
+            riskClass =
+                "risk-high";
+
+        }
+
+
+        let reasonsHTML = "";
+
+
+        if (data.reasons &&
+            data.reasons.length > 0) {
+
+            data.reasons.forEach(
+                reason => {
+
+                    reasonsHTML += `
+
+                        <div class="reason">
+                            ⚠ ${reason}
+                        </div>
+
+                    `;
+
+                }
+            );
+
+        }
+        else {
+
+            reasonsHTML = `
+
+                <div class="reason">
+                    ✓ No suspicious signals detected
+                </div>
+
+            `;
+
+        }
+
+
+        /* LOW */
+
+        if (data.decision === "ALLOW") {
+
+            openModal(`
+
+                <div class="status-icon success">
+                    ✓
+                </div>
+
+                <div class="modal-title">
+                    Payment Approved
+                </div>
+
+                <div class="modal-subtitle">
+                    SecureFlow-AI found no significant threat.
+                </div>
+
+
+                <div class="
+                    risk-circle
+                    ${riskClass}
+                ">
+
+                    <div class="risk-number">
+                        ${data.risk_score}
+                    </div>
+
+                    <div class="risk-label">
+                        RISK / 100
+                    </div>
+
+                </div>
+
+
+                ${reasonsHTML}
+
+
+                <button
+                    class="verify-button"
+                    onclick="completePayment()">
+
+                    Complete Payment
+
+                </button>
+
+            `);
+
+            return;
+
+        }
+
+
+        /* HIGH */
+
+        if (data.decision === "BLOCK") {
+
+            openModal(`
+
+                <div class="status-icon blocked">
+                    !
+                </div>
+
+                <div class="modal-title">
+                    Payment Blocked
+                </div>
+
+                <div class="modal-subtitle">
+                    Multiple high-risk behavioural signals detected.
+                </div>
+
+
+                <div class="
+                    risk-circle
+                    risk-high
+                ">
+
+                    <div class="risk-number">
+                        ${data.risk_score}
+                    </div>
+
+                    <div class="risk-label">
+                        RISK / 100
+                    </div>
+
+                </div>
+
+
+                ${reasonsHTML}
+
+
+                <div class="hold-box">
+
+                    <div class="hold-title">
+                        🛡 Transaction stopped
+                    </div>
+
+                    <div class="hold-text">
+
+                        SecureFlow-AI prevented this
+                        transaction because its behavioural
+                        pattern significantly differs from
+                        the expected user footprint.
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="secondary-button"
+                    onclick="closeModal()">
+
+                    Go Back
+
+                </button>
+
+            `);
+
+            return;
+
+        }
+
+
+        /* MEDIUM / ALERT */
+
+        let question =
+            "Please confirm that you initiated this transaction.";
+
+
+        if (
+            data.ai_questions &&
+            data.ai_questions.length > 0
+        ) {
+
+            question =
+                data.ai_questions[0];
+
+        }
+
+
+        openModal(`
+
+            <div class="modal-title">
+                ⚠ Payment Temporarily Held
+            </div>
+
+            <div class="modal-subtitle">
+
+                SecureFlow-AI detected unusual
+                behavioural activity.
+
+            </div>
+
+
+            <div class="
+                risk-circle
+                risk-medium
+            ">
+
+                <div class="risk-number">
+                    ${data.risk_score}
+                </div>
+
+                <div class="risk-label">
+                    RISK / 100
+                </div>
+
+            </div>
+
+
+            <div class="hold-box">
+
+                <div class="hold-title">
+                    🔐 Transaction slowed
+                </div>
+
+                <div class="hold-text">
+
+                    Your payment has not been completed.
+                    We need one additional verification
+                    before allowing it.
+
+                </div>
+
+            </div>
+
+
+            <div class="question-box">
+
+                <div class="question-title">
+                    SECUREFLOW-AI QUESTION
+                </div>
+
+                <div class="question">
+                    ${question}
+                </div>
+
+
+                <input
+                    class="answer-input"
+                    id="securityAnswer"
+                    placeholder="Type your answer...">
+
+            </div>
+
+
+            ${reasonsHTML}
+
+
+            <button
+                class="verify-button"
+                onclick="verifyAnswer()">
+
+                Verify & Continue
+
+            </button>
+
+
+            <button
+                class="secondary-button"
+                onclick="closeModal()">
+
+                Cancel Payment
+
+            </button>
+
+        `);
+
+    }
+
+
+    /* ==============================
+       VERIFY ANSWER
+    ============================== */
+
+    async function verifyAnswer() {
+
+        const answer =
+            document.getElementById(
+                "securityAnswer"
+            ).value.trim();
+
+
+        if (!answer) {
+
+            alert(
+                "Please answer the security question."
+            );
+
+            return;
+
+        }
+
+
+        openModal(`
+
+            <div class="modal-title">
+                Verifying...
+            </div>
+
+            <div class="loading">
+
+                <div class="spinner"></div>
+
+                <p style="
+                    margin-top:15px;
+                    color:#777;
+                ">
+                    Evaluating your response
+                </p>
+
+            </div>
+
+        `);
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API_URL +
+                    "/transaction/verify",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            answers: [answer]
+
+                        })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                data.final_decision ===
+                "ALLOW"
+            ) {
+
+                completePayment();
+
+            }
+
+            else if (
+                data.final_decision ===
+                "BLOCK"
+            ) {
+
+                openModal(`
+
+                    <div class="
+                        status-icon
+                        blocked
+                    ">
+                        !
+                    </div>
+
+                    <div class="modal-title">
+                        Payment Blocked
+                    </div>
+
+                    <p class="status-message">
+
+                        The verification response
+                        could not authenticate this
+                        transaction.
+
+                    </p>
+
+
+                    <button
+                        class="secondary-button"
+                        onclick="closeModal()">
+
+                        Return Home
+
+                    </button>
+
+                `);
+
+            }
+
+            else {
+
+                openModal(`
+
+                    <div class="status-icon"
+                         style="
+                            background:#fef3c7;
+                            color:#d97706;
+                         ">
+
+                        ?
+
+                    </div>
+
+                    <div class="modal-title">
+                        Verification Inconclusive
+                    </div>
+
+                    <p class="status-message">
+
+                        Additional verification is required.
+
+                    </p>
+
+
+                    <button
+                        class="secondary-button"
+                        onclick="closeModal()">
+
+                        Try Again
+
+                    </button>
+
+                `);
+
+            }
+
+        }
+
+
+        catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Could not verify transaction."
+            );
+
+        }
+
+    }
+
+
+    /* ==============================
+       COMPLETE PAYMENT
+    ============================== */
+
+    function completePayment() {
+
+        const amount =
+            Number(
+                document.getElementById(
+                    "amount"
+                ).value
+            );
+
+
+        const beneficiary =
+            document.getElementById(
+                "beneficiary"
+            ).value;
+
+
+        openModal(`
+
+            <div class="status-icon success">
+                ✓
+            </div>
+
+            <div class="modal-title">
+                Payment Successful
+            </div>
+
+            <p class="status-message"
+               style="margin-top:10px;">
+
+                ₹${amount.toFixed(2)}
+                sent successfully to
+                <b>${beneficiary}</b>.
+
+            </p>
+
+
+            <div class="security-card"
+                 style="margin-top:20px;">
+
+                <div class="security-title">
+
+                    🛡 Protected by SecureFlow-AI
+
+                </div>
+
+                <div class="security-text">
+
+                    Transaction behaviour was analysed
+                    before payment authorization.
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="verify-button"
+                onclick="closeModal()">
+
+                Done
+
+            </button>
+
+        `);
+
+    }
+
+
+    /* ==============================
+       CLOSE ON BACKGROUND CLICK
+    ============================== */
+
+    document
+        .getElementById("securityOverlay")
+        .addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    event.target === this
+                ) {
+
+                    closeModal();
+
+                }
+
+            }
+        );
+
+</script>
+
+</body>
+
+</html>
