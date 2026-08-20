@@ -1,10 +1,13 @@
 # =========================================================
-# BACKEND 14
-# FRAUD PATTERN DETECTION
+# BACKEND 15
+# TRANSACTION VELOCITY DETECTION
 # =========================================================
 
-@app.get("/api/fraud-patterns/{user_id}")
-def detect_fraud_patterns(user_id: str):
+from datetime import datetime, timedelta
+
+
+@app.get("/api/velocity/{user_id}")
+def transaction_velocity(user_id: str):
 
     db = get_db()
 
@@ -14,7 +17,7 @@ def detect_fraud_patterns(user_id: str):
 
     user = db.execute(
         """
-        SELECT *
+        SELECT user_id
         FROM users
         WHERE user_id = ?
         """,
@@ -30,305 +33,144 @@ def detect_fraud_patterns(user_id: str):
             detail="User not found"
         )
 
+    # -----------------------------------------------------
+    # CURRENT TIME
+    # -----------------------------------------------------
+
+    now = datetime.now()
+
 
     # -----------------------------------------------------
-    # GET RECENT TRANSACTIONS
+    # TIME WINDOWS
     # -----------------------------------------------------
 
-    transactions = db.execute(
+    five_minutes_ago = (
+        now - timedelta(minutes=5)
+    ).isoformat()
+
+    fifteen_minutes_ago = (
+        now - timedelta(minutes=15)
+    ).isoformat()
+
+    one_hour_ago = (
+        now - timedelta(hours=1)
+    ).isoformat()
+
+
+    # -----------------------------------------------------
+    # TRANSACTIONS IN LAST 5 MINUTES
+    # -----------------------------------------------------
+
+    last_5_minutes = db.execute(
         """
-        SELECT *
+        SELECT COUNT(*) AS count
         FROM transactions
         WHERE user_id = ?
-        ORDER BY id DESC
-        LIMIT 10
+        AND created_at >= ?
         """,
-        (user_id,)
-    ).fetchall()
+        (
+            user_id,
+            five_minutes_ago
+        )
+    ).fetchone()["count"]
+
+
+    # -----------------------------------------------------
+    # TRANSACTIONS IN LAST 15 MINUTES
+    # -----------------------------------------------------
+
+    last_15_minutes = db.execute(
+        """
+        SELECT COUNT(*) AS count
+        FROM transactions
+        WHERE user_id = ?
+        AND created_at >= ?
+        """,
+        (
+            user_id,
+            fifteen_minutes_ago
+        )
+    ).fetchone()["count"]
+
+
+    # -----------------------------------------------------
+    # TRANSACTIONS IN LAST 1 HOUR
+    # -----------------------------------------------------
+
+    last_hour = db.execute(
+        """
+        SELECT COUNT(*) AS count
+        FROM transactions
+        WHERE user_id = ?
+        AND created_at >= ?
+        """,
+        (
+            user_id,
+            one_hour_ago
+        )
+    ).fetchone()["count"]
+
+
+    # -----------------------------------------------------
+    # TOTAL AMOUNT IN LAST HOUR
+    # -----------------------------------------------------
+
+    hourly_amount = db.execute(
+        """
+        SELECT COALESCE(SUM(amount), 0) AS amount
+        FROM transactions
+        WHERE user_id = ?
+        AND created_at >= ?
+        """,
+        (
+            user_id,
+            one_hour_ago
+        )
+    ).fetchone()["amount"]
 
 
     db.close()
 
 
-    patterns = []
-
-
     # -----------------------------------------------------
-    # NO TRANSACTIONS
+    # DETERMINE VELOCITY RISK
     # -----------------------------------------------------
 
-    if len(transactions) == 0:
+    reasons = []
 
-        return {
+    risk_level = "LOW"
 
-            "success": True,
 
-            "user_id": user_id,
+    # Very high frequency
 
-            "fraud_detected": False,
+    if last_5_minutes >= 3:
 
-            "risk_level": "LOW",
+        risk_level = "HIGH"
 
-            "patterns": []
+        reasons.append(
+            "3 or more transactions detected "
+            "within the last 5 minutes."
+        )
 
-        }
 
+    elif last_15_minutes >= 5:
 
-    # -----------------------------------------------------
-    # PATTERN 1:
-    # MULTIPLE HIGH-RISK TRANSACTIONS
-    # -----------------------------------------------------
+        risk_level = "HIGH"
 
-    high_risk_count = 0
+        reasons.append(
+            "5 or more transactions detected "
+            "within the last 15 minutes."
+        )
 
-    for transaction in transactions:
 
-        if transaction["risk_level"] == "HIGH":
+    elif last_hour >= 8:
 
-            high_risk_count += 1
+        risk_level = "MEDIUM"
 
-
-    if high_risk_count >= 3:
-
-        patterns.append({
-
-            "type":
-                "REPEATED_HIGH_RISK",
-
-            "severity":
-                "HIGH",
-
-            "message":
-                "Multiple high-risk transactions detected."
-
-        })
-
-
-    # -----------------------------------------------------
-    # PATTERN 2:
-    # MULTIPLE BLOCKED TRANSACTIONS
-    # -----------------------------------------------------
-
-    blocked_count = 0
-
-    for transaction in transactions:
-
-        if transaction["decision"] == "BLOCK":
-
-            blocked_count += 1
-
-
-    if blocked_count >= 2:
-
-        patterns.append({
-
-            "type":
-                "REPEATED_BLOCKED",
-
-            "severity":
-                "HIGH",
-
-            "message":
-                "Multiple transactions were blocked recently."
-
-        })
-
-
-    # -----------------------------------------------------
-    # PATTERN 3:
-    # UNUSUALLY HIGH AMOUNTS
-    # -----------------------------------------------------
-
-    average_amount = user["average_amount"]
-
-
-    if average_amount > 0:
-
-        for transaction in transactions:
-
-            if transaction["amount"] >= (
-                average_amount * 5
-            ):
-
-                patterns.append({
-
-                    "type":
-                        "UNUSUAL_AMOUNT",
-
-                    "severity":
-                        "HIGH",
-
-                    "message":
-                        "A transaction is significantly higher than the user's normal amount.",
-
-                    "transaction_id":
-                        transaction["id"],
-
-                    "amount":
-                        transaction["amount"]
-
-                })
-
-                break
-
-
-    # -----------------------------------------------------
-    # PATTERN 4:
-    # UNKNOWN DEVICE
-    # -----------------------------------------------------
-
-    unknown_device_found = False
-
-
-    for transaction in transactions:
-
-        if (
-            transaction["device"]
-            and
-            transaction["device"]
-            != user["known_device"]
-        ):
-
-            unknown_device_found = True
-
-            break
-
-
-    if unknown_device_found:
-
-        patterns.append({
-
-            "type":
-                "UNKNOWN_DEVICE",
-
-            "severity":
-                "MEDIUM",
-
-            "message":
-                "Transactions from an unknown device were detected."
-
-        })
-
-
-    # -----------------------------------------------------
-    # PATTERN 5:
-    # UNUSUAL LOCATION
-    # -----------------------------------------------------
-
-    unusual_location_found = False
-
-
-    for transaction in transactions:
-
-        if (
-            transaction["location"]
-            and
-            transaction["location"]
-            != user["known_location"]
-        ):
-
-            unusual_location_found = True
-
-            break
-
-
-    if unusual_location_found:
-
-        patterns.append({
-
-            "type":
-                "UNUSUAL_LOCATION",
-
-            "severity":
-                "MEDIUM",
-
-            "message":
-                "Transactions from an unusual location were detected."
-
-        })
-
-
-    # -----------------------------------------------------
-    # PATTERN 6:
-    # NEW BENEFICIARY
-    # -----------------------------------------------------
-
-    new_beneficiary_found = False
-
-
-    for transaction in transactions:
-
-        if (
-            transaction["beneficiary"]
-            and
-            transaction["beneficiary"]
-            != user["known_beneficiary"]
-        ):
-
-            new_beneficiary_found = True
-
-            break
-
-
-    if new_beneficiary_found:
-
-        patterns.append({
-
-            "type":
-                "NEW_BENEFICIARY",
-
-            "severity":
-                "MEDIUM",
-
-            "message":
-                "A transaction to a new beneficiary was detected."
-
-        })
-
-
-    # -----------------------------------------------------
-    # DETERMINE OVERALL RISK
-    # -----------------------------------------------------
-
-    high_patterns = 0
-
-    medium_patterns = 0
-
-
-    for pattern in patterns:
-
-        if pattern["severity"] == "HIGH":
-
-            high_patterns += 1
-
-        elif pattern["severity"] == "MEDIUM":
-
-            medium_patterns += 1
-
-
-    if high_patterns >= 1:
-
-        overall_risk = "HIGH"
-
-        fraud_detected = True
-
-    elif medium_patterns >= 2:
-
-        overall_risk = "MEDIUM"
-
-        fraud_detected = True
-
-    elif medium_patterns == 1:
-
-        overall_risk = "MEDIUM"
-
-        fraud_detected = False
-
-    else:
-
-        overall_risk = "LOW"
-
-        fraud_detected = False
+        reasons.append(
+            "8 or more transactions detected "
+            "within the last hour."
+        )
 
 
     # -----------------------------------------------------
@@ -341,16 +183,32 @@ def detect_fraud_patterns(user_id: str):
 
         "user_id": user_id,
 
-        "fraud_detected":
-            fraud_detected,
+        "velocity": {
+
+            "last_5_minutes":
+                last_5_minutes,
+
+            "last_15_minutes":
+                last_15_minutes,
+
+            "last_hour":
+                last_hour,
+
+            "hourly_amount":
+                round(
+                    hourly_amount,
+                    2
+                )
+
+        },
 
         "risk_level":
-            overall_risk,
+            risk_level,
 
-        "patterns_detected":
-            len(patterns),
+        "suspicious":
+            risk_level != "LOW",
 
-        "patterns":
-            patterns
+        "reasons":
+            reasons
 
     }
