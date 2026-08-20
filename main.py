@@ -1,24 +1,22 @@
+# services/anomaly.py
 
-# models/transaction.py
+def calculate_z_score(
+    current_amount: float,
+    mean_amount: float,
+    std_amount: float
+) -> float:
 
-from pydantic import BaseModel, Field
-from typing import Optional
+    if std_amount == 0:
+        return 0.0
+
+    return (current_amount - mean_amount) / std_amount
 
 
-class Transaction(BaseModel):
-    user_id: str
-    transaction_id: str
-    amount: float = Field(gt=0)
+def detect_amount_anomaly(z_score: float) -> bool:
+    """
+    A transaction is considered unusual when
+    its amount is more than 3 standard deviations
+    from the user's normal behavior.
+    """
 
-    merchant_id: Optional[str] = None
-    location: Optional[str] = None
-    device_id: Optional[str] = None
-
-    transaction_hour: int = Field(ge=0, le=23)
-
-    previous_transaction_amount: float = 0.0
-    average_transaction_amount: float = 0.0
-
-    failed_attempts: int = 0
-    new_device: bool = False
-    new_location: bool = False
+    return abs(z_score) >= 3
