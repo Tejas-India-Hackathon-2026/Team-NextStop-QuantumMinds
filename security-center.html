@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureFlow-AI | Security Center</title>
+    <title>SecureFlow-AI | Risk Dashboard</title>
     <link rel="stylesheet" href="style10.css">
 </head>
 
@@ -13,33 +13,33 @@
 
 <header class="header">
     <div>
-        <h1>Security Center</h1>
-        <p>Centralized UPI security monitoring</p>
+        <h1>Risk Dashboard</h1>
+        <p>Real-time transaction risk overview</p>
     </div>
 
-    <div class="avatar">AI</div>
+    <div class="avatar">R</div>
 </header>
 
 <section class="stats">
 
     <div class="stat">
-        <div class="stat-title">SECURITY STATUS</div>
-        <div class="stat-number green">SAFE</div>
+        <div class="stat-title">LOW RISK</div>
+        <div class="stat-number green">28</div>
     </div>
 
     <div class="stat">
-        <div class="stat-title">THREATS</div>
+        <div class="stat-title">MEDIUM RISK</div>
+        <div class="stat-number orange">05</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-title">HIGH RISK</div>
         <div class="stat-number red">07</div>
     </div>
 
     <div class="stat">
-        <div class="stat-title">PROTECTED</div>
+        <div class="stat-title">TOTAL</div>
         <div class="stat-number blue">40</div>
-    </div>
-
-    <div class="stat">
-        <div class="stat-title">AI STATUS</div>
-        <div class="stat-number green">ON</div>
     </div>
 
 </section>
@@ -47,45 +47,57 @@
 <section class="panel factors">
 
     <div class="panel-title">
-        <h2>Security Overview</h2>
-        <p>Current protection status of SecureFlow-AI</p>
+        <h2>Risk Classification</h2>
+        <p>Transactions grouped by AI-generated risk score</p>
     </div>
 
-    <div class="factor-grid">
+    <table>
 
-        <div class="factor">
-            <h3>Fraud Detection</h3>
-            <p>AI engine actively detecting suspicious transactions.</p>
-            <div class="progress">
-                <div style="width:95%"></div>
-            </div>
-        </div>
+        <thead>
+            <tr>
+                <th>Risk Level</th>
+                <th>Score Range</th>
+                <th>Transactions</th>
+                <th>AI Action</th>
+                <th>Status</th>
+            </tr>
+        </thead>
 
-        <div class="factor">
-            <h3>Transaction Monitoring</h3>
-            <p>All incoming transactions are continuously monitored.</p>
-            <div class="progress">
-                <div style="width:92%"></div>
-            </div>
-        </div>
+        <tbody>
 
-        <div class="factor">
-            <h3>Alert Protection</h3>
-            <p>High-risk transactions automatically generate alerts.</p>
-            <div class="progress">
-                <div style="width:89%"></div>
-            </div>
-        </div>
+            <tr>
+                <td>Low</td>
+                <td>0 - 39</td>
+                <td>28</td>
+                <td>Allow</td>
+                <td>
+                    <span class="badge safe">SAFE</span>
+                </td>
+            </tr>
 
-        <div class="factor">
-            <h3>Database Security</h3>
-            <p>Transaction and user information is securely stored.</p>
-            <div class="progress">
-                <div style="width:98%"></div>
-            </div>
-        </div>
+            <tr>
+                <td>Medium</td>
+                <td>40 - 69</td>
+                <td>05</td>
+                <td>Review</td>
+                <td>
+                    <span class="badge review">REVIEW</span>
+                </td>
+            </tr>
 
-    </div>
+            <tr>
+                <td>High</td>
+                <td>70 - 100</td>
+                <td>07</td>
+                <td>Block</td>
+                <td>
+                    <span class="badge high">BLOCKED</span>
+                </td>
+            </tr>
+
+        </tbody>
+
+    </table>
 
 </section>
 
