@@ -1,39 +1,41 @@
-# services/user_profile.py
+# routes/websocket.py
 
-class UserBehaviorProfile:
+from fastapi import APIRouter, WebSocket
 
-    def __init__(self):
-        self.transaction_count = 0
-        self.total_amount = 0
-        self.average_amount = 0
-        self.known_devices = set()
-        self.known_locations = set()
+router = APIRouter()
 
-    def update(
-        self,
-        amount,
-        device_id=None,
-        location=None
-    ):
+connected_users = {}
 
-        self.transaction_count += 1
-        self.total_amount += amount
 
-        self.average_amount = (
-            self.total_amount /
-            self.transaction_count
-        )
+@router.websocket("/ws/{user_id}")
+async def websocket_endpoint(
+    websocket: WebSocket,
+    user_id: str
+):
 
-        if device_id:
-            self.known_devices.add(device_id)
+    await websocket.accept()
 
-        if location:
-            self.known_locations.add(location)
+    connected_users[user_id] = websocket
 
-    def is_new_device(self, device_id):
+    try:
 
-        return device_id not in self.known_devices
+        while True:
 
-    def is_new_location(self, location):
+            await websocket.receive_text()
 
-        return location not in self.known_locations
+    except Exception:
+
+        if user_id in connected_users:
+            del connected_users[user_id]
+
+
+async def send_alert(user_id, message):
+
+    websocket = connected_users.get(user_id)
+
+    if websocket:
+
+        await websocket.send_json({
+            "type": "fraud_alert",
+            "message": message
+        })
