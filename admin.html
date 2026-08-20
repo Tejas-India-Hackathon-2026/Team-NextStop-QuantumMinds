@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Security</title>
+<title>SecureFlow-AI | AI Control</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -24,25 +24,88 @@ content="width=device-width, initial-scale=1.0">
 
 <div>
 
-<h1>Security Control Center</h1>
+<h1>AI Detection Control</h1>
 
 <p>
-System security configuration
+Manage SecureFlow-AI fraud detection engine
 </p>
 
+</div>
+
+<div class="avatar">
+AI
 </div>
 
 </header>
 
 
+<section class="stats">
+
+
+<div class="stat">
+
+<div class="stat-title">
+AI STATUS
+</div>
+
+<div class="stat-number green">
+ACTIVE
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+ACCURACY
+</div>
+
+<div class="stat-number blue">
+94%
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+MODEL VERSION
+</div>
+
+<div class="stat-number">
+3.2
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+TRANSACTIONS
+</div>
+
+<div class="stat-number">
+1248
+</div>
+
+</div>
+
+
+</section>
+
+
 <section class="panel factors">
+
 
 <div class="panel-title">
 
-<h2>Security Controls</h2>
+<h2>AI Configuration</h2>
 
 <p>
-SecureFlow-AI security configuration
+Fraud detection parameters
 </p>
 
 </div>
@@ -50,28 +113,44 @@ SecureFlow-AI security configuration
 
 <table>
 
-<thead>
-
 <tr>
 
-<th>Security Feature</th>
-<th>Description</th>
-<th>Status</th>
+<th>AI Engine</th>
+
+<td>
+<span class="badge safe">
+RUNNING
+</span>
+</td>
 
 </tr>
 
-</thead>
-
-
-<tbody>
 
 <tr>
 
-<td>Two-Factor Authentication</td>
+<th>Risk Threshold</th>
 
 <td>
-Additional verification for administrators
+70 / 100
 </td>
+
+</tr>
+
+
+<tr>
+
+<th>High Risk Threshold</th>
+
+<td>
+85 / 100
+</td>
+
+</tr>
+
+
+<tr>
+
+<th>Behaviour Analysis</th>
 
 <td>
 <span class="badge safe">
@@ -84,62 +163,7 @@ ENABLED
 
 <tr>
 
-<td>Login Protection</td>
-
-<td>
-Blocks repeated failed login attempts
-</td>
-
-<td>
-<span class="badge safe">
-ACTIVE
-</span>
-</td>
-
-</tr>
-
-
-<tr>
-
-<td>Session Monitoring</td>
-
-<td>
-Monitors administrator sessions
-</td>
-
-<td>
-<span class="badge safe">
-ACTIVE
-</span>
-</td>
-
-</tr>
-
-
-<tr>
-
-<td>Suspicious Login Detection</td>
-
-<td>
-Detects unusual login locations
-</td>
-
-<td>
-<span class="badge safe">
-ACTIVE
-</span>
-</td>
-
-</tr>
-
-
-<tr>
-
-<td>Audit Logging</td>
-
-<td>
-Records administrative activities
-</td>
+<th>Anomaly Detection</th>
 
 <td>
 <span class="badge safe">
@@ -149,7 +173,18 @@ ENABLED
 
 </tr>
 
-</tbody>
+
+<tr>
+
+<th>Automatic Decision</th>
+
+<td>
+<span class="badge safe">
+ENABLED
+</span>
+</td>
+
+</tr>
 
 </table>
 
