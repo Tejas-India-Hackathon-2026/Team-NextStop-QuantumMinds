@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Audit Log</title>
+<title>SecureFlow-AI | System Logs</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -18,11 +18,11 @@
 <header class="header">
 
 <div>
-<h1>Audit Log</h1>
-<p>System actions and security decisions</p>
+<h1>System Logs</h1>
+<p>SecureFlow-AI backend monitoring logs</p>
 </div>
 
-<div class="avatar">AL</div>
+<div class="avatar">LOG</div>
 
 </header>
 
@@ -31,9 +31,9 @@
 
 <div class="panel-title">
 
-<h2>System Audit Trail</h2>
+<h2>Recent System Logs</h2>
 
-<p>Recorded SecureFlow-AI activities</p>
+<p>Backend and AI engine events</p>
 
 </div>
 
@@ -44,10 +44,9 @@
 
 <tr>
 <th>Time</th>
-<th>Action ID</th>
-<th>Action</th>
-<th>Performed By</th>
-<th>Target</th>
+<th>Service</th>
+<th>Event</th>
+<th>Response</th>
 <th>Status</th>
 </tr>
 
@@ -57,33 +56,30 @@
 <tbody>
 
 <tr>
-<td>12:45</td>
-<td>AUD001</td>
-<td>Transaction Blocked</td>
-<td>AI Engine</td>
-<td>TXN1002</td>
+<td>12:45:21</td>
+<td>Fraud Engine</td>
+<td>Risk score generated</td>
+<td>12</td>
 <td>
-<span class="badge high">SUCCESS</span>
+<span class="badge safe">SUCCESS</span>
 </td>
 </tr>
 
 <tr>
-<td>12:42</td>
-<td>AUD002</td>
-<td>Transaction Flagged</td>
-<td>AI Engine</td>
-<td>TXN1004</td>
+<td>12:45:18</td>
+<td>Fraud Engine</td>
+<td>High risk detected</td>
+<td>91</td>
 <td>
-<span class="badge review">PENDING</span>
+<span class="badge high">ALERT</span>
 </td>
 </tr>
 
 <tr>
-<td>12:39</td>
-<td>AUD003</td>
-<td>Transaction Allowed</td>
-<td>AI Engine</td>
-<td>TXN1001</td>
+<td>12:45:10</td>
+<td>Database</td>
+<td>Transaction inserted</td>
+<td>12ms</td>
 <td>
 <span class="badge safe">SUCCESS</span>
 </td>
