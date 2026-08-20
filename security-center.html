@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Fraud Patterns</title>
+<title>SecureFlow-AI | Location Monitor</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -18,109 +18,102 @@
 <header class="header">
 
 <div>
-
-<h1>Fraud Pattern Analysis</h1>
-
-<p>Common suspicious transaction patterns</p>
-
+<h1>Location Monitor</h1>
+<p>Detection of unusual transaction locations</p>
 </div>
 
-<div class="avatar">FP</div>
+<div class="avatar">L</div>
 
 </header>
+
+
+<section class="stats">
+
+<div class="stat">
+<div class="stat-title">LOCATIONS</div>
+<div class="stat-number blue">18</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">NORMAL</div>
+<div class="stat-number green">14</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">ANOMALIES</div>
+<div class="stat-number red">04</div>
+</div>
+
+<div class="stat">
+<div class="stat-title">MONITORING</div>
+<div class="stat-number green">ON</div>
+</div>
+
+</section>
 
 
 <section class="panel factors">
 
 <div class="panel-title">
-
-<h2>Detected Fraud Patterns</h2>
-
-<p>Behavioural patterns identified by the AI engine</p>
-
+<h2>Location Activity</h2>
+<p>Transaction locations analyzed by AI</p>
 </div>
 
 
-<div class="factor-grid">
+<table>
 
-<div class="factor">
+<thead>
 
-<h3>Unusual Amount</h3>
+<tr>
+<th>User</th>
+<th>Normal Location</th>
+<th>Current Location</th>
+<th>Risk Score</th>
+<th>Detection</th>
+<th>Status</th>
+</tr>
 
-<p>18 transactions</p>
-
-<div class="progress">
-<div style="width:88%"></div>
-</div>
-
-</div>
-
-
-<div class="factor">
-
-<h3>Unknown Recipient</h3>
-
-<p>14 transactions</p>
-
-<div class="progress">
-<div style="width:76%"></div>
-</div>
-
-</div>
+</thead>
 
 
-<div class="factor">
+<tbody>
 
-<h3>Rapid Transactions</h3>
+<tr>
+<td>Rahul Sharma</td>
+<td>Kolkata</td>
+<td>Kolkata</td>
+<td>08</td>
+<td>Normal</td>
+<td>
+<span class="badge safe">SAFE</span>
+</td>
+</tr>
 
-<p>11 transactions</p>
+<tr>
+<td>Rohan Gupta</td>
+<td>Kolkata</td>
+<td>Delhi</td>
+<td>67</td>
+<td>Location Change</td>
+<td>
+<span class="badge review">REVIEW</span>
+</td>
+</tr>
 
-<div class="progress">
-<div style="width:65%"></div>
-</div>
+<tr>
+<td>Amit Kumar</td>
+<td>Kolkata</td>
+<td>Mumbai</td>
+<td>91</td>
+<td>Major Anomaly</td>
+<td>
+<span class="badge high">BLOCKED</span>
+</td>
+</tr>
 
-</div>
+</tbody>
 
-
-<div class="factor">
-
-<h3>New Device</h3>
-
-<p>09 transactions</p>
-
-<div class="progress">
-<div style="width:58%"></div>
-</div>
-
-</div>
-
-
-<div class="factor">
-
-<h3>Location Anomaly</h3>
-
-<p>07 transactions</p>
-
-<div class="progress">
-<div style="width:48%"></div>
-</div>
-
-</div>
-
-
-<div class="factor">
-
-<h3>Behaviour Deviation</h3>
-
-<p>06 transactions</p>
-
-<div class="progress">
-<div style="width:43%"></div>
-</div>
-
-</div>
-
-</div>
+</table>
 
 </section>
 
