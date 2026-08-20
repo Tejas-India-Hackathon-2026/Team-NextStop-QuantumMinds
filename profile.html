@@ -2,83 +2,72 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Fraud Risk Gauge</title>
+<title>Beneficiary Security</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:#020617;
-color:white;
-text-align:center;
+background:#ecfdf5;
 }
 
 .container{
-width:700px;
+width:600px;
 max-width:90%;
-margin:40px auto;
+margin:50px auto;
 }
 
-.gauge{
-width:300px;
-height:150px;
-border-radius:300px 300px 0 0;
-background:linear-gradient(
-90deg,
-#22c55e,
-#facc15,
-#ef4444
-);
-margin:30px auto;
-position:relative;
-}
-
-.needle{
-width:6px;
-height:130px;
+.card{
 background:white;
-position:absolute;
-bottom:0;
-left:50%;
-transform-origin:bottom;
-transform:rotate(-90deg);
-transition:1s;
+padding:30px;
+border-radius:20px;
+box-shadow:0 8px 30px #a7f3d0;
 }
 
-.value{
-font-size:50px;
-font-weight:bold;
-}
-
-.panel{
-background:#111827;
+.receiver{
+text-align:center;
 padding:25px;
+background:#f0fdf4;
 border-radius:15px;
+}
+
+.avatar{
+width:80px;
+height:80px;
+background:#059669;
+color:white;
+border-radius:50%;
+margin:auto;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:35px;
 }
 
 input[type=number]{
 width:100%;
 padding:15px;
 box-sizing:border-box;
-background:#020617;
-color:white;
-border:1px solid #475569;
+margin:15px 0;
 }
 
 label{
 display:block;
-text-align:left;
-padding:7px;
+padding:8px;
 }
 
 button{
 width:100%;
 padding:15px;
-margin-top:15px;
-background:#2563eb;
+background:#059669;
 color:white;
 border:0;
 border-radius:8px;
+}
+
+.result{
+text-align:center;
+margin-top:20px;
 }
 </style>
 </head>
@@ -87,40 +76,80 @@ border-radius:8px;
 
 <div class="container">
 
-<h1>📊 AI Fraud Risk Gauge</h1>
+<div class="card">
 
-<div class="gauge">
-<div class="needle" id="needle"></div>
+<div class="receiver">
+
+<div class="avatar">₹</div>
+
+<h2>UPI Beneficiary</h2>
+<p>Recipient Security Verification</p>
+
 </div>
 
-<div class="value" id="score">0</div>
-
-<h2 id="decision">READY</h2>
-
-<div class="panel">
-
 <input id="amount" type="number"
-placeholder="Transaction Amount ₹">
+placeholder="Payment Amount ₹">
 
-<label><input id="unusual_time" type="checkbox"> Unusual Time</label>
-<label><input id="unusual_frequency" type="checkbox"> Unusual Frequency</label>
-<label><input id="new_device" type="checkbox"> New Device</label>
-<label><input id="unusual_location" type="checkbox"> Unusual Location</label>
-<label><input id="sudden_location_change" type="checkbox"> Sudden Location Change</label>
-<label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label>
-<label><input id="no_previous_transactions" type="checkbox"> No Previous Transactions</label>
-<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
+<label>
+<input id="unusual_time" type="checkbox">
+ Unusual Time
+</label>
 
-<button onclick="checkRisk()">CHECK RISK</button>
+<label>
+<input id="unusual_frequency" type="checkbox">
+ Unusual Frequency
+</label>
+
+<label>
+<input id="new_device" type="checkbox">
+ New Device
+</label>
+
+<label>
+<input id="unusual_location" type="checkbox">
+ Unusual Location
+</label>
+
+<label>
+<input id="sudden_location_change" type="checkbox">
+ Sudden Location Change
+</label>
+
+<label>
+<input id="unknown_beneficiary" type="checkbox">
+ Unknown Beneficiary
+</label>
+
+<label>
+<input id="no_previous_transactions" type="checkbox">
+ No Previous Transaction
+</label>
+
+<label>
+<input id="unusual_beneficiary_amount" type="checkbox">
+ Unusual Beneficiary Amount
+</label>
+
+<button onclick="verifyBeneficiary()">
+VERIFY BENEFICIARY
+</button>
+
+<div class="result">
+
+<h2 id="decision">Beneficiary Not Verified</h2>
+
+<h3 id="score"></h3>
 
 <div id="reasons"></div>
+
+</div>
 
 </div>
 </div>
 
 <script>
 
-async function checkRisk(){
+async function verifyBeneficiary(){
 
 let ids=[
 "unusual_time",
@@ -152,13 +181,11 @@ body:JSON.stringify(data)
 
 let r=await response.json();
 
-document.getElementById("score").innerText=r.risk_score;
-document.getElementById("decision").innerText=r.decision;
+document.getElementById("decision").innerText=
+r.decision;
 
-let rotation=-90+(r.risk_score/100)*180;
-
-document.getElementById("needle").style.transform=
-`rotate(${rotation}deg)`;
+document.getElementById("score").innerText=
+"Risk Score: "+r.risk_score;
 
 document.getElementById("reasons").innerHTML=
 r.reasons.map(x=>`<p>⚠ ${x}</p>`).join("");
