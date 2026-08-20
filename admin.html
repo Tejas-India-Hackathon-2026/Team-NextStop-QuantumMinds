@@ -8,9 +8,10 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | AI Control</title>
+<title>SecureFlow-AI | Database</title>
 
-<link rel="stylesheet" href="style10.css">
+<link rel="stylesheet"
+href="style10.css">
 
 </head>
 
@@ -24,16 +25,12 @@ content="width=device-width, initial-scale=1.0">
 
 <div>
 
-<h1>AI Detection Control</h1>
+<h1>Database Administration</h1>
 
 <p>
-Manage SecureFlow-AI fraud detection engine
+SecureFlow-AI SQLite database monitoring
 </p>
 
-</div>
-
-<div class="avatar">
-AI
 </div>
 
 </header>
@@ -45,11 +42,11 @@ AI
 <div class="stat">
 
 <div class="stat-title">
-AI STATUS
+DATABASE
 </div>
 
 <div class="stat-number green">
-ACTIVE
+ONLINE
 </div>
 
 </div>
@@ -58,24 +55,11 @@ ACTIVE
 <div class="stat">
 
 <div class="stat-title">
-ACCURACY
+USERS
 </div>
 
 <div class="stat-number blue">
-94%
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-MODEL VERSION
-</div>
-
-<div class="stat-number">
-3.2
+08
 </div>
 
 </div>
@@ -88,7 +72,20 @@ TRANSACTIONS
 </div>
 
 <div class="stat-number">
-1248
+40
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+TABLES
+</div>
+
+<div class="stat-number">
+08
 </div>
 
 </div>
@@ -102,10 +99,10 @@ TRANSACTIONS
 
 <div class="panel-title">
 
-<h2>AI Configuration</h2>
+<h2>Database Tables</h2>
 
 <p>
-Fraud detection parameters
+Current SQLite database structure
 </p>
 
 </div>
@@ -113,78 +110,88 @@ Fraud detection parameters
 
 <table>
 
+<thead>
+
 <tr>
 
-<th>AI Engine</th>
+<th>Table</th>
+<th>Records</th>
+<th>Status</th>
+<th>Purpose</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+
+<tr>
+
+<td>users</td>
+<td>08</td>
 
 <td>
 <span class="badge safe">
-RUNNING
+ACTIVE
 </span>
 </td>
 
-</tr>
-
-
-<tr>
-
-<th>Risk Threshold</th>
-
-<td>
-70 / 100
-</td>
+<td>User information</td>
 
 </tr>
 
 
 <tr>
 
-<th>High Risk Threshold</th>
-
-<td>
-85 / 100
-</td>
-
-</tr>
-
-
-<tr>
-
-<th>Behaviour Analysis</th>
+<td>transactions</td>
+<td>40</td>
 
 <td>
 <span class="badge safe">
-ENABLED
+ACTIVE
 </span>
 </td>
+
+<td>UPI transactions</td>
 
 </tr>
 
 
 <tr>
 
-<th>Anomaly Detection</th>
+<td>risk_factors</td>
+<td>24</td>
 
 <td>
 <span class="badge safe">
-ENABLED
+ACTIVE
 </span>
 </td>
+
+<td>AI risk indicators</td>
 
 </tr>
 
 
 <tr>
 
-<th>Automatic Decision</th>
+<td>fraud_alerts</td>
+<td>12</td>
 
 <td>
 <span class="badge safe">
-ENABLED
+ACTIVE
 </span>
 </td>
 
+<td>Fraud alerts</td>
+
 </tr>
+
+
+</tbody>
 
 </table>
 
