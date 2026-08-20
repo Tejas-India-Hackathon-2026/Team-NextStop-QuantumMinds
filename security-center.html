@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureFlow-AI | Risk Dashboard</title>
+    <title>SecureFlow-AI | Payment Monitor</title>
     <link rel="stylesheet" href="style10.css">
 </head>
 
@@ -12,34 +12,36 @@
 <main class="main">
 
 <header class="header">
+
     <div>
-        <h1>Risk Dashboard</h1>
-        <p>Real-time transaction risk overview</p>
+        <h1>Payment Monitor</h1>
+        <p>UPI payment activity and security decisions</p>
     </div>
 
-    <div class="avatar">R</div>
+    <div class="avatar">₹</div>
+
 </header>
 
 <section class="stats">
 
     <div class="stat">
-        <div class="stat-title">LOW RISK</div>
-        <div class="stat-number green">28</div>
-    </div>
-
-    <div class="stat">
-        <div class="stat-title">MEDIUM RISK</div>
-        <div class="stat-number orange">05</div>
-    </div>
-
-    <div class="stat">
-        <div class="stat-title">HIGH RISK</div>
-        <div class="stat-number red">07</div>
-    </div>
-
-    <div class="stat">
-        <div class="stat-title">TOTAL</div>
+        <div class="stat-title">PAYMENTS</div>
         <div class="stat-number blue">40</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-title">ALLOWED</div>
+        <div class="stat-number green">18</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-title">ALERTS</div>
+        <div class="stat-number orange">12</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-title">BLOCKED</div>
+        <div class="stat-number red">10</div>
     </div>
 
 </section>
@@ -47,51 +49,55 @@
 <section class="panel factors">
 
     <div class="panel-title">
-        <h2>Risk Classification</h2>
-        <p>Transactions grouped by AI-generated risk score</p>
+        <h2>Payment Decisions</h2>
+        <p>AI decisions for recent UPI payments</p>
     </div>
 
     <table>
 
         <thead>
             <tr>
-                <th>Risk Level</th>
-                <th>Score Range</th>
-                <th>Transactions</th>
-                <th>AI Action</th>
-                <th>Status</th>
+                <th>Transaction</th>
+                <th>Sender</th>
+                <th>Recipient</th>
+                <th>Amount</th>
+                <th>Risk</th>
+                <th>Decision</th>
             </tr>
         </thead>
 
         <tbody>
 
             <tr>
-                <td>Low</td>
-                <td>0 - 39</td>
-                <td>28</td>
-                <td>Allow</td>
+                <td>TXN1001</td>
+                <td>Rahul Sharma</td>
+                <td>Priya Singh</td>
+                <td>₹2,500</td>
+                <td>12</td>
                 <td>
-                    <span class="badge safe">SAFE</span>
+                    <span class="badge safe">ALLOW</span>
                 </td>
             </tr>
 
             <tr>
-                <td>Medium</td>
-                <td>40 - 69</td>
-                <td>05</td>
-                <td>Review</td>
+                <td>TXN1004</td>
+                <td>Rohan Gupta</td>
+                <td>Merchant XYZ</td>
+                <td>₹18,500</td>
+                <td>67</td>
                 <td>
-                    <span class="badge review">REVIEW</span>
+                    <span class="badge review">ALERT</span>
                 </td>
             </tr>
 
             <tr>
-                <td>High</td>
-                <td>70 - 100</td>
-                <td>07</td>
-                <td>Block</td>
+                <td>TXN1006</td>
+                <td>Vikash Das</td>
+                <td>Unknown Account</td>
+                <td>₹75,000</td>
+                <td>96</td>
                 <td>
-                    <span class="badge high">BLOCKED</span>
+                    <span class="badge high">BLOCK</span>
                 </td>
             </tr>
 
