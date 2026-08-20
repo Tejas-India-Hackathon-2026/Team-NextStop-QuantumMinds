@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Alert Severity</title>
+<title>SecureFlow-AI | Blocked Alerts</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -20,11 +20,13 @@
 
 <div>
 
-<h1>Alert Severity Dashboard</h1>
+<h1>Blocked Transactions</h1>
 
-<p>Fraud alerts classified according to severity</p>
+<p>Transactions automatically blocked by the AI engine</p>
 
 </div>
+
+<div class="avatar">AI</div>
 
 </header>
 
@@ -34,7 +36,7 @@
 <div class="stat">
 
 <div class="stat-title">
-CRITICAL
+BLOCKED
 </div>
 
 <div class="stat-number red">
@@ -47,37 +49,37 @@ CRITICAL
 <div class="stat">
 
 <div class="stat-title">
-HIGH
-</div>
-
-<div class="stat-number orange">
-05
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-MEDIUM
-</div>
-
-<div class="stat-number blue">
-08
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-LOW
+MONEY PROTECTED
 </div>
 
 <div class="stat-number green">
-22
+₹2.1L
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+AVERAGE RISK
+</div>
+
+<div class="stat-number red">
+90
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+AI ACTION
+</div>
+
+<div class="stat-number blue">
+AUTO
 </div>
 
 </div>
@@ -89,77 +91,71 @@ LOW
 
 <div class="panel-title">
 
-<h2>Severity Distribution</h2>
+<h2>Blocked Transaction Alerts</h2>
 
-<p>Classification of security alerts</p>
-
-</div>
-
-
-<div class="factor-grid">
-
-
-<div class="factor">
-
-<h3>Critical</h3>
-
-<p>07 alerts</p>
-
-<div class="progress">
-
-<div style="width:85%"></div>
-
-</div>
+<p>High-risk payments automatically stopped</p>
 
 </div>
 
 
-<div class="factor">
+<table>
 
-<h3>High</h3>
+<thead>
 
-<p>05 alerts</p>
+<tr>
 
-<div class="progress">
+<th>Transaction</th>
+<th>User</th>
+<th>Recipient</th>
+<th>Amount</th>
+<th>Risk</th>
+<th>Reason</th>
 
-<div style="width:65%"></div>
+</tr>
 
-</div>
-
-</div>
-
-
-<div class="factor">
-
-<h3>Medium</h3>
-
-<p>08 alerts</p>
-
-<div class="progress">
-
-<div style="width:45%"></div>
-
-</div>
-
-</div>
+</thead>
 
 
-<div class="factor">
+<tbody>
 
-<h3>Low</h3>
+<tr>
 
-<p>22 alerts</p>
+<td>TXN1002</td>
+<td>Amit Kumar</td>
+<td>Unknown User</td>
+<td>₹45,000</td>
+<td>91</td>
+<td>Unknown Recipient</td>
 
-<div class="progress">
-
-<div style="width:25%"></div>
-
-</div>
-
-</div>
+</tr>
 
 
-</div>
+<tr>
+
+<td>TXN1006</td>
+<td>Vikash Das</td>
+<td>Unknown Account</td>
+<td>₹75,000</td>
+<td>96</td>
+<td>Abnormal Amount</td>
+
+</tr>
+
+
+<tr>
+
+<td>TXN1008</td>
+<td>Priya Das</td>
+<td>Unknown User</td>
+<td>₹32,000</td>
+<td>84</td>
+<td>New Device</td>
+
+</tr>
+
+</tbody>
+
+</table>
 
 </section>
 
