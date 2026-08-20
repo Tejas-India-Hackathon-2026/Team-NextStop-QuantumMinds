@@ -1,23 +1,24 @@
-# main.py
 
-from fastapi import FastAPI
-from routes.transactions import router as transaction_router
-from routes.auth import router as auth_router
+# models/transaction.py
 
-app = FastAPI(
-    title="SecureFlow-AI",
-    description="Real-time AI-driven UPI fraud prevention API",
-    version="1.0.0"
-)
-
-app.include_router(auth_router, prefix="/api/auth")
-app.include_router(transaction_router, prefix="/api/transactions")
+from pydantic import BaseModel, Field
+from typing import Optional
 
 
-@app.get("/")
-def root():
-    return {
-        "project": "SecureFlow-AI",
-        "status": "running",
-        "message": "Real-time UPI fraud detection backend"
-    }
+class Transaction(BaseModel):
+    user_id: str
+    transaction_id: str
+    amount: float = Field(gt=0)
+
+    merchant_id: Optional[str] = None
+    location: Optional[str] = None
+    device_id: Optional[str] = None
+
+    transaction_hour: int = Field(ge=0, le=23)
+
+    previous_transaction_amount: float = 0.0
+    average_transaction_amount: float = 0.0
+
+    failed_attempts: int = 0
+    new_device: bool = False
+    new_location: bool = False
