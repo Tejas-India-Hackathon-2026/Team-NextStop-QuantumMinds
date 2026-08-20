@@ -5,125 +5,124 @@
 
 <meta charset="UTF-8">
 
-<title>SecureFlow Admin</title>
+<title>SecureFlow</title>
 
 <style>
 
 body{
     margin:0;
     font-family:Arial;
-    background:#f8fafc;
-}
-
-.sidebar{
-    position:fixed;
-    width:220px;
-    height:100vh;
-    background:#172554;
-    color:white;
-    padding:25px;
-}
-
-.main{
-    margin-left:270px;
-    padding:35px;
-}
-
-.card{
     background:white;
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 3px 12px #ddd;
+    color:#111;
 }
 
-.stats{
-    display:flex;
-    gap:20px;
+.container{
+    width:600px;
+    max-width:90%;
+    margin:70px auto;
 }
 
-.stat{
-    flex:1;
-    padding:25px;
-    background:white;
-    border-radius:12px;
+h1{
+    font-size:42px;
+}
+
+.subtitle{
+    color:#64748b;
 }
 
 input[type=number]{
     width:100%;
-    padding:15px;
-    margin:15px 0;
+    padding:18px;
+    border:1px solid #ddd;
+    border-radius:5px;
+    font-size:20px;
 }
 
-label{
-    display:block;
-    padding:10px;
+.option{
+    border-bottom:1px solid #eee;
+    padding:15px 0;
 }
 
 button{
-    padding:15px;
+    margin-top:25px;
     width:100%;
-    background:#1d4ed8;
+    padding:18px;
+    background:#111;
     color:white;
     border:0;
+    font-size:16px;
+}
+
+.result{
+    margin-top:30px;
+    border-top:3px solid #111;
+    padding-top:20px;
 }
 
 </style>
+
 </head>
 
 <body>
 
-<div class="sidebar">
+<div class="container">
 
-<h2>SecureFlow</h2>
+<h1>SecureFlow AI</h1>
 
-<p>Dashboard</p>
-<p>Transactions</p>
-<p>Fraud Monitor</p>
-<p>AI Analysis</p>
-<p>Security Logs</p>
+<p class="subtitle">
+Simple UPI Fraud Detection
+</p>
 
+<input id="amount"
+type="number"
+placeholder="Transaction Amount">
+
+<div class="option">
+<input id="unusual_time" type="checkbox">
+Unusual Time
 </div>
 
-<div class="main">
-
-<h1>Fraud Monitoring Dashboard</h1>
-
-<div class="stats">
-
-<div class="stat">
-<h3>Risk Score</h3>
-<h1 id="score">--</h1>
+<div class="option">
+<input id="unusual_frequency" type="checkbox">
+Unusual Frequency
 </div>
 
-<div class="stat">
-<h3>Decision</h3>
-<h1 id="decision">--</h1>
+<div class="option">
+<input id="new_device" type="checkbox">
+New Device
 </div>
 
+<div class="option">
+<input id="unusual_location" type="checkbox">
+Unusual Location
 </div>
 
-<br>
+<div class="option">
+<input id="sudden_location_change" type="checkbox">
+Sudden Location Change
+</div>
 
-<div class="card">
+<div class="option">
+<input id="unknown_beneficiary" type="checkbox">
+Unknown Beneficiary
+</div>
 
-<h2>Analyze Transaction</h2>
+<div class="option">
+<input id="no_previous_transactions" type="checkbox">
+No Previous Transactions
+</div>
 
-<input id="amount" type="number" placeholder="Amount ₹">
+<div class="option">
+<input id="unusual_beneficiary_amount" type="checkbox">
+Unusual Beneficiary Amount
+</div>
 
-<label><input id="unusual_time" type="checkbox"> Unusual Time</label>
-<label><input id="unusual_frequency" type="checkbox"> Unusual Frequency</label>
-<label><input id="new_device" type="checkbox"> New Device</label>
-<label><input id="unusual_location" type="checkbox"> Unusual Location</label>
-<label><input id="sudden_location_change" type="checkbox"> Location Change</label>
-<label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label>
-<label><input id="no_previous_transactions" type="checkbox"> No Previous Transaction</label>
-<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
+<button onclick="analyze()">
+CHECK TRANSACTION
+</button>
 
-<button onclick="analyze()">RUN ANALYSIS</button>
-
-<h3>Reasons</h3>
-<ul id="reasons"></ul>
-
+<div class="result" id="result">
+Result will appear here.
 </div>
 
 </div>
@@ -161,11 +160,11 @@ body:JSON.stringify(data)
 
 const r=await response.json();
 
-document.getElementById("score").innerText=r.risk_score;
-document.getElementById("decision").innerText=r.decision;
-
-document.getElementById("reasons").innerHTML=
-r.reasons.map(x=>`<li>${x}</li>`).join("");
+document.getElementById("result").innerHTML=`
+<h2>Risk Score: ${r.risk_score}</h2>
+<h2>${r.decision}</h2>
+<p>${r.reasons.join(", ")}</p>
+`;
 
 }
 
