@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Admin Users</title>
+<title>SecureFlow-AI | Security</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -24,85 +24,25 @@ content="width=device-width, initial-scale=1.0">
 
 <div>
 
-<h1>Admin User Management</h1>
+<h1>Security Control Center</h1>
 
 <p>
-Manage system administrators and security analysts
+System security configuration
 </p>
 
 </div>
 
-<div class="avatar">
-A
-</div>
-
 </header>
-
-
-<section class="stats">
-
-<div class="stat">
-
-<div class="stat-title">
-ADMIN USERS
-</div>
-
-<div class="stat-number blue">
-04
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-ACTIVE
-</div>
-
-<div class="stat-number green">
-03
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-LOCKED
-</div>
-
-<div class="stat-number red">
-01
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-2FA
-</div>
-
-<div class="stat-number green">
-04
-</div>
-
-</div>
-
-</section>
 
 
 <section class="panel factors">
 
 <div class="panel-title">
 
-<h2>Administrator Accounts</h2>
+<h2>Security Controls</h2>
 
 <p>
-Authorized personnel
+SecureFlow-AI security configuration
 </p>
 
 </div>
@@ -114,10 +54,8 @@ Authorized personnel
 
 <tr>
 
-<th>Admin ID</th>
-<th>Name</th>
-<th>Role</th>
-<th>Last Login</th>
+<th>Security Feature</th>
+<th>Description</th>
 <th>Status</th>
 
 </tr>
@@ -129,13 +67,28 @@ Authorized personnel
 
 <tr>
 
-<td>ADM001</td>
+<td>Two-Factor Authentication</td>
 
-<td>System Administrator</td>
+<td>
+Additional verification for administrators
+</td>
 
-<td>Super Admin</td>
+<td>
+<span class="badge safe">
+ENABLED
+</span>
+</td>
 
-<td>20 Aug 2026</td>
+</tr>
+
+
+<tr>
+
+<td>Login Protection</td>
+
+<td>
+Blocks repeated failed login attempts
+</td>
 
 <td>
 <span class="badge safe">
@@ -148,13 +101,11 @@ ACTIVE
 
 <tr>
 
-<td>ADM002</td>
+<td>Session Monitoring</td>
 
-<td>Security Analyst</td>
-
-<td>Analyst</td>
-
-<td>20 Aug 2026</td>
+<td>
+Monitors administrator sessions
+</td>
 
 <td>
 <span class="badge safe">
@@ -167,13 +118,11 @@ ACTIVE
 
 <tr>
 
-<td>ADM003</td>
+<td>Suspicious Login Detection</td>
 
-<td>Fraud Investigator</td>
-
-<td>Investigator</td>
-
-<td>19 Aug 2026</td>
+<td>
+Detects unusual login locations
+</td>
 
 <td>
 <span class="badge safe">
@@ -186,17 +135,15 @@ ACTIVE
 
 <tr>
 
-<td>ADM004</td>
-
-<td>Temporary Admin</td>
-
-<td>Admin</td>
-
-<td>15 Aug 2026</td>
+<td>Audit Logging</td>
 
 <td>
-<span class="badge high">
-LOCKED
+Records administrative activities
+</td>
+
+<td>
+<span class="badge safe">
+ENABLED
 </span>
 </td>
 
