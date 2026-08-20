@@ -1,18 +1,42 @@
-st.metric(
-    "Risk Score",
-    result["risk"]["final_score"]
-)
+def initialize_database():
 
-st.write(
-    "Risk Level:",
-    result["risk"]["risk_level"]
-)
+    conn = get_db_connection()
 
-st.write(
-    "Decision:",
-    result["decision"]
-)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS transactions (
 
-for reason in result["reasons"]:
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    st.warning(reason)
+            amount REAL NOT NULL,
+
+            average_amount REAL,
+
+            device TEXT,
+
+            location TEXT,
+
+            transaction_time TEXT,
+
+            beneficiary TEXT,
+
+            recent_transactions INTEGER,
+
+            behaviour_score REAL,
+
+            ml_score REAL,
+
+            final_score REAL,
+
+            risk_level TEXT,
+
+            decision TEXT,
+
+            reasons TEXT,
+
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+        )
+    """)
+
+    conn.commit()
+    conn.close()
