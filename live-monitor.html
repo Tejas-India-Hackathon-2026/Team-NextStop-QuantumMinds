@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | AI Monitor</title>
+<title>SecureFlow-AI | Risk Monitor</title>
 
 <link rel="stylesheet"
 href="style10.css">
@@ -25,16 +25,12 @@ href="style10.css">
 
 <div>
 
-<h1>Real-Time AI Monitor</h1>
+<h1>Live Risk Monitor</h1>
 
 <p>
-SecureFlow-AI behavioural fraud engine
+Real-time transaction risk scoring
 </p>
 
-</div>
-
-<div class="avatar">
-AI
 </div>
 
 </header>
@@ -46,11 +42,11 @@ AI
 <div class="stat">
 
 <div class="stat-title">
-AI ENGINE
+LOW RISK
 </div>
 
 <div class="stat-number green">
-ON
+05
 </div>
 
 </div>
@@ -59,11 +55,11 @@ ON
 <div class="stat">
 
 <div class="stat-title">
-TRANSACTIONS / MIN
+MEDIUM RISK
 </div>
 
-<div class="stat-number blue">
-18
+<div class="stat-number orange">
+02
 </div>
 
 </div>
@@ -72,11 +68,11 @@ TRANSACTIONS / MIN
 <div class="stat">
 
 <div class="stat-title">
-THREATS
+HIGH RISK
 </div>
 
 <div class="stat-number red">
-03
+01
 </div>
 
 </div>
@@ -85,11 +81,11 @@ THREATS
 <div class="stat">
 
 <div class="stat-title">
-LATENCY
+AVG RISK
 </div>
 
-<div class="stat-number green">
-42ms
+<div class="stat-number blue">
+31
 </div>
 
 </div>
@@ -104,96 +100,89 @@ LATENCY
 <div class="panel-title">
 
 <h2>
-AI Processing Status
+Current Risk Scores
 </h2>
 
 <p>
-Current fraud engine activity
+Latest transaction risk evaluation
 </p>
 
 </div>
 
 
-<div class="factor-grid">
+<table>
 
 
-<div class="factor">
+<thead>
 
-<h3>
-Transaction Analysis
-</h3>
+<tr>
 
-<p>
-Processing incoming UPI transactions
-</p>
+<th>Transaction</th>
+<th>User</th>
+<th>Amount</th>
+<th>Risk Score</th>
+<th>Classification</th>
+<th>Action</th>
 
-<div class="progress">
+</tr>
 
-<div style="width:94%"></div>
-
-</div>
-
-</div>
+</thead>
 
 
-<div class="factor">
-
-<h3>
-Behaviour Analysis
-</h3>
-
-<p>
-Comparing user behaviour patterns
-</p>
-
-<div class="progress">
-
-<div style="width:88%"></div>
-
-</div>
-
-</div>
+<tbody>
 
 
-<div class="factor">
+<tr>
 
-<h3>
-Risk Calculation
-</h3>
+<td>TXN2011</td>
+<td>Rahul Sharma</td>
+<td>₹1,500</td>
+<td>12</td>
 
-<p>
-Generating real-time risk scores
-</p>
+<td>
+<span class="badge safe">LOW</span>
+</td>
 
-<div class="progress">
+<td>ALLOW</td>
 
-<div style="width:91%"></div>
-
-</div>
-
-</div>
+</tr>
 
 
-<div class="factor">
+<tr>
 
-<h3>
-Fraud Detection
-</h3>
+<td>TXN2010</td>
+<td>Amit Kumar</td>
+<td>₹45,000</td>
+<td>91</td>
 
-<p>
-Searching for suspicious behaviour
-</p>
+<td>
+<span class="badge high">HIGH</span>
+</td>
 
-<div class="progress">
+<td>BLOCK</td>
 
-<div style="width:96%"></div>
-
-</div>
-
-</div>
+</tr>
 
 
-</div>
+<tr>
+
+<td>TXN2008</td>
+<td>Rohan Gupta</td>
+<td>₹18,500</td>
+<td>67</td>
+
+<td>
+<span class="badge review">MEDIUM</span>
+</td>
+
+<td>REVIEW</td>
+
+</tr>
+
+
+</tbody>
+
+</table>
 
 </section>
 
