@@ -1,135 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>UPI Security Scanner</title>
-
-<style>
-body{
-margin:0;
-font-family:Arial;
-background:#020617;
-color:white;
-}
-
-.scanner{
-width:650px;
-max-width:90%;
-margin:50px auto;
-text-align:center;
-}
-
-.circle{
-width:220px;
-height:220px;
-border:8px solid #22c55e;
-border-radius:50%;
-margin:auto;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:50px;
-}
-
-.panel{
-margin-top:30px;
-background:#111827;
-padding:25px;
-border-radius:20px;
-}
-
-input[type=number]{
-width:100%;
-padding:15px;
-box-sizing:border-box;
-}
-
-label{
-display:block;
-text-align:left;
-padding:7px;
-}
-
-button{
-width:100%;
-padding:15px;
-background:#22c55e;
-border:0;
-border-radius:8px;
-font-weight:bold;
-margin-top:15px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureFlow-AI | Transactions</title>
+    <link rel="stylesheet" href="style10.css">
 </head>
 
 <body>
 
-<div class="scanner">
+<aside class="sidebar">
 
-<h1>🔐 UPI Security Scanner</h1>
-<p>SecureFlow-AI Transaction Verification</p>
+    <div class="logo">
+        <div class="logo-icon">SF</div>
+        <div>
+            <h2>SecureFlow</h2>
+            <small>AI FRAUD DETECTION</small>
+        </div>
+    </div>
 
-<div class="circle">
-<span id="score">0</span>
+    <nav>
+        <a href="index.html">Dashboard</a>
+        <a href="transactions.html" class="active">Transactions</a>
+        <a href="users.html">Users</a>
+        <a href="risk-analysis.html">Risk Analysis</a>
+        <a href="fraud-alerts.html">Alerts</a>
+        <a href="reports.html">Reports</a>
+    </nav>
+
+    <div class="online">
+        <span></span>
+        <strong>System Online</strong>
+        <small>AI engine monitoring transactions</small>
+    </div>
+
+</aside>
+
+
+<main class="main">
+
+<header class="header">
+
+    <div>
+        <h1>Transaction History</h1>
+        <p>Complete UPI transaction monitoring</p>
+    </div>
+
+    <div class="admin">
+        <strong>Admin</strong>
+        <div class="avatar">A</div>
+    </div>
+
+</header>
+
+
+<section class="stats">
+
+    <div class="stat">
+        <div class="stat-title">TOTAL</div>
+        <div class="stat-number blue">40</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-title">SAFE</div>
+        <div class="stat-number green">28</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-title">HIGH RISK</div>
+        <div class="stat-number red">07</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-title">REVIEW</div>
+        <div class="stat-number orange">05</div>
+    </div>
+
+</section>
+
+
+<section class="panel factors">
+
+<div class="panel-title">
+    <h2>All Transactions</h2>
+    <p>Transaction database records</p>
 </div>
 
-<h2 id="decision">SYSTEM READY</h2>
+<table>
 
-<div class="panel">
+<thead>
+<tr>
+    <th>ID</th>
+    <th>SENDER</th>
+    <th>RECIPIENT</th>
+    <th>AMOUNT</th>
+    <th>RISK</th>
+    <th>STATUS</th>
+</tr>
+</thead>
 
-<input id="amount" type="number" placeholder="Enter UPI Amount">
+<tbody>
 
-<label><input id="unusual_time" type="checkbox"> Unusual Time</label>
-<label><input id="unusual_frequency" type="checkbox"> High Frequency</label>
-<label><input id="new_device" type="checkbox"> New Device</label>
-<label><input id="unusual_location" type="checkbox"> Unusual Location</label>
-<label><input id="sudden_location_change" type="checkbox"> Sudden Location Change</label>
-<label><input id="unknown_beneficiary" type="checkbox"> Unknown Beneficiary</label>
-<label><input id="no_previous_transactions" type="checkbox"> First Transaction</label>
-<label><input id="unusual_beneficiary_amount" type="checkbox"> Unusual Amount</label>
+<tr>
+    <td>TXN1001</td>
+    <td>Rahul Sharma</td>
+    <td>Priya Singh</td>
+    <td>₹2,500</td>
+    <td>12</td>
+    <td><span class="badge safe">SAFE</span></td>
+</tr>
 
-<button onclick="scan()">SCAN PAYMENT</button>
+<tr>
+    <td>TXN1002</td>
+    <td>Amit Kumar</td>
+    <td>Unknown User</td>
+    <td>₹45,000</td>
+    <td>91</td>
+    <td><span class="badge high">BLOCKED</span></td>
+</tr>
 
-<div id="result"></div>
+<tr>
+    <td>TXN1003</td>
+    <td>Sneha Das</td>
+    <td>Arjun Roy</td>
+    <td>₹1,200</td>
+    <td>08</td>
+    <td><span class="badge safe">SAFE</span></td>
+</tr>
 
-</div>
-</div>
+<tr>
+    <td>TXN1004</td>
+    <td>Rohan Gupta</td>
+    <td>Merchant XYZ</td>
+    <td>₹18,500</td>
+    <td>67</td>
+    <td><span class="badge review">REVIEW</span></td>
+</tr>
 
-<script>
-async function scan(){
+<tr>
+    <td>TXN1005</td>
+    <td>Neha Singh</td>
+    <td>Online Store</td>
+    <td>₹3,999</td>
+    <td>19</td>
+    <td><span class="badge safe">SAFE</span></td>
+</tr>
 
-let ids=[
-"unusual_time","unusual_frequency","new_device",
-"unusual_location","sudden_location_change",
-"unknown_beneficiary","no_previous_transactions",
-"unusual_beneficiary_amount"
-];
+<tr>
+    <td>TXN1006</td>
+    <td>Vikash Das</td>
+    <td>Unknown Account</td>
+    <td>₹75,000</td>
+    <td>96</td>
+    <td><span class="badge high">BLOCKED</span></td>
+</tr>
 
-let data={
-amount:Number(document.getElementById("amount").value)
-};
+</tbody>
 
-ids.forEach(id=>{
-data[id]=document.getElementById(id).checked;
-});
+</table>
 
-let response=await fetch(
-"http://127.0.0.1:8000/transaction",
-{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify(data)
-});
+</section>
 
-let r=await response.json();
+<footer>
+    <span>© 2026 SecureFlow-AI</span>
+    <span>UPI Fraud Detection System</span>
+</footer>
 
-document.getElementById("score").innerText=r.risk_score;
-document.getElementById("decision").innerText=r.decision;
-
-document.getElementById("result").innerHTML=
-r.reasons.map(x=>`<p>⚠ ${x}</p>`).join("");
-}
-</script>
+</main>
 
 </body>
 </html>
