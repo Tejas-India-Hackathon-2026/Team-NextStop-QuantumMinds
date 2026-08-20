@@ -1,16 +1,18 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
 import sqlite3
+from datetime import datetime
 
 
 # =========================================================
 # SECUREFLOW-AI BACKEND
-# CODE 3 — USER PROFILE & BEHAVIOURAL DATA
+# CODE 4 — TRANSACTION API
 # =========================================================
 
 
 # =========================================================
-# FASTAPI SERVER
+# FASTAPI
 # =========================================================
 
 app = FastAPI(
@@ -21,7 +23,7 @@ app = FastAPI(
 
 
 # =========================================================
-# FRONTEND CONNECTION
+# CORS
 # =========================================================
 
 app.add_middleware(
@@ -61,7 +63,6 @@ def create_database():
 
     cursor = connection.cursor()
 
-    # USERS TABLE
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
 
@@ -84,7 +85,6 @@ def create_database():
         )
     """)
 
-    # TRANSACTIONS TABLE
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS transactions (
 
@@ -124,7 +124,7 @@ create_database()
 
 
 # =========================================================
-# DEMO USER PROFILE
+# DEMO USER
 # =========================================================
 
 def create_demo_user():
@@ -133,7 +133,6 @@ def create_demo_user():
 
     cursor = connection.cursor()
 
-    # Check whether USER001 already exists
     cursor.execute(
         """
         SELECT user_id
@@ -143,10 +142,9 @@ def create_demo_user():
         ("USER001",)
     )
 
-    existing_user = cursor.fetchone()
+    user = cursor.fetchone()
 
-    # Only create user if it doesn't exist
-    if existing_user is None:
+    if user is None:
 
         cursor.execute(
             """
@@ -185,6 +183,33 @@ create_demo_user()
 
 
 # =========================================================
+# TRANSACTION REQUEST MODEL
+# =========================================================
+
+class TransactionRequest(BaseModel):
+
+    user_id: str = "USER001"
+
+    amount: float = Field(
+        gt=0,
+        description="Transaction amount in INR"
+    )
+
+    device: str
+
+    location: str
+
+    beneficiary: str
+
+    transaction_time: str
+
+    recent_transactions: int = Field(
+        default=0,
+        ge=0
+    )
+
+
+# =========================================================
 # GET USER PROFILE
 # =========================================================
 
@@ -211,7 +236,131 @@ def get_user_profile(user_id):
 
 
 # =========================================================
-# USER PROFILE API
+# TRANSACTION API
+# =========================================================
+
+@app.post("/api/transaction")
+def receive_transaction(
+    transaction: TransactionRequest
+):
+
+    # -----------------------------------------------------
+    # STEP 1 — FIND USER
+    # -----------------------------------------------------
+
+    user = get_user_profile(
+        transaction.user_id
+    )
+
+    if user is None:
+
+        raise HTTPException(
+            status_code=404,
+            detail="User profile not found"
+        )
+
+
+    # -----------------------------------------------------
+    # STEP 2 — PREPARE TRANSACTION
+    # -----------------------------------------------------
+
+    transaction_data = {
+
+        "user_id":
+            transaction.user_id,
+
+        "amount":
+            transaction.amount,
+
+        "device":
+            transaction.device,
+
+        "location":
+            transaction.location,
+
+        "beneficiary":
+            transaction.beneficiary,
+
+        "transaction_time":
+            transaction.transaction_time,
+
+        "recent_transactions":
+            transaction.recent_transactions
+    }
+
+
+    # -----------------------------------------------------
+    # STEP 3 — COMPARE WITH USER PROFILE
+    # -----------------------------------------------------
+
+    profile_comparison = {
+
+        "amount_difference":
+            transaction.amount -
+            user["average_amount"],
+
+        "new_device":
+            transaction.device !=
+            user["known_device"],
+
+        "new_location":
+            transaction.location !=
+            user["known_location"],
+
+        "new_beneficiary":
+            transaction.beneficiary !=
+            user["known_beneficiary"]
+
+    }
+
+
+    # -----------------------------------------------------
+    # STEP 4 — RETURN TRANSACTION
+    # -----------------------------------------------------
+
+    return {
+
+        "success": True,
+
+        "message":
+            "Transaction received successfully",
+
+        "transaction":
+            transaction_data,
+
+        "user_profile": {
+
+            "user_id":
+                user["user_id"],
+
+            "name":
+                user["name"],
+
+            "average_amount":
+                user["average_amount"],
+
+            "known_device":
+                user["known_device"],
+
+            "known_location":
+                user["known_location"],
+
+            "known_beneficiary":
+                user["known_beneficiary"]
+
+        },
+
+        "comparison":
+            profile_comparison,
+
+        "next_step":
+            "Send transaction to behavioural analysis engine"
+
+    }
+
+
+# =========================================================
+# GET USER PROFILE
 # =========================================================
 
 @app.get("/api/user/{user_id}")
@@ -232,138 +381,7 @@ def get_user(user_id: str):
 
         "success": True,
 
-        "user": {
-
-            "user_id":
-                user["user_id"],
-
-            "name":
-                user["name"],
-
-            "average_amount":
-                user["average_amount"],
-
-            "known_device":
-                user["known_device"],
-
-            "known_location":
-                user["known_location"],
-
-            "known_beneficiary":
-                user["known_beneficiary"],
-
-            "total_transactions":
-                user["total_transactions"]
-
-        }
-
-    }
-
-
-# =========================================================
-# ADD NEW USER
-# =========================================================
-
-@app.post("/api/user")
-def create_user(
-
-    user_id: str,
-    name: str,
-    average_amount: float = 0,
-    known_device: str = "",
-    known_location: str = "",
-    known_beneficiary: str = ""
-
-):
-
-    connection = get_database()
-
-    cursor = connection.cursor()
-
-    # Check if user already exists
-    cursor.execute(
-        """
-        SELECT user_id
-        FROM users
-        WHERE user_id = ?
-        """,
-        (user_id,)
-    )
-
-    existing_user = cursor.fetchone()
-
-    if existing_user:
-
-        connection.close()
-
-        raise HTTPException(
-            status_code=400,
-            detail="User already exists"
-        )
-
-    # Insert new user
-    cursor.execute(
-        """
-        INSERT INTO users (
-
-            user_id,
-            name,
-            average_amount,
-            known_device,
-            known_location,
-            known_beneficiary,
-            total_transactions
-
-        )
-
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        """,
-
-        (
-            user_id,
-            name,
-            average_amount,
-            known_device,
-            known_location,
-            known_beneficiary,
-            0
-        )
-    )
-
-    connection.commit()
-
-    connection.close()
-
-    return {
-
-        "success": True,
-
-        "message":
-            "User profile created",
-
-        "user_id":
-            user_id
-
-    }
-
-
-# =========================================================
-# HOME
-# =========================================================
-
-@app.get("/")
-def home():
-
-    return {
-
-        "project":
-            "SecureFlow-AI",
-
-        "status":
-            "Backend is running",
-
-        "module":
-            "User Profile"
+        "user": dict(user)
 
     }
 
@@ -392,7 +410,28 @@ def health_check():
             "online",
 
         "module":
-            "User Profile"
+            "Transaction API"
+
+    }
+
+
+# =========================================================
+# HOME
+# =========================================================
+
+@app.get("/")
+def home():
+
+    return {
+
+        "project":
+            "SecureFlow-AI",
+
+        "status":
+            "Backend is running",
+
+        "module":
+            "Transaction API"
 
     }
 
