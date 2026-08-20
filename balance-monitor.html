@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Alert Center</title>
+<title>SecureFlow-AI | Fraud Cases</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -18,43 +18,19 @@
 <header class="header">
 
 <div>
-<h1>Alert Center</h1>
-<p>Centralized fraud and security alerts</p>
+<h1>Fraud Cases</h1>
+<p>Investigate suspicious transaction cases</p>
 </div>
 
-<div class="avatar">!</div>
+<div class="avatar">FC</div>
 
 </header>
-
-<section class="stats">
-
-<div class="stat">
-<div class="stat-title">TOTAL ALERTS</div>
-<div class="stat-number orange">12</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">CRITICAL</div>
-<div class="stat-number red">04</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">REVIEWED</div>
-<div class="stat-number green">07</div>
-</div>
-
-<div class="stat">
-<div class="stat-title">PENDING</div>
-<div class="stat-number blue">05</div>
-</div>
-
-</section>
 
 <section class="panel factors">
 
 <div class="panel-title">
-<h2>Active Alerts</h2>
-<p>Fraud alerts requiring attention</p>
+<h2>Investigation Cases</h2>
+<p>Fraud cases created by the security engine</p>
 </div>
 
 <table>
@@ -62,11 +38,11 @@
 <thead>
 
 <tr>
-<th>Alert ID</th>
+<th>Case ID</th>
+<th>User</th>
 <th>Transaction</th>
-<th>Reason</th>
 <th>Risk</th>
-<th>Priority</th>
+<th>Investigator</th>
 <th>Status</th>
 </tr>
 
@@ -75,21 +51,21 @@
 <tbody>
 
 <tr>
-<td>ALT001</td>
-<td>TXN1004</td>
-<td>Rapid Transactions</td>
-<td>67</td>
-<td>Medium</td>
-<td><span class="badge review">OPEN</span></td>
+<td>CASE001</td>
+<td>Amit Kumar</td>
+<td>TXN1002</td>
+<td>91</td>
+<td>Admin</td>
+<td><span class="badge high">OPEN</span></td>
 </tr>
 
 <tr>
-<td>ALT002</td>
-<td>TXN1006</td>
-<td>Abnormal Amount</td>
-<td>96</td>
-<td>Critical</td>
-<td><span class="badge high">CRITICAL</span></td>
+<td>CASE002</td>
+<td>Rohan Gupta</td>
+<td>TXN1004</td>
+<td>67</td>
+<td>Security Team</td>
+<td><span class="badge review">REVIEW</span></td>
 </tr>
 
 </tbody>
