@@ -12,83 +12,62 @@
 
     <title>SecureFlow-AI</title>
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
 
 <body>
 
-    <!-- =========================================
-         HEADER
-    ========================================== -->
+    <!-- HEADER -->
 
-    <header class="header">
+    <header>
 
-        <div class="logo">
-            SecureFlow-AI
-        </div>
+        <h1>🛡️ SecureFlow-AI</h1>
 
-        <div class="subtitle">
-            Real-Time Transaction Fraud Prevention
-        </div>
+        <p>
+            Real-Time AI Transaction Fraud Prevention
+        </p>
 
     </header>
 
 
-    <!-- =========================================
-         MAIN CONTENT
-    ========================================== -->
+    <!-- MAIN -->
 
-    <main class="container">
+    <main>
 
-        <section class="welcome-card">
+        <div class="welcome-card">
 
-            <div class="shield">
+            <div class="icon">
                 🛡️
             </div>
 
-            <h1>
-                SecureFlow-AI
-            </h1>
+            <h2>
+                Welcome to SecureFlow-AI
+            </h2>
 
             <p>
-                AI-powered real-time transaction
-                fraud detection and prevention.
+                Protect your digital transactions using
+                behavioural analysis and real-time risk detection.
             </p>
 
-
-            <button
-                id="startButton"
-                onclick="startTransaction()"
-            >
-                Start Transaction
+            <button onclick="startApp()">
+                Get Started
             </button>
 
-        </section>
+        </div>
 
     </main>
 
 
-    <!-- =========================================
-         FOOTER
-    ========================================== -->
+    <!-- FOOTER -->
 
-    <footer class="footer">
+    <footer>
 
-        <p>
-            SecureFlow-AI Hackathon Prototype
-        </p>
+        SecureFlow-AI • Hackathon Prototype
 
     </footer>
 
-
-    <!-- =========================================
-         JAVASCRIPT
-    ========================================== -->
 
     <script src="script.js"></script>
 
