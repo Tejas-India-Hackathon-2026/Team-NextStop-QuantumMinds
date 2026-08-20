@@ -2,112 +2,114 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Transaction Passport</title>
+<title>SecureFlow Command Center</title>
 
 <style>
 body{
 margin:0;
-background:#e5e7eb;
 font-family:Arial;
+background:#0f172a;
+color:white;
 }
 
-.passport{
-width:700px;
-max-width:90%;
-margin:50px auto;
-background:#172554;
-color:white;
-padding:35px;
+.top{
+padding:25px;
+background:#020617;
+}
+
+.grid{
+max-width:1000px;
+margin:30px auto;
+display:grid;
+grid-template-columns:250px 1fr;
+gap:20px;
+}
+
+.menu{
+background:#1e293b;
+padding:20px;
 border-radius:15px;
 }
 
-.page{
-background:#f8fafc;
-color:#111827;
-padding:25px;
-border-radius:10px;
+.menu p{
+padding:15px;
+border-bottom:1px solid #334155;
 }
 
-.field{
-display:flex;
-justify-content:space-between;
-padding:12px;
-border-bottom:1px solid #ddd;
+.main{
+background:#1e293b;
+padding:30px;
+border-radius:15px;
 }
 
 input[type=number]{
-padding:12px;
 width:100%;
-margin-bottom:15px;
+padding:15px;
+background:#0f172a;
+color:white;
+border:1px solid #475569;
+box-sizing:border-box;
+}
+
+label{
+display:inline-block;
+width:48%;
+padding:12px 0;
 }
 
 button{
 width:100%;
 padding:15px;
-background:#172554;
+background:#14b8a6;
 color:white;
 border:0;
+border-radius:8px;
 }
 
+.score{
+font-size:60px;
+text-align:center;
+}
 </style>
 </head>
 
 <body>
 
-<div class="passport">
-
-<h1>🛂 Transaction Passport</h1>
-<p>SecureFlow AI Verification Document</p>
-
-<div class="page">
-
-<input id="amount" type="number" placeholder="Amount ₹">
-
-<div class="field">
-<span>Unusual Time</span>
-<input id="unusual_time" type="checkbox">
+<div class="top">
+<h1>🎛 SecureFlow Command Center</h1>
 </div>
 
-<div class="field">
-<span>Unusual Frequency</span>
-<input id="unusual_frequency" type="checkbox">
+<div class="grid">
+
+<div class="menu">
+<h3>CONTROL PANEL</h3>
+<p>Overview</p>
+<p>Fraud Detection</p>
+<p>Transactions</p>
+<p>Risk Engine</p>
+<p>AI Questions</p>
 </div>
 
-<div class="field">
-<span>New Device</span>
-<input id="new_device" type="checkbox">
-</div>
+<div class="main">
 
-<div class="field">
-<span>Unusual Location</span>
-<input id="unusual_location" type="checkbox">
-</div>
+<h2>Transaction Risk Engine</h2>
 
-<div class="field">
-<span>Location Change</span>
-<input id="sudden_location_change" type="checkbox">
-</div>
+<input id="amount" type="number" placeholder="Transaction Amount">
 
-<div class="field">
-<span>Unknown Beneficiary</span>
-<input id="unknown_beneficiary" type="checkbox">
-</div>
+<label><input id="unusual_time" type="checkbox"> Time</label>
+<label><input id="unusual_frequency" type="checkbox"> Frequency</label>
+<label><input id="new_device" type="checkbox"> Device</label>
+<label><input id="unusual_location" type="checkbox"> Location</label>
+<label><input id="sudden_location_change" type="checkbox"> Movement</label>
+<label><input id="unknown_beneficiary" type="checkbox"> Recipient</label>
+<label><input id="no_previous_transactions" type="checkbox"> History</label>
+<label><input id="unusual_beneficiary_amount" type="checkbox"> Amount</label>
 
-<div class="field">
-<span>No Previous Transaction</span>
-<input id="no_previous_transactions" type="checkbox">
-</div>
+<button onclick="runEngine()">EXECUTE RISK ENGINE</button>
 
-<div class="field">
-<span>Unusual Amount</span>
-<input id="unusual_beneficiary_amount" type="checkbox">
-</div>
+<div class="score" id="score">--</div>
 
-<button onclick="verify()">VERIFY PASSPORT</button>
-
-<h2 id="decision">NOT VERIFIED</h2>
-
-<p id="score"></p>
+<h2 id="decision">ENGINE IDLE</h2>
 
 <ul id="reasons"></ul>
 
@@ -115,7 +117,7 @@ border:0;
 </div>
 
 <script>
-async function verify(){
+async function runEngine(){
 
 const ids=["unusual_time","unusual_frequency","new_device","unusual_location","sudden_location_change","unknown_beneficiary","no_previous_transactions","unusual_beneficiary_amount"];
 
@@ -130,8 +132,8 @@ body:JSON.stringify(data)
 
 const x=await r.json();
 
+document.getElementById("score").innerText=x.risk_score;
 document.getElementById("decision").innerText=x.decision;
-document.getElementById("score").innerText="Risk Score: "+x.risk_score;
 document.getElementById("reasons").innerHTML=x.reasons.map(a=>`<li>${a}</li>`).join("");
 }
 </script>
