@@ -1,54 +1,43 @@
-# services/risk_aggregator.py
+# security/encryption.py
+
+import os
+from cryptography.fernet import Fernet
 
 
-class RiskAggregator:
+class DataEncryption:
 
-    def __init__(self):
+    def __init__(self, key=None):
 
-        self.weights = {
-            "ml": 0.40,
-            "rules": 0.20,
-            "merchant": 0.15,
-            "travel": 0.10,
-            "device": 0.15
-        }
+        if key is None:
 
-    def calculate(
-        self,
-        ml_score,
-        rule_score,
-        merchant_score,
-        travel_score,
-        device_score
-    ):
+            key = os.environ.get(
+                "SECUREFLOW_ENCRYPTION_KEY"
+            )
 
-        final_score = (
+        if not key:
 
-            ml_score *
-            self.weights["ml"]
+            raise ValueError(
+                "Encryption key is missing"
+            )
 
-            +
-
-            rule_score *
-            self.weights["rules"]
-
-            +
-
-            merchant_score *
-            self.weights["merchant"]
-
-            +
-
-            travel_score *
-            self.weights["travel"]
-
-            +
-
-            device_score *
-            self.weights["device"]
+        self.cipher = Fernet(
+            key.encode()
+            if isinstance(key, str)
+            else key
         )
 
-        return round(
-            min(final_score, 100),
-            2
+    def encrypt(self, value):
+
+        encrypted = self.cipher.encrypt(
+            value.encode()
         )
+
+        return encrypted.decode()
+
+    def decrypt(self, encrypted_value):
+
+        decrypted = self.cipher.decrypt(
+            encrypted_value.encode()
+        )
+
+        return decrypted.decode()
