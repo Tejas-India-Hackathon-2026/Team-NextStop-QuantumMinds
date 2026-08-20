@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Blocked Transactions</title>
+<title>SecureFlow-AI | Review Queue</title>
 
 <link rel="stylesheet" href="style10.css">
 
@@ -19,13 +19,13 @@
 
 <div>
 
-<h1>Blocked Transactions</h1>
+<h1>Security Review Queue</h1>
 
-<p>High-risk payments stopped by SecureFlow-AI</p>
+<p>Transactions waiting for analyst verification</p>
 
 </div>
 
-<div class="avatar">!</div>
+<div class="avatar">Q</div>
 
 </header>
 
@@ -33,23 +33,23 @@
 <section class="stats">
 
 <div class="stat">
-<div class="stat-title">BLOCKED</div>
-<div class="stat-number red">10</div>
+<div class="stat-title">PENDING</div>
+<div class="stat-number orange">05</div>
 </div>
 
 <div class="stat">
-<div class="stat-title">AMOUNT PROTECTED</div>
-<div class="stat-number green">₹2.8L</div>
+<div class="stat-title">HIGH PRIORITY</div>
+<div class="stat-number red">02</div>
 </div>
 
 <div class="stat">
-<div class="stat-title">AVG RISK</div>
-<div class="stat-number red">89</div>
+<div class="stat-title">MEDIUM</div>
+<div class="stat-number blue">03</div>
 </div>
 
 <div class="stat">
-<div class="stat-title">AI ACTION</div>
-<div class="stat-number blue">AUTO</div>
+<div class="stat-title">AVG WAIT</div>
+<div class="stat-number green">4m</div>
 </div>
 
 </section>
@@ -59,9 +59,9 @@
 
 <div class="panel-title">
 
-<h2>Blocked Payment History</h2>
+<h2>Pending Reviews</h2>
 
-<p>Transactions automatically prevented</p>
+<p>Analyst action required</p>
 
 </div>
 
@@ -71,12 +71,12 @@
 <thead>
 
 <tr>
-<th>Transaction</th>
+<th>Case</th>
 <th>User</th>
 <th>Amount</th>
 <th>Risk</th>
 <th>Reason</th>
-<th>Action</th>
+<th>Priority</th>
 </tr>
 
 </thead>
@@ -85,35 +85,35 @@
 <tbody>
 
 <tr>
-<td>TXN1002</td>
-<td>Amit Kumar</td>
-<td>₹45,000</td>
-<td>91</td>
-<td>Unknown Recipient</td>
+<td>CASE001</td>
+<td>Rohan Gupta</td>
+<td>₹18,500</td>
+<td>67</td>
+<td>Rapid Transactions</td>
 <td>
-<span class="badge high">BLOCKED</span>
+<span class="badge review">MEDIUM</span>
 </td>
 </tr>
 
 <tr>
-<td>TXN1006</td>
-<td>Vikash Das</td>
-<td>₹75,000</td>
-<td>96</td>
-<td>Unusual Amount</td>
-<td>
-<span class="badge high">BLOCKED</span>
-</td>
-</tr>
-
-<tr>
-<td>TXN1008</td>
+<td>CASE002</td>
 <td>Priya Das</td>
 <td>₹32,000</td>
 <td>84</td>
 <td>New Device</td>
 <td>
-<span class="badge high">BLOCKED</span>
+<span class="badge high">HIGH</span>
+</td>
+</tr>
+
+<tr>
+<td>CASE003</td>
+<td>Neha Singh</td>
+<td>₹21,000</td>
+<td>61</td>
+<td>Location Change</td>
+<td>
+<span class="badge review">MEDIUM</span>
 </td>
 </tr>
 
