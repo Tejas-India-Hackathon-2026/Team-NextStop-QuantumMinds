@@ -1,49 +1,54 @@
-# security/audit.py
+# ml/drift_detector.py
 
-from datetime import datetime
-import json
+import math
 
 
-class AuditLogger:
+class DriftDetector:
 
-    def __init__(self, file_path="audit.log"):
-
-        self.file_path = file_path
-
-    def record(
-        self,
-        user_id,
-        transaction_id,
-        event,
-        details
+    @staticmethod
+    def distribution_difference(
+        baseline,
+        current
     ):
 
-        entry = {
-            "timestamp":
-                datetime.utcnow().isoformat(),
-
-            "user_id":
-                user_id,
-
-            "transaction_id":
-                transaction_id,
-
-            "event":
-                event,
-
-            "details":
-                details
-        }
-
-        with open(
-            self.file_path,
-            "a",
-            encoding="utf-8"
-        ) as file:
-
-            file.write(
-                json.dumps(entry)
-                + "\n"
+        if len(baseline) != len(current):
+            raise ValueError(
+                "Distributions must have "
+                "the same number of bins."
             )
 
-        return entry
+        score = 0
+
+        for expected, actual in zip(
+            baseline,
+            current
+        ):
+
+            expected = max(expected, 0.0001)
+            actual = max(actual, 0.0001)
+
+            score += (
+                (actual - expected)
+                * math.log(actual / expected)
+            )
+
+        return score
+
+    def detect(
+        self,
+        baseline,
+        current,
+        threshold=0.25
+    ):
+
+        score = self.distribution_difference(
+            baseline,
+            current
+        )
+
+        return {
+            "drift_score": round(score, 4),
+            "drift_detected": score >= threshold,
+            "recommend_retraining":
+                score >= threshold
+        }
