@@ -8,25 +8,27 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Accounts</title>
+<title>SecureFlow-AI | User Risk</title>
 
 <link rel="stylesheet"
 href="style10.css">
 
 </head>
 
+
 <body>
 
 <main class="main">
+
 
 <header class="header">
 
 <div>
 
-<h1>User Account Database</h1>
+<h1>User Risk Database</h1>
 
 <p>
-UPI and linked account information
+AI-generated risk scores for registered users
 </p>
 
 </div>
@@ -38,10 +40,10 @@ UPI and linked account information
 
 <div class="panel-title">
 
-<h2>Linked Accounts</h2>
+<h2>Risk Classification</h2>
 
 <p>
-Financial accounts monitored by SecureFlow-AI
+Behaviour-based fraud risk analysis
 </p>
 
 </div>
@@ -54,11 +56,11 @@ Financial accounts monitored by SecureFlow-AI
 <tr>
 
 <th>User ID</th>
-<th>User</th>
-<th>Bank</th>
-<th>Account</th>
-<th>UPI ID</th>
-<th>Status</th>
+<th>Name</th>
+<th>Transactions</th>
+<th>Average Amount</th>
+<th>Risk Score</th>
+<th>Risk Level</th>
 
 </tr>
 
@@ -71,11 +73,14 @@ Financial accounts monitored by SecureFlow-AI
 
 <td>USR001</td>
 <td>Rahul Sharma</td>
-<td>HDFC Bank</td>
-<td>XXXX4521</td>
-<td>rahul@upi</td>
+<td>14</td>
+<td>₹2,450</td>
+<td>14</td>
+
 <td>
-<span class="badge safe">VERIFIED</span>
+<span class="badge safe">
+LOW
+</span>
 </td>
 
 </tr>
@@ -85,11 +90,14 @@ Financial accounts monitored by SecureFlow-AI
 
 <td>USR002</td>
 <td>Priya Singh</td>
-<td>SBI</td>
-<td>XXXX8291</td>
-<td>priya@upi</td>
+<td>12</td>
+<td>₹3,100</td>
+<td>19</td>
+
 <td>
-<span class="badge safe">VERIFIED</span>
+<span class="badge safe">
+LOW
+</span>
 </td>
 
 </tr>
@@ -99,11 +107,14 @@ Financial accounts monitored by SecureFlow-AI
 
 <td>USR003</td>
 <td>Amit Kumar</td>
-<td>ICICI Bank</td>
-<td>XXXX1198</td>
-<td>amit@upi</td>
+<td>14</td>
+<td>₹8,200</td>
+<td>91</td>
+
 <td>
-<span class="badge high">RESTRICTED</span>
+<span class="badge high">
+HIGH
+</span>
 </td>
 
 </tr>
@@ -113,11 +124,31 @@ Financial accounts monitored by SecureFlow-AI
 
 <td>USR004</td>
 <td>Sneha Das</td>
-<td>Axis Bank</td>
-<td>XXXX6712</td>
-<td>sneha@upi</td>
+<td>09</td>
+<td>₹1,850</td>
+<td>12</td>
+
 <td>
-<span class="badge safe">VERIFIED</span>
+<span class="badge safe">
+LOW
+</span>
+</td>
+
+</tr>
+
+
+<tr>
+
+<td>USR005</td>
+<td>Rohan Gupta</td>
+<td>18</td>
+<td>₹7,400</td>
+<td>67</td>
+
+<td>
+<span class="badge review">
+MEDIUM
+</span>
 </td>
 
 </tr>
