@@ -1,55 +1,54 @@
-# ml/train.py
+# services/upi_validator.py
 
-import pandas as pd
-
-from xgboost import XGBClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-import joblib
+import re
 
 
-def train_fraud_model(csv_file):
+class UPIValidator:
 
-    data = pd.read_csv(csv_file)
-
-    X = data.drop(
-        columns=["is_fraud"]
+    UPI_PATTERN = re.compile(
+        r"^[a-zA-Z0-9._-]{2,256}@[a-zA-Z]{2,64}$"
     )
 
-    y = data["is_fraud"]
+    @classmethod
+    def validate(cls, upi_id: str):
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X,
-        y,
-        test_size=0.2,
-        random_state=42,
-        stratify=y
-    )
+        if not upi_id:
+            return {
+                "valid": False,
+                "reason": "UPI ID is empty"
+            }
 
-    model = XGBClassifier(
-        n_estimators=200,
-        max_depth=6,
-        learning_rate=0.05,
-        subsample=0.8,
-        colsample_bytree=0.8,
-        eval_metric="logloss"
-    )
+        upi_id = upi_id.strip()
 
-    model.fit(X_train, y_train)
+        if not cls.UPI_PATTERN.match(upi_id):
 
-    predictions = model.predict(X_test)
+            return {
+                "valid": False,
+                "reason": "Invalid UPI ID format"
+            }
 
-    accuracy = accuracy_score(
-        y_test,
-        predictions
-    )
+        username, provider = upi_id.split("@", 1)
 
-    joblib.dump(
-        model,
-        "models/xgboost_fraud_model.pkl"
-    )
+        return {
+            "valid": True,
+            "username": username,
+            "provider": provider
+        }
+
+
+def validate_transaction_upi(
+    sender_upi,
+    receiver_upi
+):
+
+    sender = UPIValidator.validate(sender_upi)
+    receiver = UPIValidator.validate(receiver_upi)
 
     return {
-        "accuracy": round(accuracy, 4),
-        "model_saved": True
+        "sender": sender,
+        "receiver": receiver,
+        "valid": (
+            sender["valid"] and
+            receiver["valid"]
+        )
     }
