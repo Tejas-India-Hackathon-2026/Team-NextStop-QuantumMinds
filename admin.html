@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Database</title>
+<title>SecureFlow-AI | Alert Control</title>
 
 <link rel="stylesheet"
 href="style10.css">
@@ -25,10 +25,10 @@ href="style10.css">
 
 <div>
 
-<h1>Database Administration</h1>
+<h1>Alert Management</h1>
 
 <p>
-SecureFlow-AI SQLite database monitoring
+Manage fraud detection alerts
 </p>
 
 </div>
@@ -38,58 +38,56 @@ SecureFlow-AI SQLite database monitoring
 
 <section class="stats">
 
+<div class="stat">
+
+<div class="stat-title">
+TOTAL ALERTS
+</div>
+
+<div class="stat-number red">
+12
+</div>
+
+</div>
+
 
 <div class="stat">
 
 <div class="stat-title">
-DATABASE
+CRITICAL
+</div>
+
+<div class="stat-number red">
+04
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+REVIEW
+</div>
+
+<div class="stat-number orange">
+05
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+RESOLVED
 </div>
 
 <div class="stat-number green">
-ONLINE
+03
 </div>
 
 </div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-USERS
-</div>
-
-<div class="stat-number blue">
-08
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-TRANSACTIONS
-</div>
-
-<div class="stat-number">
-40
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-title">
-TABLES
-</div>
-
-<div class="stat-number">
-08
-</div>
-
-</div>
-
 
 </section>
 
@@ -99,10 +97,10 @@ TABLES
 
 <div class="panel-title">
 
-<h2>Database Tables</h2>
+<h2>Recent Fraud Alerts</h2>
 
 <p>
-Current SQLite database structure
+Administrator alert management
 </p>
 
 </div>
@@ -114,10 +112,11 @@ Current SQLite database structure
 
 <tr>
 
-<th>Table</th>
-<th>Records</th>
+<th>Alert ID</th>
+<th>Transaction</th>
+<th>Risk</th>
+<th>Reason</th>
 <th>Status</th>
-<th>Purpose</th>
 
 </tr>
 
@@ -129,64 +128,48 @@ Current SQLite database structure
 
 <tr>
 
-<td>users</td>
-<td>08</td>
+<td>ALT001</td>
+<td>TXN1002</td>
+<td>91</td>
+<td>Unusual amount</td>
 
 <td>
-<span class="badge safe">
-ACTIVE
+<span class="badge high">
+BLOCKED
 </span>
 </td>
-
-<td>User information</td>
 
 </tr>
 
 
 <tr>
 
-<td>transactions</td>
-<td>40</td>
+<td>ALT002</td>
+<td>TXN1004</td>
+<td>67</td>
+<td>New recipient</td>
 
 <td>
-<span class="badge safe">
-ACTIVE
+<span class="badge review">
+REVIEW
 </span>
 </td>
-
-<td>UPI transactions</td>
 
 </tr>
 
 
 <tr>
 
-<td>risk_factors</td>
-<td>24</td>
+<td>ALT003</td>
+<td>TXN1006</td>
+<td>96</td>
+<td>Unknown account</td>
 
 <td>
-<span class="badge safe">
-ACTIVE
+<span class="badge high">
+BLOCKED
 </span>
 </td>
-
-<td>AI risk indicators</td>
-
-</tr>
-
-
-<tr>
-
-<td>fraud_alerts</td>
-<td>12</td>
-
-<td>
-<span class="badge safe">
-ACTIVE
-</span>
-</td>
-
-<td>Fraud alerts</td>
 
 </tr>
 
