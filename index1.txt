@@ -1,221 +1,245 @@
-<!DOCTYPE html>
-<html lang="en">
+* {
+    box-sizing: border-box;
+}
 
-<head>
 
-    <meta charset="UTF-8">
+body {
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    margin: 0;
 
-    <title>SecureFlow-AI - Login</title>
+    font-family: Arial, sans-serif;
 
-    <link rel="stylesheet" href="style.css">
+    background: #f4f7fb;
 
-</head>
+    color: #1f2937;
 
+    min-height: 100vh;
 
-<body>
+    display: flex;
 
-    <!-- =====================================
-         HEADER
-    ====================================== -->
+    flex-direction: column;
+}
 
-    <header>
 
-        <h1>🛡️ SecureFlow-AI</h1>
+/* =====================================
+   HEADER
+===================================== */
 
-        <p>
-            Real-Time AI Transaction Protection
-        </p>
+header {
 
-    </header>
+    background: #111827;
 
+    color: white;
 
-    <!-- =====================================
-         AUTH CONTAINER
-    ====================================== -->
+    text-align: center;
 
-    <main>
+    padding: 25px;
+}
 
-        <div class="auth-card">
 
-            <h2 id="formTitle">
-                Login
-            </h2>
+header h1 {
 
+    margin: 0;
 
-            <p id="formDescription">
-                Login to access your secure dashboard.
-            </p>
+    font-size: 30px;
+}
 
 
-            <!-- NAME -->
+header p {
 
-            <div
-                id="nameContainer"
-                class="input-group hidden"
-            >
+    margin-top: 8px;
 
-                <label>
-                    Full Name
-                </label>
+    color: #d1d5db;
+}
 
-                <input
-                    type="text"
-                    id="name"
-                    placeholder="Enter your name"
-                >
 
-            </div>
+/* =====================================
+   MAIN
+===================================== */
 
+main {
 
-            <!-- USER ID -->
+    flex: 1;
 
-            <div class="input-group">
+    display: flex;
 
-                <label>
-                    User ID
-                </label>
+    justify-content: center;
 
-                <input
-                    type="text"
-                    id="userId"
-                    placeholder="Example: USER001"
-                >
+    align-items: center;
 
-            </div>
+    padding: 30px;
+}
 
 
-            <!-- DEVICE -->
+/* =====================================
+   AUTH CARD
+===================================== */
 
-            <div
-                id="deviceContainer"
-                class="input-group hidden"
-            >
+.auth-card {
 
-                <label>
-                    Known Device
-                </label>
+    width: 100%;
 
-                <input
-                    type="text"
-                    id="device"
-                    placeholder="Example: Android-Primary"
-                >
+    max-width: 480px;
 
-            </div>
+    background: white;
 
+    padding: 35px;
 
-            <!-- LOCATION -->
+    border-radius: 16px;
 
-            <div
-                id="locationContainer"
-                class="input-group hidden"
-            >
+    box-shadow:
+        0 10px 30px
+        rgba(0, 0, 0, 0.08);
+}
 
-                <label>
-                    Known Location
-                </label>
 
-                <input
-                    type="text"
-                    id="location"
-                    placeholder="Example: Patna"
-                >
+.auth-card h2 {
 
-            </div>
+    margin-top: 0;
 
+    text-align: center;
 
-            <!-- BENEFICIARY -->
+    font-size: 28px;
+}
 
-            <div
-                id="beneficiaryContainer"
-                class="input-group hidden"
-            >
 
-                <label>
-                    Known Beneficiary
-                </label>
+.auth-card > p {
 
-                <input
-                    type="text"
-                    id="beneficiary"
-                    placeholder="Example: friend@upi"
-                >
+    text-align: center;
 
-            </div>
+    color: #6b7280;
 
+    margin-bottom: 25px;
+}
 
-            <!-- AVERAGE AMOUNT -->
 
-            <div
-                id="amountContainer"
-                class="input-group hidden"
-            >
+/* =====================================
+   INPUTS
+===================================== */
 
-                <label>
-                    Average Transaction Amount
-                </label>
+.input-group {
 
-                <input
-                    type="number"
-                    id="averageAmount"
-                    placeholder="Example: 1200"
-                >
+    margin-bottom: 18px;
+}
 
-            </div>
 
+.input-group label {
 
-            <!-- BUTTON -->
+    display: block;
 
-            <button
-                id="authButton"
-                onclick="submitAuth()"
-            >
-                Login
-            </button>
+    margin-bottom: 7px;
 
+    font-weight: bold;
 
-            <!-- MESSAGE -->
+    font-size: 14px;
+}
 
-            <div
-                id="message"
-                class="message"
-            ></div>
 
+.input-group input {
 
-            <!-- SWITCH -->
+    width: 100%;
 
-            <p class="switch-text">
+    padding: 12px;
 
-                <span id="switchText">
-                    Don't have an account?
-                </span>
+    border: 1px solid #d1d5db;
 
-                <button
-                    class="switch-button"
-                    onclick="toggleForm()"
-                    id="switchButton"
-                >
-                    Register
-                </button>
+    border-radius: 8px;
 
-            </p>
+    font-size: 15px;
 
-        </div>
+    outline: none;
+}
 
-    </main>
 
+.input-group input:focus {
 
-    <!-- =====================================
-         JAVASCRIPT
-    ====================================== -->
+    border-color: #2563eb;
+}
 
-    <script src="script.js"></script>
 
-</body>
+/* =====================================
+   HIDDEN
+===================================== */
 
-</html>
+.hidden {
+
+    display: none;
+}
+
+
+/* =====================================
+   MAIN BUTTON
+===================================== */
+
+#authButton {
+
+    width: 100%;
+
+    padding: 13px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    margin-top: 5px;
+}
+
+
+#authButton:hover {
+
+    background: #1d4ed8;
+}
+
+
+/* =====================================
+   MESSAGE
+===================================== */
+
+.message {
+
+    margin-top: 15px;
+
+    text-align: center;
+
+    font-size: 14px;
+
+    min-height: 20px;
+}
+
+
+/* =====================================
+   SWITCH
+===================================== */
+
+.switch-text {
+
+    margin-top: 22px !important;
+
+    margin-bottom: 0;
+
+    text-align: center;
+}
+
+
+.switch-button {
+
+    border: none;
+
+    background: none;
+
+    color: #2563eb;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: bold;
+}
