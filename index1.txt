@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>AI Transaction Analysis | UPI FraudShield</title>
+<title>Risk Score | UPI FraudShield</title>
 
 <style>
 
@@ -74,6 +74,11 @@ body{
     right:15px;
 }
 
+.logout a{
+    color:#cbd5e1;
+    text-decoration:none;
+}
+
 /* MAIN */
 
 .main{
@@ -84,7 +89,7 @@ body{
 /* HEADER */
 
 .header{
-    margin-bottom:30px;
+    margin-bottom:25px;
 }
 
 .header h1{
@@ -93,198 +98,171 @@ body{
 }
 
 .header p{
-    margin-top:8px;
+    margin-top:7px;
     color:#64748b;
 }
 
 /* TRANSACTION */
 
-.transaction-card{
+.transaction{
     background:white;
-    padding:25px;
-    border-radius:15px;
-    box-shadow:0 6px 25px rgba(0,0,0,.06);
+    padding:20px 25px;
+    border-radius:12px;
+    box-shadow:0 5px 20px rgba(0,0,0,.05);
     margin-bottom:25px;
 }
 
-.transaction-card h2{
-    margin-bottom:20px;
-}
-
-.transaction-info{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:15px;
-}
-
-.info-box{
-    background:#f8fafc;
-    padding:18px;
-    border-radius:9px;
-}
-
-.info-box span{
-    display:block;
+.transaction-title{
     color:#64748b;
     font-size:13px;
-    margin-bottom:7px;
+    margin-bottom:8px;
 }
 
-.info-box strong{
-    font-size:17px;
-}
-
-/* ANALYSIS */
-
-.analysis-card{
-    background:white;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 6px 25px rgba(0,0,0,.06);
-}
-
-.analysis-header{
+.transaction-details{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:30px;
 }
 
-.analysis-header h2{
-    color:#081b33;
-}
-
-.live{
-    padding:7px 14px;
-    background:#dcfce7;
-    color:#166534;
-    border-radius:20px;
-    font-size:13px;
+.recipient{
+    font-size:19px;
     font-weight:bold;
 }
 
-/* SCAN CIRCLE */
-
-.scan-section{
-    display:flex;
-    justify-content:center;
-    margin:25px 0 40px;
+.amount{
+    font-size:24px;
+    font-weight:bold;
 }
 
-.scan-circle{
-    width:190px;
-    height:190px;
-    border-radius:50%;
-    border:8px solid #dbeafe;
-    border-top-color:#1677ff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    animation:spin 1.5s linear infinite;
-}
+/* RESULT GRID */
 
-.scan-inner{
-    text-align:center;
-    animation:counterspin 1.5s linear infinite;
-}
-
-.scan-icon{
-    font-size:40px;
-}
-
-.scan-inner h3{
-    margin-top:8px;
-    color:#1677ff;
-}
-
-.scan-inner p{
-    margin-top:5px;
-    font-size:12px;
-    color:#64748b;
-}
-
-@keyframes spin{
-
-    from{
-        transform:rotate(0deg);
-    }
-
-    to{
-        transform:rotate(360deg);
-    }
-
-}
-
-@keyframes counterspin{
-
-    from{
-        transform:rotate(0deg);
-    }
-
-    to{
-        transform:rotate(-360deg);
-    }
-
-}
-
-/* CHECKS */
-
-.checks{
+.result-grid{
     display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
+    grid-template-columns:1fr 1.2fr;
+    gap:25px;
 }
 
-.check{
-    display:flex;
-    align-items:center;
-    gap:15px;
-    padding:17px;
-    border:1px solid #e2e8f0;
-    border-radius:10px;
+/* SCORE CARD */
+
+.score-card{
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.05);
+    text-align:center;
 }
 
-.check-icon{
-    width:40px;
-    height:40px;
+.score-card h2{
+    margin-bottom:25px;
+}
+
+/* SCORE CIRCLE */
+
+.score-circle{
+    width:210px;
+    height:210px;
+    margin:auto;
     border-radius:50%;
-    background:#dbeafe;
+    background:
+        conic-gradient(
+        #eab308 0deg 245deg,
+        #e5e7eb 245deg 360deg
+        );
+
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:20px;
 }
 
-.check-text{
-    flex:1;
+.score-inner{
+    width:165px;
+    height:165px;
+    border-radius:50%;
+    background:white;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
 }
 
-.check-text strong{
-    display:block;
-    margin-bottom:5px;
+.score{
+    font-size:52px;
+    font-weight:bold;
+    color:#ca8a04;
 }
 
-.check-text span{
-    font-size:13px;
+.score-label{
     color:#64748b;
+    font-size:13px;
 }
 
-.check-status{
-    color:#1677ff;
-    font-size:20px;
+.risk-level{
+    display:inline-block;
+    margin-top:22px;
+    padding:9px 25px;
+    background:#fef3c7;
+    color:#92400e;
+    border-radius:25px;
+    font-weight:bold;
 }
 
-/* PROGRESS */
+/* ACTION */
 
-.progress-container{
-    margin-top:30px;
+.action-box{
+    margin-top:25px;
+    padding:18px;
+    border-radius:10px;
+    background:#fff7ed;
+    border-left:5px solid #f97316;
 }
 
-.progress-header{
+.action-box h3{
+    color:#9a3412;
+    margin-bottom:7px;
+}
+
+.action-box p{
+    color:#7c2d12;
+    font-size:14px;
+}
+
+/* EXPLANATION */
+
+.explanation{
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+.explanation h2{
+    margin-bottom:8px;
+}
+
+.subtitle{
+    color:#64748b;
+    font-size:14px;
+    margin-bottom:25px;
+}
+
+/* FACTORS */
+
+.factor{
+    margin-bottom:22px;
+}
+
+.factor-top{
     display:flex;
     justify-content:space-between;
     margin-bottom:8px;
-    font-size:14px;
+}
+
+.factor-name{
+    font-weight:bold;
+}
+
+.factor-value{
+    font-weight:bold;
 }
 
 .progress{
@@ -294,34 +272,114 @@ body{
     overflow:hidden;
 }
 
-.progress-bar{
+.bar{
     height:100%;
-    width:0%;
-    background:#1677ff;
     border-radius:10px;
-    transition:width .5s;
 }
 
-/* STATUS */
+.high{
+    background:#ef4444;
+}
 
-.status-message{
+.medium{
+    background:#eab308;
+}
+
+.low{
+    background:#22c55e;
+}
+
+/* REASONS */
+
+.reasons{
+    margin-top:30px;
+}
+
+.reason{
+    display:flex;
+    gap:12px;
+    padding:13px 0;
+    border-bottom:1px solid #edf0f4;
+}
+
+.reason-icon{
+    font-size:20px;
+}
+
+.reason p{
+    font-size:14px;
+    color:#475569;
+    line-height:1.5;
+}
+
+/* DECISION */
+
+.decision{
     margin-top:25px;
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.05);
+}
+
+.decision h2{
+    margin-bottom:20px;
+}
+
+.actions{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.action-button{
     padding:17px;
-    background:#eff6ff;
-    color:#1e40af;
     border-radius:9px;
+    border:2px solid transparent;
     text-align:center;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.allow{
+    background:#dcfce7;
+    color:#166534;
+    border-color:#bbf7d0;
+}
+
+.alert-action{
+    background:#fef3c7;
+    color:#92400e;
+    border-color:#fde68a;
+}
+
+.block{
+    background:#fee2e2;
+    color:#991b1b;
+    border-color:#fecaca;
+}
+
+.action-button:hover{
+    transform:translateY(-2px);
+}
+
+/* FOOTER NOTE */
+
+.note{
+    margin-top:20px;
+    padding:15px;
+    background:#eff6ff;
+    border-radius:8px;
+    color:#1e40af;
+    font-size:13px;
+    line-height:1.5;
 }
 
 /* RESPONSIVE */
 
-@media(max-width:900px){
+@media(max-width:950px){
 
-    .transaction-info{
-        grid-template-columns:1fr;
-    }
-
-    .checks{
+    .result-grid{
         grid-template-columns:1fr;
     }
 
@@ -347,12 +405,21 @@ body{
         text-align:center;
     }
 
+    .transaction-details{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:10px;
+    }
+
+    .actions{
+        grid-template-columns:1fr;
+    }
+
 }
 
 </style>
 
 </head>
-
 
 <body>
 
@@ -417,96 +484,258 @@ body{
 
 <div class="header">
 
-<h1>Real-Time AI Analysis</h1>
+<h1>Transaction Risk Analysis</h1>
 
 <p>
-FraudShield is analyzing your transaction before processing.
+FraudShield has completed the AI-powered transaction analysis.
 </p>
 
 </div>
 
 
-<!-- TRANSACTION DETAILS -->
+<!-- TRANSACTION -->
 
-<section class="transaction-card">
+<section class="transaction">
 
-<h2>Transaction Under Review</h2>
+<div class="transaction-title">
+TRANSACTION UNDER REVIEW
+</div>
 
-<div class="transaction-info">
+<div class="transaction-details">
 
+<div>
 
-<div class="info-box">
+<div class="recipient" id="recipient">
+Rahul Kumar
+</div>
 
-<span>Recipient</span>
-
-<strong id="recipient">
-Loading...
-</strong>
+<small id="upi">
+rahul@upi
+</small>
 
 </div>
 
-
-<div class="info-box">
-
-<span>UPI ID</span>
-
-<strong id="upi">
-Loading...
-</strong>
-
+<div class="amount" id="amount">
+₹8,500
 </div>
-
-
-<div class="info-box">
-
-<span>Amount</span>
-
-<strong id="amount">
-Loading...
-</strong>
-
-</div>
-
 
 </div>
 
 </section>
 
 
-<!-- AI ANALYSIS -->
+<!-- RESULT -->
 
-<section class="analysis-card">
+<section class="result-grid">
 
 
-<div class="analysis-header">
+<!-- SCORE -->
 
-<h2>AI Fraud Detection Engine</h2>
+<div class="score-card">
 
-<div class="live">
-● LIVE ANALYSIS
+<h2>Dynamic Risk Score</h2>
+
+
+<div class="score-circle">
+
+<div class="score-inner">
+
+<div class="score" id="score">
+68
+</div>
+
+<div class="score-label">
+out of 100
 </div>
 
 </div>
 
-
-<!-- SCANNING -->
-
-<div class="scan-section">
-
-<div class="scan-circle">
-
-<div class="scan-inner">
-
-<div class="scan-icon">
-🧠
 </div>
 
-<h3 id="scanText">
-Analyzing
-</h3>
+
+<div class="risk-level">
+MEDIUM RISK
+</div>
+
+
+<div class="action-box">
+
+<h3>⚠ Verification Required</h3>
 
 <p>
-AI Risk Engine
+This transaction shows unusual behaviour.
+Please verify the payment before proceeding.
+</p>
+
+</div>
+
+</div>
+
+
+<!-- EXPLANATION -->
+
+<div class="explanation">
+
+<h2>Why This Score?</h2>
+
+<p class="subtitle">
+The AI system identified the following risk factors.
+</p>
+
+
+<!-- BEHAVIOUR -->
+
+<div class="factor">
+
+<div class="factor-top">
+
+<span class="factor-name">
+Behaviour Deviation
+</span>
+
+<span class="factor-value">
+72%
+</span>
+
+</div>
+
+<div class="progress">
+
+<div
+class="bar medium"
+style="width:72%">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- AMOUNT -->
+
+<div class="factor">
+
+<div class="factor-top">
+
+<span class="factor-name">
+Unusual Amount
+</span>
+
+<span class="factor-value">
+65%
+</span>
+
+</div>
+
+<div class="progress">
+
+<div
+class="bar medium"
+style="width:65%">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- DEVICE -->
+
+<div class="factor">
+
+<div class="factor-top">
+
+<span class="factor-name">
+Device Risk
+</span>
+
+<span class="factor-value">
+45%
+</span>
+
+</div>
+
+<div class="progress">
+
+<div
+class="bar low"
+style="width:45%">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- LOCATION -->
+
+<div class="factor">
+
+<div class="factor-top">
+
+<span class="factor-name">
+Location Risk
+</span>
+
+<span class="factor-value">
+38%
+</span>
+
+</div>
+
+<div class="progress">
+
+<div
+class="bar low"
+style="width:38%">
+</div>
+
+</div>
+
+</div>
+
+
+<!-- REASONS -->
+
+<div class="reasons">
+
+<div class="reason">
+
+<div class="reason-icon">
+⚠️
+</div>
+
+<p>
+Transaction amount is higher than your usual
+payment pattern.
+</p>
+
+</div>
+
+
+<div class="reason">
+
+<div class="reason-icon">
+📊
+</div>
+
+<p>
+The recipient does not strongly match your
+normal transaction behaviour.
+</p>
+
+</div>
+
+
+<div class="reason">
+
+<div class="reason-icon">
+📱
+</div>
+
+<p>
+The current device has a lower trust score
+than your usual device.
 </p>
 
 </div>
@@ -515,143 +744,74 @@ AI Risk Engine
 
 </div>
 
-
-<!-- SECURITY CHECKS -->
-
-<div class="checks">
+</section>
 
 
-<div class="check">
+<!-- DECISION -->
 
-<div class="check-icon">
-👤
-</div>
+<section class="decision">
 
-<div class="check-text">
+<h2>Recommended Security Action</h2>
 
-<strong>Behaviour Analysis</strong>
+<div class="actions">
 
-<span>
-Comparing with normal payment behaviour
-</span>
-
-</div>
-
-<div class="check-status" id="check1">
-⌛
-</div>
-
-</div>
-
-
-<div class="check">
-
-<div class="check-icon">
-📱
-</div>
-
-<div class="check-text">
-
-<strong>Device Analysis</strong>
-
-<span>
-Checking trusted device signals
-</span>
-
-</div>
-
-<div class="check-status" id="check2">
-⌛
-</div>
-
-</div>
-
-
-<div class="check">
-
-<div class="check-icon">
-📍
-</div>
-
-<div class="check-text">
-
-<strong>Location Analysis</strong>
-
-<span>
-Checking transaction location signals
-</span>
-
-</div>
-
-<div class="check-status" id="check3">
-⌛
-</div>
-
-</div>
-
-
-<div class="check">
-
-<div class="check-icon">
-🔗
-</div>
-
-<div class="check-text">
-
-<strong>Fraud Pattern Analysis</strong>
-
-<span>
-Checking suspicious transaction patterns
-</span>
-
-</div>
-
-<div class="check-status" id="check4">
-⌛
-</div>
-
-</div>
-
-
-</div>
-
-
-<!-- PROGRESS -->
-
-<div class="progress-container">
-
-<div class="progress-header">
-
-<span>
-AI Analysis Progress
-</span>
-
-<strong id="progressText">
-0%
-</strong>
-
-</div>
-
-<div class="progress">
 
 <div
-class="progress-bar"
-id="progressBar">
-</div>
+class="action-button allow"
+onclick="allowPayment()">
 
-</div>
+✓ ALLOW
+
+<br>
+
+<small>
+Continue Payment
+</small>
 
 </div>
 
 
 <div
-class="status-message"
-id="statusMessage">
+class="action-button alert-action"
+onclick="verifyPayment()">
 
-Initializing AI fraud detection...
+⚠ VERIFY
+
+<br>
+
+<small>
+Verify User
+</small>
 
 </div>
 
+
+<div
+class="action-button block"
+onclick="blockPayment()">
+
+✕ BLOCK
+
+<br>
+
+<small>
+Stop Transaction
+</small>
+
+</div>
+
+</div>
+
+
+<div class="note">
+
+<strong>AI Recommendation:</strong>
+
+Because the transaction has a medium risk score,
+FraudShield recommends additional user verification
+before allowing the payment.
+
+</div>
 
 </section>
 
@@ -661,152 +821,72 @@ Initializing AI fraud detection...
 
 <script>
 
-/* GET TRANSACTION DATA */
+/* LOAD TRANSACTION DATA */
 
 const recipient =
-localStorage.getItem("recipient") || "Rahul Kumar";
+localStorage.getItem("recipient");
 
 const upi =
-localStorage.getItem("upi") || "rahul@upi";
+localStorage.getItem("upi");
 
 const amount =
-localStorage.getItem("amount") || "8500";
+localStorage.getItem("amount");
 
+
+if(recipient){
 
 document.getElementById("recipient")
 .innerText = recipient;
 
+}
+
+if(upi){
+
 document.getElementById("upi")
 .innerText = upi;
 
+}
+
+if(amount){
+
 document.getElementById("amount")
-innerText = "₹" + amount;
+.innerText = "₹" + amount;
+
+}
 
 
-/* ANALYSIS SIMULATION */
+/* SECURITY ACTIONS */
 
-let progress = 0;
+function allowPayment(){
 
-const progressBar =
-document.getElementById("progressBar");
+alert(
+"Payment allowed.\n\nTransaction approved by FraudShield."
+);
 
-const progressText =
-document.getElementById("progressText");
+window.location.href =
+"dashboard.html";
 
-const statusMessage =
-document.getElementById("statusMessage");
-
-const scanText =
-document.getElementById("scanText");
+}
 
 
-const checks = [
-    document.getElementById("check1"),
-    document.getElementById("check2"),
-    document.getElementById("check3"),
-    document.getElementById("check4")
-];
+function verifyPayment(){
+
+window.location.href =
+"verification.html";
+
+}
 
 
-const messages = [
+function blockPayment(){
 
-"Collecting transaction signals...",
+alert(
+"Transaction blocked.\n\nFraudShield has stopped this payment for your security."
+);
 
-"Analyzing user behaviour...",
+window.location.href =
+"alert.html";
 
-"Checking device and location signals...",
-
-"Detecting suspicious fraud patterns...",
-
-"Calculating dynamic risk score..."
-
-];
-
-
-let step = 0;
-
-
-/* PROGRESS ANIMATION */
-
-const analysis =
-setInterval(function(){
-
-    progress += 5;
-
-    progressBar.style.width =
-    progress + "%";
-
-    progressText.innerText =
-    progress + "%";
-
-
-    if(progress === 20){
-
-        checks[0].innerText = "✓";
-        statusMessage.innerText =
-        messages[1];
-
-    }
-
-
-    if(progress === 40){
-
-        checks[1].innerText = "✓";
-        statusMessage.innerText =
-        messages[2];
-
-    }
-
-
-    if(progress === 60){
-
-        checks[2].innerText = "✓";
-        statusMessage.innerText =
-        messages[3];
-
-    }
-
-
-    if(progress === 80){
-
-        checks[3].innerText = "✓";
-        statusMessage.innerText =
-        messages[4];
-
-    }
-
-
-    if(progress >= 100){
-
-        clearInterval(analysis);
-
-        scanText.innerText =
-        "Analysis Complete";
-
-        statusMessage.innerText =
-        "AI analysis completed. Generating your risk score...";
-
-
-        setTimeout(function(){
-
-            window.location.href =
-            "risk-score.html";
-
-        },1200);
-
-    }
-
-},150);
-
-
-/* INITIAL MESSAGE */
-
-setTimeout(function(){
-
-    statusMessage.innerText =
-    messages[0];
-
-},500);
+}
 
 </script>
 
