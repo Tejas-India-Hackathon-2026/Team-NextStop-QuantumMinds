@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>SecureFlow-AI | Location Analytics</title>
+<title>SecureFlow-AI | Money Analytics</title>
 
 <link rel="stylesheet"
 href="style10.css">
@@ -25,15 +25,73 @@ href="style10.css">
 
 <div>
 
-<h1>Geographic Fraud Analytics</h1>
+<h1>Transaction Value Analytics</h1>
 
 <p>
-Location-based transaction intelligence
+UPI money flow and fraud exposure
 </p>
 
 </div>
 
 </header>
+
+
+<section class="stats">
+
+
+<div class="stat">
+
+<div class="stat-title">
+TOTAL VALUE
+</div>
+
+<div class="stat-number blue">
+₹8.4L
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+SAFE VALUE
+</div>
+
+<div class="stat-number green">
+₹5.9L
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+RISK VALUE
+</div>
+
+<div class="stat-number orange">
+₹2.5L
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-title">
+BLOCKED VALUE
+</div>
+
+<div class="stat-number red">
+₹2.1L
+</div>
+
+</div>
+
+
+</section>
 
 
 <section class="panel factors">
@@ -42,11 +100,11 @@ Location-based transaction intelligence
 <div class="panel-title">
 
 <h2>
-Transaction Locations
+Transaction Value Breakdown
 </h2>
 
 <p>
-Geographic distribution of transactions
+Financial exposure by transaction category
 </p>
 
 </div>
@@ -58,11 +116,11 @@ Geographic distribution of transactions
 
 <tr>
 
-<th>City</th>
+<th>Category</th>
 <th>Transactions</th>
-<th>Safe</th>
-<th>Suspicious</th>
-<th>Risk Level</th>
+<th>Total Value</th>
+<th>Percentage</th>
+<th>Risk</th>
 
 </tr>
 
@@ -74,10 +132,13 @@ Geographic distribution of transactions
 
 <tr>
 
-<td>Kolkata</td>
-<td>16</td>
-<td>14</td>
-<td>02</td>
+<td>Normal Payments</td>
+
+<td>28</td>
+
+<td>₹5.9L</td>
+
+<td>70%</td>
 
 <td>
 <span class="badge safe">
@@ -90,10 +151,13 @@ LOW
 
 <tr>
 
-<td>Delhi</td>
-<td>09</td>
-<td>06</td>
-<td>03</td>
+<td>Medium Risk</td>
+
+<td>05</td>
+
+<td>₹42K</td>
+
+<td>5%</td>
 
 <td>
 <span class="badge review">
@@ -106,30 +170,17 @@ MEDIUM
 
 <tr>
 
-<td>Mumbai</td>
-<td>08</td>
-<td>04</td>
-<td>04</td>
+<td>High Risk</td>
+
+<td>07</td>
+
+<td>₹2.1L</td>
+
+<td>25%</td>
 
 <td>
 <span class="badge high">
 HIGH
-</span>
-</td>
-
-</tr>
-
-
-<tr>
-
-<td>Pune</td>
-<td>07</td>
-<td>04</td>
-<td>03</td>
-
-<td>
-<span class="badge review">
-MEDIUM
 </span>
 </td>
 
@@ -141,6 +192,7 @@ MEDIUM
 </table>
 
 </section>
+
 
 </main>
 
